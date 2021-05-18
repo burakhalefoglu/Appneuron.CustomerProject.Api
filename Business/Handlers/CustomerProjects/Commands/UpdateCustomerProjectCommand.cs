@@ -41,7 +41,7 @@ namespace Business.Handlers.CustomerProjects.Commands
             [ValidationAspect(typeof(UpdateCustomerProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
                 int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

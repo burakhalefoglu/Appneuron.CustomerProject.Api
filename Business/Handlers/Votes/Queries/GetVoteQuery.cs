@@ -26,7 +26,7 @@ namespace Business.Handlers.Votes.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Vote>> Handle(GetVoteQuery request, CancellationToken cancellationToken)
             {
                 var vote = await _voteRepository.GetAsync(p => p.Id == request.Id);

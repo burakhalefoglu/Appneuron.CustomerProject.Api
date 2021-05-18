@@ -45,6 +45,8 @@ namespace Business.Handlers.Customers.Commands
             [ValidationAspect(typeof(CreateCustomerValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
+            [SecuredOperation(Priority = 1)]
+
 
             public async Task<IResult> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
             {

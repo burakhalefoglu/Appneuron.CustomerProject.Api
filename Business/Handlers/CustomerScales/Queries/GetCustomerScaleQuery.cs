@@ -26,6 +26,8 @@ namespace Business.Handlers.CustomerScales.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
+            [SecuredOperation(Priority = 1)]
+
             public async Task<IDataResult<CustomerScale>> Handle(GetCustomerScaleQuery request, CancellationToken cancellationToken)
             {
                 var customerScale = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);

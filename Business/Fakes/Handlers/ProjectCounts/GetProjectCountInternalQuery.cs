@@ -1,24 +1,23 @@
-﻿using Business.BusinessAspects;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Utilities.IoC;
+﻿using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
-using System.Threading;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Linq;
 
-namespace Business.Handlers.CustomerProjects.Queries
+namespace Business.Fakes.Handlers.ProjectCounts
 {
-    public class GetProjectCountQuery : IRequest<IDataResult<int>>
+    class GetProjectCountInternalQuery : IRequest<IDataResult<int>>
     {
         public long Id { get; set; }
 
-        public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountQuery, IDataResult<int>>
+        public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountInternalQuery, IDataResult<int>>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IMediator _mediator;
@@ -31,9 +30,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             }
 
-            [LogAspect(typeof(FileLogger))]
-            [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<int>> Handle(GetProjectCountQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<int>> Handle(GetProjectCountInternalQuery request, CancellationToken cancellationToken)
             {
                 int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 

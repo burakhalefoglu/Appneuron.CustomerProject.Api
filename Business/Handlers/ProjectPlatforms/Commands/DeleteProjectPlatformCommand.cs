@@ -1,5 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
+using Business.Fakes.Handlers.ProjectCounts;
 using Business.Handlers.CustomerProjects.Queries;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -33,10 +34,10 @@ namespace Business.Handlers.ProjectPlatforms.Commands
 
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteProjectPlatformCommand request, CancellationToken cancellationToken)
             {
-                var result = await _mediator.Send(new GetProjectCountQuery { Id = request.ProjectId });
+                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId });
                 if (result.Data <= 0)
                 {
                     return new ErrorResult(Messages.ProjectNotFound);

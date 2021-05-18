@@ -29,7 +29,7 @@ namespace Business.Handlers.Votes.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<Vote>>> Handle(GetVotesQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<Vote>>(await _voteRepository.GetListAsync());

@@ -75,7 +75,7 @@ namespace WebAPI
                                                     ValidateAudience = true,
                                                     ValidateLifetime = true,
                                                     ValidIssuer = tokenOptions.Issuer,
-                                                    ValidAudience = tokenOptions.Audience,
+                                                    ValidAudiences = tokenOptions.Audience,
                                                     ValidateIssuerSigningKey = true,
                                                     IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
                                                     ClockSkew = TimeSpan.Zero
@@ -121,6 +121,11 @@ namespace WebAPI
                 app.UseDbFakeDataCreator();
                 app.UseDeveloperExceptionPage();
             }
+
+            //güvenlik için gerekli...
+            app.UseHsts();
+            //güvenlik için gerekli...
+            app.UseSecurityHeaders();
 
             app.ConfigureCustomExceptionMiddleware();
 

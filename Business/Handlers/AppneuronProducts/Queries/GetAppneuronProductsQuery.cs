@@ -29,7 +29,8 @@ namespace Business.Handlers.AppneuronProducts.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
+
             public async Task<IDataResult<IEnumerable<AppneuronProduct>>> Handle(GetAppneuronProductsQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<AppneuronProduct>>(await _appneuronProductRepository.GetListAsync());

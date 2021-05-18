@@ -1,5 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
+using Business.Fakes.Handlers.ProjectCounts;
 using Business.Handlers.CustomerProjects.Queries;
 using Business.Handlers.ProjectPlatforms.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -34,10 +35,10 @@ namespace Business.Handlers.ProjectPlatforms.Commands
             [ValidationAspect(typeof(UpdateProjectPlatformValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateProjectPlatformCommand request, CancellationToken cancellationToken)
             {
-                var result = await _mediator.Send(new GetProjectCountQuery { Id = request.ProjectId });
+                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId });
                 if (result.Data <= 0)
                 {
                     return new ErrorDataResult<ProjectPlatform>(Messages.ProjectNotFound);

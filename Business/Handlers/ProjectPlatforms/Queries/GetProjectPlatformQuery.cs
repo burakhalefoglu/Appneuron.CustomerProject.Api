@@ -1,6 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
-using Business.Handlers.CustomerProjects.Queries;
+using Business.Fakes.Handlers.ProjectCounts;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
@@ -34,10 +34,10 @@ namespace Business.Handlers.ProjectPlatforms.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<ProjectPlatform>>> Handle(GetProjectPlatformQuery request, CancellationToken cancellationToken)
             {
-                var result = await _mediator.Send(new GetProjectCountQuery { Id = request.ProjectId });
+                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId });
                 if (result.Data <= 0)
                 {
                     return new ErrorDataResult<IEnumerable<ProjectPlatform>>(Messages.ProjectNotFound);

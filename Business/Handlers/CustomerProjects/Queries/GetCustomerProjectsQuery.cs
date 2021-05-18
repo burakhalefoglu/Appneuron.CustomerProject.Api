@@ -36,7 +36,7 @@ namespace Business.Handlers.CustomerProjects.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectsQuery request, CancellationToken cancellationToken)
             {
                 int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

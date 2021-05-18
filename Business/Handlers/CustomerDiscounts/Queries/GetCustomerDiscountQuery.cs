@@ -33,7 +33,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request, CancellationToken cancellationToken)
             {
                 int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

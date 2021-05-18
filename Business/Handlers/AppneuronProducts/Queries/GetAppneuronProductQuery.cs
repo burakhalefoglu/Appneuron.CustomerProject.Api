@@ -26,7 +26,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<AppneuronProduct>> Handle(GetAppneuronProductQuery request, CancellationToken cancellationToken)
             {
                 var appneuronProduct = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);

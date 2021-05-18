@@ -27,7 +27,7 @@ namespace Business.Handlers.Industries.Queries
             }
 
             [LogAspect(typeof(FileLogger))]
-            [LoginRequired(Priority = 1)]
+            [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Industry>> Handle(GetIndustryQuery request, CancellationToken cancellationToken)
             {
                 var industry = await _industryRepository.GetAsync(p => p.Id == request.Id);

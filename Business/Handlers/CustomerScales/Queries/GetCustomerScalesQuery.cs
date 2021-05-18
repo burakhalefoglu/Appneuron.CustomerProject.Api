@@ -1,4 +1,5 @@
-﻿using Business.Constants;
+﻿using Business.BusinessAspects;
+using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -29,6 +30,8 @@ namespace Business.Handlers.CustomerScales.Queries
             [PerformanceAspect(5)]
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
+            [SecuredOperation(Priority = 1)]
+
             public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(), Messages.DefaultSuccess);
