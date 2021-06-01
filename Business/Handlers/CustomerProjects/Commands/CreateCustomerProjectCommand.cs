@@ -56,7 +56,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var addedCustomerProject = new CustomerProject
                 {
-                    ProjectKey = SecurityKeyHelper.GetRandomStringNumber(32).ToLower(),
+                    ProjectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower(),
                     ProjectName = request.ProjectName,
                     Statuse = true,
                     CreatedAt = DateTime.Now,

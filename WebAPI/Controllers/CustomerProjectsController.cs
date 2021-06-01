@@ -36,6 +36,28 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
+
+        ///<summary>
+        ///List CustomerProjects
+        ///</summary>
+        ///<remarks>CustomerProjects</remarks>
+        ///<return>List CustomerProjects</return>
+        ///<response code="200"></response>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerProject>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpGet("getbyuser")]
+        public async Task<IActionResult> GetUsersList()
+        {
+            var result = await Mediator.Send(new GetCustomerProjectLookupQuery());
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(result.Message);
+        }
+
+
         ///<summary>
         ///It brings the details according to its id.
         ///</summary>
@@ -46,9 +68,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerProject))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(string projectkey)
+        public async Task<IActionResult> GetByProjectKey(string id)
         {
-            var result = await Mediator.Send(new GetCustomerProjectQuery { ProjectKey = projectkey });
+            var result = await Mediator.Send(new GetCustomerProjectQuery { ProjectKey = id });
             if (result.Success)
             {
                 return Ok(result.Data);

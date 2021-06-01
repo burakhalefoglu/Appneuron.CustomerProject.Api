@@ -20,7 +20,7 @@ namespace Business.Handlers.CustomerProjects.Commands
     /// </summary>
     public class DeleteCustomerProjectCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteCustomerProjectCommandHandler : IRequestHandler<DeleteCustomerProjectCommand, IResult>
         {
@@ -42,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Commands
             {
                 int userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var customerProjectToDelete = _customerProjectRepository.Get(p => p.Id == request.Id && p.CustomerId == userId);
+                var customerProjectToDelete = _customerProjectRepository.Get(p => p.ProjectKey == request.Id && p.CustomerId == userId);
 
                 _customerProjectRepository.Delete(customerProjectToDelete);
                 await _customerProjectRepository.SaveChangesAsync();

@@ -24,6 +24,7 @@ namespace Business.Handlers.CustomerProjects.Commands
         public string ProjectName { get; set; }
         public bool Statuse { get; set; }
         public short? VotesId { get; set; }
+        public string ProjectBody { get; set; }
 
         public class UpdateCustomerProjectCommandHandler : IRequestHandler<UpdateCustomerProjectCommand, IResult>
         {
@@ -53,6 +54,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                 isThereCustomerProjectRecord.ProjectName = request.ProjectName;
                 isThereCustomerProjectRecord.Statuse = request.Statuse;
                 isThereCustomerProjectRecord.VoteId = request.VotesId;
+                isThereCustomerProjectRecord.ProjectBody = request.ProjectBody;
 
                 _customerProjectRepository.Update(isThereCustomerProjectRecord);
                 await _customerProjectRepository.SaveChangesAsync();

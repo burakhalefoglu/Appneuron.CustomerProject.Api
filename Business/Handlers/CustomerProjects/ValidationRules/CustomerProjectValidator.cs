@@ -17,7 +17,7 @@ namespace Business.Handlers.CustomerProjects.ValidationRules
         {
             RuleFor(x => x.ProjectKey).NotEmpty();
             RuleFor(x => x.ProjectName).NotEmpty();
-            RuleFor(x => x.Statuse).NotEmpty();
+            RuleFor(x => x.Statuse).NotNull();
         }
     }
 }

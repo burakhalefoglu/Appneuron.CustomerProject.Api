@@ -35,6 +35,27 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
+
+        /// <summary>
+        /// Add CustomerProject.
+        /// </summary>
+        /// <param name="createCustomerCommand"></param>
+        /// <returns></returns>
+        [Produces("application/json", "text/plain")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] CreateCustomerCommand createCustomerCommand)
+        {
+            var result = await Mediator.Send(createCustomerCommand);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Message);
+        }
+
+
         ///<summary>
         ///It brings the details according to its id.
         ///</summary>
@@ -44,7 +65,7 @@ namespace WebAPI.Controllers
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Customer))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        [HttpGet("getcustomerinfo")]
+        [HttpGet]
         public async Task<IActionResult> GetById()
         {
             var result = await Mediator.Send(new GetCustomerQuery());

@@ -18,9 +18,9 @@ using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerProjects.Queries
 {
-    public class GetCustomerProjectsQuery : IRequest<IDataResult<IEnumerable<CustomerProject>>>
+    public class GetCustomerProjectLookupQuery : IRequest<IDataResult<IEnumerable<CustomerProject>>>
     {
-        public class GetCustomerProjectsQueryHandler : IRequestHandler<GetCustomerProjectsQuery, IDataResult<IEnumerable<CustomerProject>>>
+        public class GetCustomerProjectsQueryHandler : IRequestHandler<GetCustomerProjectLookupQuery, IDataResult<IEnumerable<CustomerProject>>>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IMediator _mediator;
@@ -37,9 +37,11 @@ namespace Business.Handlers.CustomerProjects.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectsQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectLookupQuery request, CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<CustomerProject>>(await _customerProjectRepository.GetListAsync());
+                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+
+                return new SuccessDataResult<IEnumerable<CustomerProject>>(await _customerProjectRepository.GetListAsync(p => p.CustomerId == userId));
             }
         }
     }
