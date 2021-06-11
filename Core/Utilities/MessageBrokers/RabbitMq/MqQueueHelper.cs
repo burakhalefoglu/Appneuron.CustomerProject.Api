@@ -14,7 +14,7 @@ namespace Core.Utilities.MessageBrokers.RabbitMq
             _brokerOptions = configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
         }
 
-        public void QueueMessage(string messageText)
+        public void QueueMessage(object objMessage)
         {
             var factory = new ConnectionFactory
             {
@@ -27,12 +27,13 @@ namespace Core.Utilities.MessageBrokers.RabbitMq
             {
                 channel.QueueDeclare(
                         queue: "DArchQueue",
-                        durable: false,
+                        durable: true,
                         exclusive: false,
                         autoDelete: false,
                         arguments: null);
 
-                var message = JsonConvert.SerializeObject(messageText);
+
+                var message = JsonConvert.SerializeObject(objMessage);
                 var body = Encoding.UTF8.GetBytes(message);
 
                 channel.BasicPublish(exchange: "", routingKey: "DArchQueue", basicProperties: null, body: body);

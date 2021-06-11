@@ -3,9 +3,12 @@ using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
+using Core.Utilities.MessageBrokers.RabbitMq;
+using Core.Utilities.MessageBrokers.RabbitMq.Models;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
@@ -33,9 +36,10 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
-
-            public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            private readonly IMessageBrokerHelper _messageBrockerHelper;
+            public CreateCustomerProjectCommandHandler(IMessageBrokerHelper messageBrockerHelper, ICustomerProjectRepository customerProjectRepository, IMediator mediator)
             {
+                _messageBrockerHelper = messageBrockerHelper;
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
@@ -43,6 +47,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
+            [TransactionScopeAspectAsync]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
@@ -54,9 +59,10 @@ namespace Business.Handlers.CustomerProjects.Commands
                 if (isThereCustomerProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
+                var projectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower();
                 var addedCustomerProject = new CustomerProject
                 {
-                    ProjectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower(),
+                    ProjectKey = projectKey,
                     ProjectName = request.ProjectName,
                     Statuse = true,
                     CreatedAt = DateTime.Now,
@@ -66,6 +72,13 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 _customerProjectRepository.Add(addedCustomerProject);
                 await _customerProjectRepository.SaveChangesAsync();
+                var projectModel = new ProjectModel
+                {
+                    UserId = userId,
+                    ProjectKey = projectKey
+                };
+                _messageBrockerHelper.QueueMessage(projectModel);
+
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
             }
         }
