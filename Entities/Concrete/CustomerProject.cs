@@ -21,6 +21,7 @@ namespace Entities.Concrete
         public virtual Vote Vote { get; set; }
         public virtual ICollection<CustomerProjectHasProduct> CustomerProjectHasProducts { get; set; }
         public virtual ICollection<ProjectPlatform> ProjectPlatforms { get; set; }
+        public virtual ICollection<Client> Clients { get; set; }
 
     }
 }

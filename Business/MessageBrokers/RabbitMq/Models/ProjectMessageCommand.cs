@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Utilities.MessageBrokers.RabbitMq.Models
+namespace Business.MessageBrokers.RabbitMq.Models
 {
-    public class ProjectModel
+    public class ProjectMessageCommand
     {
         public int UserId { get; set; }
         public string ProjectKey { get; set; }

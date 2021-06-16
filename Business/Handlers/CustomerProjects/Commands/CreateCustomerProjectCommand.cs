@@ -1,18 +1,18 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
+using Business.MessageBrokers.RabbitMq.Models;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
-using Core.Utilities.MessageBrokers.RabbitMq;
-using Core.Utilities.MessageBrokers.RabbitMq.Models;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,13 +36,15 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMessageBrokerHelper _messageBrockerHelper;
-            public CreateCustomerProjectCommandHandler(IMessageBrokerHelper messageBrockerHelper, ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            private readonly ISendEndpointProvider _sendEndpointProvider;
+
+            public CreateCustomerProjectCommandHandler(ISendEndpointProvider sendEndpointProvider
+                , ICustomerProjectRepository customerProjectRepository, IMediator mediator)
             {
-                _messageBrockerHelper = messageBrockerHelper;
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _sendEndpointProvider = sendEndpointProvider;
             }
 
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
@@ -72,12 +74,15 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 _customerProjectRepository.Add(addedCustomerProject);
                 await _customerProjectRepository.SaveChangesAsync();
-                var projectModel = new ProjectModel
+                var projectModel = new ProjectMessageCommand
                 {
                     UserId = userId,
                     ProjectKey = projectKey
                 };
-                _messageBrockerHelper.QueueMessage(projectModel);
+
+                var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateCustomerProjectQueue"));
+
+                await sendEndpoint.Send<ProjectMessageCommand>(projectModel);
 
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
             }

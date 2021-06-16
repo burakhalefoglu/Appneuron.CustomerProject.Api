@@ -13,12 +13,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
+using MassTransit;
+using Core.Utilities.MessageBrokers.RabbitMq;
+using Business.MessageBrokers.RabbitMq.Consumers;
 
 namespace WebAPI
 {
@@ -63,6 +64,32 @@ namespace WebAPI
                 options.AddPolicy("AllowOrigin",
                 builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
+
+            var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateClientMessageCommandConsumer>();
+
+                // Default Port : 5672
+                x.UsingRabbitMq((context, cfg) =>
+                {
+
+                    cfg.Host(rabbitmqOptions.HostName, "/", host =>
+                    {
+                        host.Username(rabbitmqOptions.UserName);
+                        host.Password(rabbitmqOptions.Password);
+                    });
+
+                    cfg.ReceiveEndpoint("CreateClientQueue", e =>
+                    {
+                        e.ConfigureConsumer<CreateClientMessageCommandConsumer>(context);
+                    });
+
+                });
+            });
+
+            services.AddMassTransitHostedService();
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 

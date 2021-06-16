@@ -66,5 +66,6 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<CustomerScale> CustomerScales { get; set; }
         public DbSet<GamePlatform> GamePlatforms { get; set; }
         public DbSet<ProjectPlatform> ProjectPlatforms { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }

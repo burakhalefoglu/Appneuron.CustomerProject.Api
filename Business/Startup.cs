@@ -2,6 +2,7 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
+using Business.MessageBrokers.RabbitMq;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
@@ -64,8 +65,6 @@ namespace Business
 
             services.AddTransient<IElasticSearch, ElasticSearchManager>();
 
-            services.AddTransient<IMessageBrokerHelper, MqQueueHelper>();
-            services.AddTransient<IMessageConsumer, MqConsumerHelper>();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
 
             services.AddAutoMapper(typeof(ConfigurationManager));
@@ -85,6 +84,7 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
@@ -112,6 +112,7 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
@@ -140,6 +141,7 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
+            services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
