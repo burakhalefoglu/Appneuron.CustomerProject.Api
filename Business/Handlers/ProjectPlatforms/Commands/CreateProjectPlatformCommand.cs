@@ -1,7 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Business.Fakes.Handlers.ProjectCounts;
-using Business.Handlers.CustomerProjects.Queries;
 using Business.Handlers.ProjectPlatforms.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -52,7 +51,6 @@ namespace Business.Handlers.ProjectPlatforms.Commands
 
                 if (isThereProjectPlatformRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
-
 
                 var addedProjectPlatform = new ProjectPlatform
                 {

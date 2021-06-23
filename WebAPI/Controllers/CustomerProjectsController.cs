@@ -4,7 +4,6 @@ using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -36,7 +35,6 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
-
         ///<summary>
         ///List CustomerProjects
         ///</summary>
@@ -56,7 +54,6 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result.Message);
         }
-
 
         ///<summary>
         ///It brings the details according to its id.

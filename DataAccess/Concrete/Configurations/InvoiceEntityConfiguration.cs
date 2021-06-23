@@ -25,7 +25,5 @@ namespace DataAccess.Concrete.Configurations
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Invoices_Discounts");
         }
-
-
     }
 }

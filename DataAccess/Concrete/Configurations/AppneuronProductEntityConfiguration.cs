@@ -13,7 +13,5 @@ namespace DataAccess.Concrete.Configurations
                               .IsRequired()
                               .HasMaxLength(50);
         }
-
-
     }
 }

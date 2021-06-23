@@ -1,15 +1,7 @@
-﻿using Business.BusinessAspects;
-using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Utilities.IoC;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -35,7 +35,6 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
         }
 
-
         /// <summary>
         /// Add CustomerProject.
         /// </summary>
@@ -54,7 +53,6 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result.Message);
         }
-
 
         ///<summary>
         ///It brings the details according to its id.
@@ -75,7 +73,6 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result.Message);
         }
-
 
         /// <summary>
         /// Delete Customer.

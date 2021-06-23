@@ -24,7 +24,5 @@ namespace DataAccess.Concrete.Configurations
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_CustomerHasProducts_CustomerProjects");
         }
-
-
     }
 }

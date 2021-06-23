@@ -31,7 +31,6 @@ namespace Business.Handlers.CustomerScales.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-
             public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(), Messages.DefaultSuccess);

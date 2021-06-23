@@ -1,5 +1,4 @@
-﻿using Core.Entities.Concrete;
-using System.IO;
+﻿using System.IO;
 
 namespace Core.Utilities.Mail.Helpers
 {

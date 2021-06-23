@@ -75,7 +75,6 @@ namespace DataAccess.Migrations.Pg
                     table.PrimaryKey("PK_Logs", x => x.Id);
                 });
 
-
             migrationBuilder.CreateTable(
                 name: "OperationClaims",
                 columns: table => new
@@ -309,7 +308,6 @@ namespace DataAccess.Migrations.Pg
                     { 138, "DeleteConfirm", 2, "Are you sure?" }
                 });
 
-
             migrationBuilder.CreateIndex(
                 name: "IX_Users_MobilePhones",
                 table: "Users",
@@ -378,11 +376,7 @@ namespace DataAccess.Migrations.Pg
                             principalTable: "Languages",
                             principalColumn: "Id",
                     onDelete: ReferentialAction.Restrict);
-
-
         }
-
-
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -397,7 +391,6 @@ namespace DataAccess.Migrations.Pg
 
             migrationBuilder.DropTable(
                 name: "Logs");
-
 
             migrationBuilder.DropTable(
                 name: "OperationClaims");

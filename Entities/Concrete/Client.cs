@@ -1,6 +1,5 @@
-﻿using System;
-using Core.Entities;
-using System.Collections.Generic;
+﻿using Core.Entities;
+using System;
 
 #nullable disable
 
@@ -16,7 +15,5 @@ namespace Entities.Concrete
         public bool IsPaidClient { get; set; }
 
         public virtual CustomerProject CustomerProject { get; set; }
-
-
     }
 }

@@ -28,7 +28,5 @@ namespace DataAccess.Concrete.Configurations
             builder.Property(x => x.ProjectId).IsRequired();
             builder.Property(x => x.GamePlatformId).IsRequired();
         }
-
-
     }
 }

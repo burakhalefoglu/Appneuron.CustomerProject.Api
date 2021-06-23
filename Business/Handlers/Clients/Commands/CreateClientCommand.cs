@@ -1,6 +1,7 @@
-﻿
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
+using Business.Fakes.Handlers.CustomerProjects;
+using Business.Handlers.Clients.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
@@ -11,28 +12,24 @@ using Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Business.Handlers.Clients.ValidationRules;
-using Business.Fakes.Handlers.CustomerProjects;
 
 namespace Business.Handlers.Clients.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class CreateClientCommand : IRequest<IResult>
     {
-
         public string ClientId { get; set; }
         public string ProjectKey { get; set; }
         public System.DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
-
         public class CreateClientCommandHandler : IRequestHandler<CreateClientCommand, IResult>
         {
             private readonly IClientRepository _clientRepository;
             private readonly IMediator _mediator;
+
             public CreateClientCommandHandler(IClientRepository clientRepository, IMediator mediator)
             {
                 _clientRepository = clientRepository;
@@ -45,7 +42,6 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateClientCommand request, CancellationToken cancellationToken)
             {
-
                 var resultProject = await _mediator.Send(new GetCustomerProjectInternalQuery
                 {
                     ProjectKey = request.ProjectKey
@@ -58,7 +54,6 @@ namespace Business.Handlers.Clients.Commands
                     CreatedAt = request.CreatedAt,
                     IsPaidClient = request.IsPaidClient,
                     ProjectKey = request.ProjectKey
-
                 };
 
                 _clientRepository.Add(addedClient);

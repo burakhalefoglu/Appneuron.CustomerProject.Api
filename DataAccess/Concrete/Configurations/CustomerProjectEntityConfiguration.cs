@@ -38,7 +38,5 @@ namespace DataAccess.Concrete.Configurations
                 .HasForeignKey(d => d.VoteId)
                 .HasConstraintName("fk_CustomerProjects_Votes");
         }
-
-
     }
 }

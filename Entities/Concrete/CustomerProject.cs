@@ -1,5 +1,5 @@
-﻿using System;
-using Core.Entities;
+﻿using Core.Entities;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -22,6 +22,5 @@ namespace Entities.Concrete
         public virtual ICollection<CustomerProjectHasProduct> CustomerProjectHasProducts { get; set; }
         public virtual ICollection<ProjectPlatform> ProjectPlatforms { get; set; }
         public virtual ICollection<Client> Clients { get; set; }
-
     }
 }

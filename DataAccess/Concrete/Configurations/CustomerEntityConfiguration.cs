@@ -33,8 +33,6 @@ namespace DataAccess.Concrete.Configurations
                 .HasForeignKey(d => d.IndustryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Customers_IndustryId_fkey");
-
-
         }
     }
 }

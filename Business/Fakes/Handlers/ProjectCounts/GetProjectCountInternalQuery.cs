@@ -3,17 +3,15 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
-using System.Threading;
+using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.ProjectCounts
 {
-    class GetProjectCountInternalQuery : IRequest<IDataResult<int>>
+    internal class GetProjectCountInternalQuery : IRequest<IDataResult<int>>
     {
         public long Id { get; set; }
 

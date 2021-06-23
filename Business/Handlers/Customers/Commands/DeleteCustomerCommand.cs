@@ -3,15 +3,15 @@ using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using Core.Utilities.IoC;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Business.Handlers.Customers.Commands
 {
@@ -20,20 +20,17 @@ namespace Business.Handlers.Customers.Commands
     /// </summary>
     public class DeleteCustomerCommand : IRequest<IResult>
     {
-
         public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerCommand, IResult>
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-
             public DeleteCustomerCommandHandler(ICustomerRepository customerRepository, IMediator mediator)
             {
                 _customerRepository = customerRepository;
                 _mediator = mediator;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-
             }
 
             [CacheRemoveAspect("Get")]
@@ -42,7 +39,6 @@ namespace Business.Handlers.Customers.Commands
             public async Task<IResult> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
             {
                 var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
-
 
                 var customerToDelete = _customerRepository.Get(p => p.UserId == userId);
 

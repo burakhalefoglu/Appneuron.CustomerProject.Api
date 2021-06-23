@@ -14,7 +14,5 @@ namespace DataAccess.Concrete.Configurations
                                .HasMaxLength(50);
             builder.Property(x => x.VoteValue).IsRequired();
         }
-
-
     }
 }

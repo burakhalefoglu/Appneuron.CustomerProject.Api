@@ -1,20 +1,17 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Customers.ValidationRules;
-using Business.Handlers.CustomerScales.Queries;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
-using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,8 +43,6 @@ namespace Business.Handlers.Customers.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-
-
             public async Task<IResult> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
             {
                 var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);

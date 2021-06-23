@@ -1,10 +1,13 @@
 ﻿using Business;
 using Business.Helpers;
+using Business.MessageBrokers.RabbitMq.Consumers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
+using Core.Utilities.MessageBrokers.RabbitMq;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.Jwt;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,9 +20,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
-using MassTransit;
-using Core.Utilities.MessageBrokers.RabbitMq;
-using Business.MessageBrokers.RabbitMq.Consumers;
 
 namespace WebAPI
 {
@@ -58,7 +58,6 @@ namespace WebAPI
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
 
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
@@ -74,7 +73,6 @@ namespace WebAPI
                 // Default Port : 5672
                 x.UsingRabbitMq((context, cfg) =>
                 {
-
                     cfg.Host(rabbitmqOptions.HostName, "/", host =>
                     {
                         host.Username(rabbitmqOptions.UserName);
@@ -85,7 +83,6 @@ namespace WebAPI
                     {
                         e.ConfigureConsumer<CreateClientMessageCommandConsumer>(context);
                     });
-
                 });
             });
 

@@ -1,0 +1,1 @@
+2021-06-19 17:40:55.569 +03:00 [Information] {"FullName":null,"MethodName":"Handle","User":"?","Parameters":[{"Name":"request","Value":{},"Type":"GetCustomerQuery"},{"Name":"cancellationToken","Value":{"IsCancellationRequested":false,"CanBeCanceled":false,"WaitHandle":{"Handle":{"value":4376},"SafeWaitHandle":{"IsInvalid":false,"IsClosed":false}},"Type":"CancellationToken"}]}

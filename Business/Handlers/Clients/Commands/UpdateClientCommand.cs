@@ -1,24 +1,18 @@
-﻿
+﻿using Business.BusinessAspects;
 using Business.Constants;
-using Business.BusinessAspects;
+using Business.Handlers.Clients.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using Core.Aspects.Autofac.Validation;
-using Business.Handlers.Clients.ValidationRules;
-
 
 namespace Business.Handlers.Clients.Commands
 {
-
-
     public class UpdateClientCommand : IRequest<IResult>
     {
         public long Id { get; set; }
@@ -46,12 +40,10 @@ namespace Business.Handlers.Clients.Commands
             {
                 var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id);
 
-
                 isThereClientRecord.ClientId = request.ClientId;
                 isThereClientRecord.ProjectId = request.ProjectId;
                 isThereClientRecord.CreatedAt = request.CreatedAt;
                 isThereClientRecord.IsPaidClient = request.IsPaidClient;
-
 
                 _clientRepository.Update(isThereClientRecord);
                 await _clientRepository.SaveChangesAsync();
@@ -60,4 +52,3 @@ namespace Business.Handlers.Clients.Commands
         }
     }
 }
-

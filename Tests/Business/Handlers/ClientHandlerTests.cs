@@ -1,32 +1,31 @@
-﻿
+﻿using Business.Constants;
+using Business.Handlers.Clients.Commands;
 using Business.Handlers.Clients.Queries;
 using DataAccess.Abstract;
+using Entities.Concrete;
+using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using static Business.Handlers.Clients.Queries.GetClientQuery;
-using Entities.Concrete;
-using static Business.Handlers.Clients.Queries.GetClientsQuery;
 using static Business.Handlers.Clients.Commands.CreateClientCommand;
-using Business.Handlers.Clients.Commands;
-using Business.Constants;
-using static Business.Handlers.Clients.Commands.UpdateClientCommand;
 using static Business.Handlers.Clients.Commands.DeleteClientCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
-
+using static Business.Handlers.Clients.Commands.UpdateClientCommand;
+using static Business.Handlers.Clients.Queries.GetClientQuery;
+using static Business.Handlers.Clients.Queries.GetClientsQuery;
 
 namespace Tests.Business.HandlersTest
 {
     [TestFixture]
     public class ClientHandlerTests
     {
-        Mock<IClientRepository> _clientRepository;
-        Mock<IMediator> _mediator;
+        private Mock<IClientRepository> _clientRepository;
+        private Mock<IMediator> _mediator;
+
         [SetUp]
         public void Setup()
         {
@@ -42,7 +41,7 @@ namespace Tests.Business.HandlersTest
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>())).ReturnsAsync(new Client()
 //propertyler buraya yazılacak
-//{																		
+//{
 //ClientId = 1,
 //ClientName = "Test"
 //}
@@ -56,7 +55,6 @@ namespace Tests.Business.HandlersTest
             //Asset
             x.Success.Should().BeTrue();
             //x.Data.ClientId.Should().Be(1);
-
         }
 
         [Test]
@@ -76,7 +74,6 @@ namespace Tests.Business.HandlersTest
             //Asset
             x.Success.Should().BeTrue();
             ((List<Client>)x.Data).Count.Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -106,7 +103,7 @@ namespace Tests.Business.HandlersTest
         {
             //Arrange
             var command = new CreateClientCommand();
-            //propertyler buraya yazılacak 
+            //propertyler buraya yazılacak
             //command.ClientName = "test";
 
             _clientRepository.Setup(x => x.Query())
@@ -161,4 +158,3 @@ namespace Tests.Business.HandlersTest
         }
     }
 }
-

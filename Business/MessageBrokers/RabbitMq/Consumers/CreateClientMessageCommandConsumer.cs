@@ -3,10 +3,7 @@ using Business.Fakes.Handlers.CustomerProjects;
 using Business.MessageBrokers.RabbitMq.Models;
 using MassTransit;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Business.MessageBrokers.RabbitMq.Consumers
@@ -22,7 +19,6 @@ namespace Business.MessageBrokers.RabbitMq.Consumers
 
         public async Task Consume(ConsumeContext<CreateClientMessageComamnd> context)
         {
-
             var resultProject = await _mediator.Send(new GetCustomerProjectInternalQuery
             {
                 ProjectKey = context.Message.ProjectKey
