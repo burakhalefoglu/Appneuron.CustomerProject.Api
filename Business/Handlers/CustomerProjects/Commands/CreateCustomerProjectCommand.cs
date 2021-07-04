@@ -38,8 +38,9 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly ISendEndpointProvider _sendEndpointProvider;
 
-            public CreateCustomerProjectCommandHandler(ISendEndpointProvider sendEndpointProvider
-                , ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            public CreateCustomerProjectCommandHandler(ISendEndpointProvider sendEndpointProvider,
+                ICustomerProjectRepository customerProjectRepository,
+                IMediator mediator)
             {
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
@@ -81,7 +82,6 @@ namespace Business.Handlers.CustomerProjects.Commands
                 };
 
                 var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateCustomerProjectQueue"));
-
                 await sendEndpoint.Send<ProjectMessageCommand>(projectModel);
 
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
