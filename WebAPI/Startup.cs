@@ -58,10 +58,14 @@ namespace WebAPI
                                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
                             });
 
+            var corsPolicies = Configuration.GetSection("CorsPolicies").Get<String[]>();
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowOrigin",
-                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                options.AddPolicy("CorsPolicy",
+           builder => builder.WithOrigins(corsPolicies)
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials());
             });
 
             var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
@@ -159,9 +163,10 @@ namespace WebAPI
             {
                 c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture");
             });
-            app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
