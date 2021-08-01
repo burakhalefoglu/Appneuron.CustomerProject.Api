@@ -1,6 +1,5 @@
 ﻿using Business;
 using Business.Helpers;
-using Business.MessageBrokers.RabbitMq.Consumers;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -67,30 +66,6 @@ namespace WebAPI
            .AllowAnyHeader()
            .AllowCredentials());
             });
-
-            var rabbitmqOptions = Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
-
-            services.AddMassTransit(x =>
-            {
-                x.AddConsumer<CreateClientMessageCommandConsumer>();
-
-                // Default Port : 5672
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host(rabbitmqOptions.HostName, "/", host =>
-                    {
-                        host.Username(rabbitmqOptions.UserName);
-                        host.Password(rabbitmqOptions.Password);
-                    });
-
-                    cfg.ReceiveEndpoint("CreateClientQueue", e =>
-                    {
-                        e.ConfigureConsumer<CreateClientMessageCommandConsumer>(context);
-                    });
-                });
-            });
-
-            services.AddMassTransitHostedService();
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 

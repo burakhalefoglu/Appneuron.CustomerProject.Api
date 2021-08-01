@@ -1,7 +1,8 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
-using Business.MessageBrokers.RabbitMq.Models;
+using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers.Models;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
@@ -36,16 +37,16 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly ISendEndpointProvider _sendEndpointProvider;
-
-            public CreateCustomerProjectCommandHandler(ISendEndpointProvider sendEndpointProvider,
-                ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator)
+            private readonly IKafkaMessageBroker _kafkaMessageBroker;
+            
+            public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
+                IMediator mediator,
+                IKafkaMessageBroker kafkaMessageBroker)
             {
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
-                _sendEndpointProvider = sendEndpointProvider;
+                _kafkaMessageBroker = kafkaMessageBroker;
             }
 
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
@@ -81,8 +82,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                     ProjectKey = projectKey
                 };
 
-                var sendEndpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri("queue:CreateCustomerProjectQueue"));
-                await sendEndpoint.Send<ProjectMessageCommand>(projectModel);
+                await _kafkaMessageBroker.SendMessageAsync(projectModel);
 
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
             }
