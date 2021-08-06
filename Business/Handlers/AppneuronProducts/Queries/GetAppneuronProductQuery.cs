@@ -1,6 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -25,7 +26,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<AppneuronProduct>> Handle(GetAppneuronProductQuery request, CancellationToken cancellationToken)
             {

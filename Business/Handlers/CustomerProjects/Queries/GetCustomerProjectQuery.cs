@@ -1,6 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -33,7 +34,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request, CancellationToken cancellationToken)
             {

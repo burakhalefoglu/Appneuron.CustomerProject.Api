@@ -5,6 +5,7 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
@@ -31,7 +32,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
 
             [ValidationAspect(typeof(UpdateAppneuronProductValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateAppneuronProductCommand request, CancellationToken cancellationToken)
             {

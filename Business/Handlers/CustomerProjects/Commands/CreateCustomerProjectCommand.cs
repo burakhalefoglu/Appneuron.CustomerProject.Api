@@ -8,6 +8,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
@@ -52,7 +53,7 @@ namespace Business.Handlers.CustomerProjects.Commands
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [TransactionScopeAspectAsync]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
