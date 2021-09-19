@@ -3,7 +3,6 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -36,7 +35,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
+            [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectLookupQuery request, CancellationToken cancellationToken)
             {

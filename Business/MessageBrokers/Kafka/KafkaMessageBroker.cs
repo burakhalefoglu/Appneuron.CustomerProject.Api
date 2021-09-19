@@ -20,7 +20,6 @@ namespace Business.MessageBrokers.Kafka
         IConfiguration Configuration;
         KafkaOptions kafkaOptions;
         private readonly IMediator _mediator;
-        private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public KafkaMessageBroker(IMediator mediator)
         {

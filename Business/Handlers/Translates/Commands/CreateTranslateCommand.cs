@@ -5,7 +5,6 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -39,7 +38,7 @@ namespace Business.Handlers.Translates.Commands
             [SecuredOperation(Priority = 1)]
             [ValidationAspect(typeof(CreateTranslateValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
+            [LogAspect(typeof(FileLogger))]
             public async Task<IResult> Handle(CreateTranslateCommand request, CancellationToken cancellationToken)
             {
                 var isThereTranslateRecord = _translateRepository.Query().Any(u => u.LangId == request.LangId && u.Code == request.Code);

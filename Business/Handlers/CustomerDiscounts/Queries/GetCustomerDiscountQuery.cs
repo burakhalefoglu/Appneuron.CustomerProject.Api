@@ -1,7 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -33,7 +32,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             }
 
-            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
+            [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request, CancellationToken cancellationToken)
             {

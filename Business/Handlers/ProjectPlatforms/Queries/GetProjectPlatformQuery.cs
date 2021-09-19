@@ -3,7 +3,6 @@ using Business.Constants;
 using Business.Fakes.Handlers.ProjectCounts;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -34,7 +33,7 @@ namespace Business.Handlers.ProjectPlatforms.Queries
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             }
 
-            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
+            [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<ProjectPlatform>>> Handle(GetProjectPlatformQuery request, CancellationToken cancellationToken)
             {

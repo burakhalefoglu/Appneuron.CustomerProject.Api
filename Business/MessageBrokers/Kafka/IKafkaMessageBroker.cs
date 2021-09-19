@@ -12,7 +12,7 @@ namespace Business.MessageBrokers.Kafka
         Task<IResult> SendMessageAsync<T>(T messageModel) where T :
          class, new();
 
-        Task GetClientCreationMessage(); 
+        Task GetClientCreationMessage();
 
     }
 }

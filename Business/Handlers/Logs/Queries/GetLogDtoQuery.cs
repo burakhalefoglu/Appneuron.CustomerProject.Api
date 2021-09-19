@@ -3,7 +3,6 @@ using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
 using Core.Entities.Dtos;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -31,7 +30,7 @@ namespace Business.Handlers.Logs.Queries
             [SecuredOperation(Priority = 1)]
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(ApacheKafkaDatabaseActionLogger))]
+            [LogAspect(typeof(FileLogger))]
             public async Task<IDataResult<IEnumerable<LogDto>>> Handle(GetLogDtoQuery request, CancellationToken cancellationToken)
             {
                 var result = await _logRepository.GetListAsync();

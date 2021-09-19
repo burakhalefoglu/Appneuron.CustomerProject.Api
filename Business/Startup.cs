@@ -2,6 +2,7 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
+using Business.MessageBrokers.Kafka;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
@@ -98,6 +99,7 @@ namespace Business
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();
+            services.AddTransient<IKafkaMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext, DArchInMemory>(ServiceLifetime.Transient);
             services.AddSingleton<MongoDbContextBase, MongoDbContext>();
@@ -126,6 +128,7 @@ namespace Business
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();
+            services.AddTransient<IKafkaMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext>();
 
@@ -155,6 +158,7 @@ namespace Business
             services.AddTransient<ILogRepository, LogRepository>();
             services.AddTransient<ITranslateRepository, TranslateRepository>();
             services.AddTransient<ILanguageRepository, LanguageRepository>();
+            services.AddTransient<IKafkaMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext>();
 

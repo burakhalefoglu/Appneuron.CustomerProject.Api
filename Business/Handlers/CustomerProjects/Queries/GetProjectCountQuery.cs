@@ -1,6 +1,6 @@
 ﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
-using Core.CrossCuttingConcerns.Logging.Serilog.Loggers.ApacheKafka;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -31,7 +31,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             }
 
-            [LogAspect(typeof(ApacheKafkaCustomerProjectLogger))]
+            [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<int>> Handle(GetProjectCountQuery request, CancellationToken cancellationToken)
             {
