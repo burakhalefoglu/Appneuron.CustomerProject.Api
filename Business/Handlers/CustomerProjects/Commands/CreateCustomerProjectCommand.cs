@@ -56,9 +56,12 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.
+                    FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var isThereCustomerProjectRecord = _customerProjectRepository.Query().Any(u => u.ProjectName == request.ProjectName);
+                var isThereCustomerProjectRecord = _customerProjectRepository.Query().Any(u =>
+                    u.ProjectName == request.ProjectName &&
+                    u.CustomerId == userId);
 
                 if (isThereCustomerProjectRecord)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -82,7 +85,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                     ProjectKey = projectKey
                 };
 
-                await _kafkaMessageBroker.SendMessageAsync(projectModel);
+                //await _kafkaMessageBroker.SendMessageAsync(projectModel);
 
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
             }

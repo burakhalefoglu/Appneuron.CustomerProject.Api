@@ -9,8 +9,6 @@ namespace Business.Handlers.Discounts.ValidationRules
         {
             RuleFor(x => x.DiscountName).NotEmpty();
             RuleFor(x => x.Percent).NotEmpty();
-            RuleFor(x => x.CustomerDiscounts).NotEmpty();
-            RuleFor(x => x.Invoices).NotEmpty();
         }
     }
 
@@ -20,8 +18,6 @@ namespace Business.Handlers.Discounts.ValidationRules
         {
             RuleFor(x => x.DiscountName).NotEmpty();
             RuleFor(x => x.Percent).NotEmpty();
-            RuleFor(x => x.CustomerDiscounts).NotEmpty();
-            RuleFor(x => x.Invoices).NotEmpty();
         }
     }
 }

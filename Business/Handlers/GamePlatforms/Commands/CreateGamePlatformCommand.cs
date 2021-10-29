@@ -22,7 +22,6 @@ namespace Business.Handlers.GamePlatforms.Commands
     {
         public string PlatformName { get; set; }
         public string PlatformDescription { get; set; }
-        public System.Collections.Generic.ICollection<ProjectPlatform> ProjectPlatforms { get; set; }
 
         public class CreateGamePlatformCommandHandler : IRequestHandler<CreateGamePlatformCommand, IResult>
         {
@@ -49,8 +48,7 @@ namespace Business.Handlers.GamePlatforms.Commands
                 var addedGamePlatform = new GamePlatform
                 {
                     PlatformName = request.PlatformName,
-                    PlatformDescription = request.PlatformDescription,
-                    ProjectPlatforms = request.ProjectPlatforms,
+                    PlatformDescription = request.PlatformDescription
                 };
 
                 _gamePlatformRepository.Add(addedGamePlatform);

@@ -22,8 +22,6 @@ namespace Business.Handlers.Votes.Commands
     {
         public string VoteName { get; set; }
         public short VoteValue { get; set; }
-        public System.Collections.Generic.ICollection<CustomerProject> CustomerProjects { get; set; }
-
         public class CreateVoteCommandHandler : IRequestHandler<CreateVoteCommand, IResult>
         {
             private readonly IVoteRepository _voteRepository;
@@ -50,7 +48,6 @@ namespace Business.Handlers.Votes.Commands
                 {
                     VoteName = request.VoteName,
                     VoteValue = request.VoteValue,
-                    CustomerProjects = request.CustomerProjects,
                 };
 
                 _voteRepository.Add(addedVote);

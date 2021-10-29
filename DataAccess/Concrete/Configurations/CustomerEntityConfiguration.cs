@@ -13,10 +13,6 @@ namespace DataAccess.Concrete.Configurations
 
             builder.Property(e => e.UserId).ValueGeneratedNever();
 
-            builder.Property(e => e.DashboardKey)
-                .IsRequired()
-                .HasMaxLength(500);
-
             builder.HasOne(d => d.CustomerScaleNavigation)
                 .WithMany(p => p.Customers)
                 .HasForeignKey(d => d.CustomerScaleId)

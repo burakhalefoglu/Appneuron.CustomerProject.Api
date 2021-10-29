@@ -7,9 +7,7 @@ namespace Business.Handlers.GamePlatforms.ValidationRules
     {
         public CreateGamePlatformValidator()
         {
-            RuleFor(x => x.PlatformName).NotEmpty();
-            RuleFor(x => x.PlatformDescription).NotEmpty();
-            RuleFor(x => x.ProjectPlatforms).NotEmpty();
+            RuleFor(x => x.PlatformName).NotNull();
         }
     }
 
@@ -19,7 +17,6 @@ namespace Business.Handlers.GamePlatforms.ValidationRules
         {
             RuleFor(x => x.PlatformName).NotEmpty();
             RuleFor(x => x.PlatformDescription).NotEmpty();
-            RuleFor(x => x.ProjectPlatforms).NotEmpty();
         }
     }
 }

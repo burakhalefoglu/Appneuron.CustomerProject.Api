@@ -22,8 +22,6 @@ namespace Business.Handlers.Discounts.Commands
     {
         public string DiscountName { get; set; }
         public short Percent { get; set; }
-        public System.Collections.Generic.ICollection<CustomerDiscount> CustomerDiscounts { get; set; }
-        public System.Collections.Generic.ICollection<Invoice> Invoices { get; set; }
 
         public class CreateDiscountCommandHandler : IRequestHandler<CreateDiscountCommand, IResult>
         {
@@ -51,8 +49,6 @@ namespace Business.Handlers.Discounts.Commands
                 {
                     DiscountName = request.DiscountName,
                     Percent = request.Percent,
-                    CustomerDiscounts = request.CustomerDiscounts,
-                    Invoices = request.Invoices,
                 };
 
                 _discountRepository.Add(addedDiscount);

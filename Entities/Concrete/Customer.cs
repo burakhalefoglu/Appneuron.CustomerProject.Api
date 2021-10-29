@@ -10,7 +10,6 @@ namespace Entities.Concrete
         public int UserId { get; set; }
         public short CustomerScaleId { get; set; }
         public short? DemographicId { get; set; }
-        public string DashboardKey { get; set; }
         public short IndustryId { get; set; }
 
         public virtual CustomerScale CustomerScaleNavigation { get; set; }

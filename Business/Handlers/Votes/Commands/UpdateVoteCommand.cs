@@ -19,7 +19,6 @@ namespace Business.Handlers.Votes.Commands
         public short Id { get; set; }
         public string VoteName { get; set; }
         public short VoteValue { get; set; }
-        public System.Collections.Generic.ICollection<CustomerProject> CustomerProjects { get; set; }
 
         public class UpdateVoteCommandHandler : IRequestHandler<UpdateVoteCommand, IResult>
         {
@@ -42,7 +41,6 @@ namespace Business.Handlers.Votes.Commands
 
                 isThereVoteRecord.VoteName = request.VoteName;
                 isThereVoteRecord.VoteValue = request.VoteValue;
-                isThereVoteRecord.CustomerProjects = request.CustomerProjects;
 
                 _voteRepository.Update(isThereVoteRecord);
                 await _voteRepository.SaveChangesAsync();

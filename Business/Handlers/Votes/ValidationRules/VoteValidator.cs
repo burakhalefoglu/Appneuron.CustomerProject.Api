@@ -9,7 +9,6 @@ namespace Business.Handlers.Votes.ValidationRules
         {
             RuleFor(x => x.VoteName).NotEmpty();
             RuleFor(x => x.VoteValue).NotEmpty();
-            RuleFor(x => x.CustomerProjects).NotEmpty();
         }
     }
 
@@ -19,7 +18,6 @@ namespace Business.Handlers.Votes.ValidationRules
         {
             RuleFor(x => x.VoteName).NotEmpty();
             RuleFor(x => x.VoteValue).NotEmpty();
-            RuleFor(x => x.CustomerProjects).NotEmpty();
         }
     }
 }

@@ -19,8 +19,6 @@ namespace Business.Handlers.Discounts.Commands
         public short Id { get; set; }
         public string DiscountName { get; set; }
         public short Percent { get; set; }
-        public System.Collections.Generic.ICollection<CustomerDiscount> CustomerDiscounts { get; set; }
-        public System.Collections.Generic.ICollection<Invoice> Invoices { get; set; }
 
         public class UpdateDiscountCommandHandler : IRequestHandler<UpdateDiscountCommand, IResult>
         {
@@ -43,8 +41,6 @@ namespace Business.Handlers.Discounts.Commands
 
                 isThereDiscountRecord.DiscountName = request.DiscountName;
                 isThereDiscountRecord.Percent = request.Percent;
-                isThereDiscountRecord.CustomerDiscounts = request.CustomerDiscounts;
-                isThereDiscountRecord.Invoices = request.Invoices;
 
                 _discountRepository.Update(isThereDiscountRecord);
                 await _discountRepository.SaveChangesAsync();

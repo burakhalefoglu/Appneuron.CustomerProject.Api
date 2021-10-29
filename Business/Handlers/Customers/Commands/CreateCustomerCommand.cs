@@ -46,14 +46,12 @@ namespace Business.Handlers.Customers.Commands
             public async Task<IResult> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
             {
                 var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
-                var dashboardKey = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("UniqueKey"))?.Value;
 
                 var addedCustomer = new Customer
                 {
                     UserId = userId,
                     CustomerScaleId = request.CustomerScaleId,
                     IndustryId = request.IndustryId,
-                    DashboardKey = dashboardKey
                 };
 
                 _customerRepository.Add(addedCustomer);

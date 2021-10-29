@@ -19,7 +19,6 @@ namespace Business.Handlers.GamePlatforms.Commands
         public short Id { get; set; }
         public string PlatformName { get; set; }
         public string PlatformDescription { get; set; }
-        public System.Collections.Generic.ICollection<ProjectPlatform> ProjectPlatforms { get; set; }
 
         public class UpdateGamePlatformCommandHandler : IRequestHandler<UpdateGamePlatformCommand, IResult>
         {
@@ -42,7 +41,6 @@ namespace Business.Handlers.GamePlatforms.Commands
 
                 isThereGamePlatformRecord.PlatformName = request.PlatformName;
                 isThereGamePlatformRecord.PlatformDescription = request.PlatformDescription;
-                isThereGamePlatformRecord.ProjectPlatforms = request.ProjectPlatforms;
 
                 _gamePlatformRepository.Update(isThereGamePlatformRecord);
                 await _gamePlatformRepository.SaveChangesAsync();
