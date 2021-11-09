@@ -32,11 +32,12 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public UpdateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            public UpdateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [ValidationAspect(typeof(UpdateCustomerProjectValidator), Priority = 1)]
@@ -45,11 +46,11 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u => u.ProjectKey == request.ProjectKey && u.CustomerId == userId);
                 if (isThereCustomerProjectRecord == null)
-                    return new ErrorResult(Messages.UserNotFound);
+                    return new ErrorResult(Messages.ProjectNotFound);
 
                 isThereCustomerProjectRecord.ProjectName = request.ProjectName;
                 isThereCustomerProjectRecord.Statuse = request.Statuse;

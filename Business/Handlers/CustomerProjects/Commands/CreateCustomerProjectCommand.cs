@@ -41,11 +41,12 @@ namespace Business.Handlers.CustomerProjects.Commands
             
             public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
                 IMediator mediator,
-                IKafkaMessageBroker kafkaMessageBroker)
+                IKafkaMessageBroker kafkaMessageBroker,
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
                 _kafkaMessageBroker = kafkaMessageBroker;
             }
 
@@ -56,14 +57,14 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.
                     FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var isThereCustomerProjectRecord = _customerProjectRepository.Query().Any(u =>
+                var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.ProjectName == request.ProjectName &&
                     u.CustomerId == userId);
 
-                if (isThereCustomerProjectRecord)
+                if (isThereCustomerProjectRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var projectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower();
@@ -79,6 +80,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 _customerProjectRepository.Add(addedCustomerProject);
                 await _customerProjectRepository.SaveChangesAsync();
+
                 var projectModel = new ProjectMessageCommand
                 {
                     UserId = userId,

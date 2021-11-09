@@ -10,6 +10,7 @@ using DataAccess.Abstract;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using ServiceStack.Messaging;
 
 namespace Business.Handlers.AppneuronProducts.Commands
 {
@@ -36,7 +37,10 @@ namespace Business.Handlers.AppneuronProducts.Commands
             public async Task<IResult> Handle(UpdateAppneuronProductCommand request, CancellationToken cancellationToken)
             {
                 var isThereAppneuronProductRecord = await _appneuronProductRepository.GetAsync(u => u.Id == request.Id);
-
+                if (isThereAppneuronProductRecord == null)
+                {
+                    return new ErrorResult(Messages.AppneuronProductNotFound);
+                }
                 isThereAppneuronProductRecord.ProductName = request.ProductName;
 
                 _appneuronProductRepository.Update(isThereAppneuronProductRecord);

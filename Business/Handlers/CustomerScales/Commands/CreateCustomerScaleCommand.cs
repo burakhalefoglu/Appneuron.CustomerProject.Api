@@ -40,9 +40,9 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerScaleRecord = _customerScaleRepository.Query().Any(u => u.Name == request.Name);
+                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Name == request.Name);
 
-                if (isThereCustomerScaleRecord == true)
+                if (isThereCustomerScaleRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedCustomerScale = new CustomerScale

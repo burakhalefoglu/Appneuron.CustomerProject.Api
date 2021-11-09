@@ -39,9 +39,9 @@ namespace Business.Handlers.AppneuronProducts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateAppneuronProductCommand request, CancellationToken cancellationToken)
             {
-                var isThereAppneuronProductRecord = _appneuronProductRepository.Query().Any(u => u.ProductName == request.ProductName);
+                var isThereAppneuronProductRecord = await _appneuronProductRepository.GetAsync(u => u.ProductName == request.ProductName);
 
-                if (isThereAppneuronProductRecord)
+                if (isThereAppneuronProductRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedAppneuronProduct = new AppneuronProduct

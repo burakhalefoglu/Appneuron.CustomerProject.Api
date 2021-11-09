@@ -26,9 +26,9 @@ namespace Business.Handlers.CustomerProjects.Queries
             private readonly IHttpContextAccessor _httpContextAccessor;
 
             public GetCustomerProjectQueryHandler(ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator)
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
             }
@@ -37,7 +37,7 @@ namespace Business.Handlers.CustomerProjects.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request, CancellationToken cancellationToken)
             {
-                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var customerProject = await _customerProjectRepository.GetAsync(p => p.CustomerId == userId && p.ProjectKey == request.ProjectKey);
                 return new SuccessDataResult<CustomerProject>(customerProject);

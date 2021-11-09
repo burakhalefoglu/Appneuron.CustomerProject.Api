@@ -1,4 +1,5 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -26,11 +27,12 @@ namespace Business.Handlers.Customers.Commands
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public DeleteCustomerCommandHandler(ICustomerRepository customerRepository, IMediator mediator)
+            public DeleteCustomerCommandHandler(ICustomerRepository customerRepository,
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [CacheRemoveAspect("Get")]
@@ -38,9 +40,14 @@ namespace Business.Handlers.Customers.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
             {
-                var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var customerToDelete = _customerRepository.Get(p => p.UserId == userId);
+                var customerToDelete = await _customerRepository.GetAsync(p => p.UserId == userId);
+                if (customerToDelete == null)
+                {
+                    return new ErrorResult(Messages.CustomerNotFound);
+
+                }
 
                 _customerRepository.Delete(customerToDelete);
                 await _customerRepository.SaveChangesAsync();

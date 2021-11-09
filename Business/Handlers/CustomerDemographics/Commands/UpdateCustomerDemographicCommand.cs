@@ -11,6 +11,7 @@ using Entities.Concrete;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using ServiceStack.Messaging;
 
 namespace Business.Handlers.CustomerDemographics.Commands
 {
@@ -38,6 +39,11 @@ namespace Business.Handlers.CustomerDemographics.Commands
             public async Task<IResult> Handle(UpdateCustomerDemographicCommand request, CancellationToken cancellationToken)
             {
                 var isThereCustomerDemographicRecord = await _customerDemographicRepository.GetAsync(u => u.Id == request.Id);
+
+                if (isThereCustomerDemographicRecord == null)
+                {
+                    return new ErrorResult(Messages.CustomerDemographicNotFound);
+                }
 
                 isThereCustomerDemographicRecord.CustomerDesc = request.CustomerDesc;
                 isThereCustomerDemographicRecord.Customers = request.Customers;

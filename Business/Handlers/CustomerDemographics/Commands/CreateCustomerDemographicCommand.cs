@@ -40,9 +40,9 @@ namespace Business.Handlers.CustomerDemographics.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerDemographicCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerDemographicRecord = _customerDemographicRepository.Query().Any(u => u.CustomerDesc == request.CustomerDesc);
+                var isThereCustomerDemographicRecord = await  _customerDemographicRepository.GetAsync(u => u.CustomerDesc == request.CustomerDesc);
 
-                if (isThereCustomerDemographicRecord)
+                if (isThereCustomerDemographicRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedCustomerDemographic = new CustomerDemographic

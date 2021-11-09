@@ -38,6 +38,11 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             {
                 var isThereCustomerDiscountRecord = await _customerDiscountRepository.GetAsync(u => u.Id == request.Id);
 
+                if (isThereCustomerDiscountRecord == null)
+                {
+                    return new ErrorResult(Messages.CustomerDiscountNotFound);
+                }
+
                 isThereCustomerDiscountRecord.UserId = request.CustomerId;
                 isThereCustomerDiscountRecord.DiscountId = request.DiscountId;
 

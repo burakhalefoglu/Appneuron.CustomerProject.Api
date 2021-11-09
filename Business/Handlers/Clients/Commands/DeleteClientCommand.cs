@@ -34,7 +34,12 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteClientCommand request, CancellationToken cancellationToken)
             {
-                var clientToDelete = _clientRepository.Get(p => p.Id == request.Id);
+                var clientToDelete = await _clientRepository.GetAsync(p => p.Id == request.Id);
+
+                if (clientToDelete == null)
+                {
+                    return new ErrorResult(Messages.ClientNotFound);
+                }
 
                 _clientRepository.Delete(clientToDelete);
                 await _clientRepository.SaveChangesAsync();

@@ -39,6 +39,9 @@ namespace Business.Handlers.GamePlatforms.Commands
             {
                 var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.Id == request.Id);
 
+                if (isThereGamePlatformRecord == null)
+                    return new ErrorResult(Messages.GamePlatformNotFound);
+
                 isThereGamePlatformRecord.PlatformName = request.PlatformName;
                 isThereGamePlatformRecord.PlatformDescription = request.PlatformDescription;
 

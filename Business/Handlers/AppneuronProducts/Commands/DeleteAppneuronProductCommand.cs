@@ -34,8 +34,11 @@ namespace Business.Handlers.AppneuronProducts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteAppneuronProductCommand request, CancellationToken cancellationToken)
             {
-                var appneuronProductToDelete = _appneuronProductRepository.Get(p => p.Id == request.Id);
-
+                var appneuronProductToDelete = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);
+                if (appneuronProductToDelete == null)
+                {
+                    return new ErrorResult(Messages.AppneuronProductNotFound);
+                }
                 _appneuronProductRepository.Delete(appneuronProductToDelete);
                 await _appneuronProductRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

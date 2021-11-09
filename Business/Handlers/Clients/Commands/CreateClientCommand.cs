@@ -47,6 +47,18 @@ namespace Business.Handlers.Clients.Commands
                     ProjectKey = request.ProjectKey
                 });
 
+                if (resultProject.Data == null)
+                {
+                    return new ErrorResult(Messages.ProjectNotFound);
+                }
+
+                var resultClient = await _clientRepository.GetAsync(c => c.ClientId == request.ClientId &&
+                                                c.ProjectKey == request.ProjectKey);
+                if (resultClient != null)
+                {
+                    return new ErrorResult(Messages.ClientAlreadyExist);
+                }
+
                 var addedClient = new Client
                 {
                     ClientId = request.ClientId,

@@ -40,9 +40,9 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateDiscountCommand request, CancellationToken cancellationToken)
             {
-                var isThereDiscountRecord = _discountRepository.Query().Any(u => u.DiscountName == request.DiscountName);
+                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.DiscountName == request.DiscountName);
 
-                if (isThereDiscountRecord)
+                if (isThereDiscountRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedDiscount = new Discount

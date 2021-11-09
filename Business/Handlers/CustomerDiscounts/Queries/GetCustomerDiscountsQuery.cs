@@ -24,11 +24,12 @@ namespace Business.Handlers.CustomerDiscounts.Queries
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public GetCustomerDiscountsQueryHandler(ICustomerDiscountRepository customerDiscountRepository, IMediator mediator)
+            public GetCustomerDiscountsQueryHandler(ICustomerDiscountRepository customerDiscountRepository,
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
                 _customerDiscountRepository = customerDiscountRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [PerformanceAspect(5)]

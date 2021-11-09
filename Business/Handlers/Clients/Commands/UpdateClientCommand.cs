@@ -40,6 +40,11 @@ namespace Business.Handlers.Clients.Commands
             {
                 var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id);
 
+                if (isThereClientRecord == null)
+                {
+                    return new ErrorResult(Messages.ClientNotFound);
+                }
+
                 isThereClientRecord.ClientId = request.ClientId;
                 isThereClientRecord.ProjectId = request.ProjectId;
                 isThereClientRecord.CreatedAt = request.CreatedAt;

@@ -24,9 +24,10 @@ namespace Business.Handlers.CustomerProjects.Queries
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public GetCustomerProjectsQueryHandler(ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            public GetCustomerProjectsQueryHandler(ICustomerProjectRepository customerProjectRepository,
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
             }

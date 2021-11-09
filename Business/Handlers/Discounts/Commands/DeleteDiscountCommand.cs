@@ -34,8 +34,11 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteDiscountCommand request, CancellationToken cancellationToken)
             {
-                var discountToDelete = _discountRepository.Get(p => p.Id == request.Id);
-
+                var discountToDelete = await _discountRepository.GetAsync(p => p.Id == request.Id);
+                if (discountToDelete == null)
+                { 
+                    return new ErrorResult(Messages.DiscountNotFound);
+                }
                 _discountRepository.Delete(discountToDelete);
                 await _discountRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

@@ -34,8 +34,11 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var customerScaleToDelete = _customerScaleRepository.Get(p => p.Id == request.Id);
-
+                var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
+                if (customerScaleToDelete == null)
+                {
+                    return new ErrorResult(Messages.CustomerScaleNotFound);
+                }
                 _customerScaleRepository.Delete(customerScaleToDelete);
                 await _customerScaleRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

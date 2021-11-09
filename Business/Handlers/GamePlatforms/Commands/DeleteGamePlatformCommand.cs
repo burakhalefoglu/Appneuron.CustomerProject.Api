@@ -34,7 +34,10 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var gamePlatformToDelete = _gamePlatformRepository.Get(p => p.Id == request.Id);
+                var gamePlatformToDelete = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
+
+                if (gamePlatformToDelete == null)
+                    return new ErrorResult(Messages.GamePlatformNotFound);
 
                 _gamePlatformRepository.Delete(gamePlatformToDelete);
                 await _gamePlatformRepository.SaveChangesAsync();

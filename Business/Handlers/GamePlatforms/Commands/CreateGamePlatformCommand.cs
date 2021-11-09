@@ -40,9 +40,9 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var isThereGamePlatformRecord = _gamePlatformRepository.Query().Any(u => u.PlatformName == request.PlatformName);
+                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.PlatformName == request.PlatformName);
 
-                if (isThereGamePlatformRecord)
+                if (isThereGamePlatformRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedGamePlatform = new GamePlatform

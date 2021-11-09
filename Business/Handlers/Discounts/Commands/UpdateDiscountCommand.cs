@@ -38,6 +38,10 @@ namespace Business.Handlers.Discounts.Commands
             public async Task<IResult> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
             {
                 var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.Id == request.Id);
+                if (isThereDiscountRecord == null)
+                {
+                    return new ErrorResult(Messages.DiscountNotFound);
+                }
 
                 isThereDiscountRecord.DiscountName = request.DiscountName;
                 isThereDiscountRecord.Percent = request.Percent;

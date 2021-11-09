@@ -1,4 +1,5 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Customers.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -32,11 +33,13 @@ namespace Business.Handlers.Customers.Commands
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public CreateCustomerCommandHandler(ICustomerRepository customerRepository, IMediator mediator)
+            public CreateCustomerCommandHandler(ICustomerRepository customerRepository,
+                IMediator mediator,
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [ValidationAspect(typeof(CreateCustomerValidator), Priority = 1)]
@@ -45,8 +48,13 @@ namespace Business.Handlers.Customers.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
             {
-                var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
+                var isCustomerExist = await _customerRepository.GetAsync(c => c.UserId == userId);
+                if (isCustomerExist != null)
+                {
+                    return new ErrorResult(Messages.CustomerNotFound);
+                }
                 var addedCustomer = new Customer
                 {
                     UserId = userId,

@@ -23,18 +23,19 @@ namespace Business.Handlers.Customers.Queries
             private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public GetCustomerQueryHandler(ICustomerRepository customerRepository, IMediator mediator)
+            public GetCustomerQueryHandler(ICustomerRepository customerRepository, 
+                IMediator mediator, IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
                 _mediator = mediator;
-                _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+                _httpContextAccessor = httpContextAccessor;
             }
 
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Customer>> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
             {
-                int userId = Int32.Parse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var customer = await _customerRepository.GetAsync(p => p.UserId == userId);
                 return new SuccessDataResult<Customer>(customer);

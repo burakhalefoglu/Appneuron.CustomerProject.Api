@@ -34,8 +34,11 @@ namespace Business.Handlers.CustomerDemographics.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerDemographicCommand request, CancellationToken cancellationToken)
             {
-                var customerDemographicToDelete = _customerDemographicRepository.Get(p => p.Id == request.Id);
-
+                var customerDemographicToDelete = await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
+                if (customerDemographicToDelete == null)
+                {
+                    return new ErrorResult(Messages.CustomerDemographicNotFound);
+                }
                 _customerDemographicRepository.Delete(customerDemographicToDelete);
                 await _customerDemographicRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);
