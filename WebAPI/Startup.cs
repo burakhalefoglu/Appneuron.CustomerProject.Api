@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Business;
 using Business.Helpers;
+using Business.MessageBrokers.Manager.GetClientCreationMessage;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -65,6 +66,7 @@ namespace WebAPI
                         .AllowCredentials());
             });
 
+
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -90,6 +92,8 @@ namespace WebAPI
             services.AddTransient<FileLogger>();
             services.AddTransient<PostgreSqlLogger>();
             services.AddTransient<MsSqlLogger>();
+            services.AddSingleton<IGetClientCreationMessageService, GetClientCreationMessageManager>();
+
 
             base.ConfigureServices(services);
         }

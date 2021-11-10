@@ -1,7 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using Business.Fakes.Handlers.Clients;
+using Business.Fakes.Handlers.CustomerProjects;
+using Business.MessageBrokers;
 using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers.Manager.GetClientCreationMessage;
+using Business.MessageBrokers.Models;
+using Core.Utilities.Results;
+using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +25,7 @@ namespace WebAPI
         /// <param name="args"></param>
         public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
             await ConsumerAdapter();
         }
 
@@ -47,8 +54,11 @@ namespace WebAPI
             IServiceCollection services = new ServiceCollection();
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            var kafka = serviceProvider.GetService<IKafkaMessageBroker>();
-            await kafka.GetClientCreationMessage();
+            var kafka = serviceProvider.GetService<IMessageBroker>();
+            var getClientCreationMessageService = serviceProvider.GetService<IGetClientCreationMessageService>();
+
+            await kafka.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
+                getClientCreationMessageService.GetClientCreationMessageQuery);
         }
     }
 }

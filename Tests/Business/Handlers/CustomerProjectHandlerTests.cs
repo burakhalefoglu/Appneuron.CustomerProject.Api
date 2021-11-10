@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.Commands;
 using Business.Handlers.CustomerProjects.Queries;
+using Business.MessageBrokers;
 using Business.MessageBrokers.Kafka;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -34,7 +35,7 @@ namespace Tests.Business.Handlers
         {
             _customerProjectRepository = new Mock<ICustomerProjectRepository>();
             _mediator = new Mock<IMediator>();
-            _kafkaMessageBroker = new Mock<IKafkaMessageBroker>();
+            _kafkaMessageBroker = new Mock<IMessageBroker>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             _getCustomerProjectQueryHandler =
@@ -62,7 +63,7 @@ namespace Tests.Business.Handlers
 
         private Mock<ICustomerProjectRepository> _customerProjectRepository;
         private Mock<IMediator> _mediator;
-        private Mock<IKafkaMessageBroker> _kafkaMessageBroker;
+        private Mock<IMessageBroker> _kafkaMessageBroker;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
 
         private GetCustomerProjectQueryHandler _getCustomerProjectQueryHandler;

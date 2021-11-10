@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
-using Business.MessageBrokers.Kafka;
+using Business.MessageBrokers;
 using Business.MessageBrokers.Models;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -32,18 +32,18 @@ namespace Business.Handlers.CustomerProjects.Commands
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IKafkaMessageBroker _kafkaMessageBroker;
+            private readonly IMessageBroker _messageBroker;
             private readonly IMediator _mediator;
 
             public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
                 IMediator mediator,
-                IKafkaMessageBroker kafkaMessageBroker,
+                IMessageBroker messageBroker,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
                 _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
-                _kafkaMessageBroker = kafkaMessageBroker;
+                _messageBroker = messageBroker;
             }
 
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
@@ -83,7 +83,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                     ProjectKey = projectKey
                 };
 
-                //await _kafkaMessageBroker.SendMessageAsync(projectModel);
+                await _messageBroker.SendMessageAsync(projectModel);
 
                 return new SuccessDataResult<CustomerProject>(addedCustomerProject, Messages.Added);
             }
