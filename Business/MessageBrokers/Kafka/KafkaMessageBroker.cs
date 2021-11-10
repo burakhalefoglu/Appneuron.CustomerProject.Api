@@ -1,32 +1,30 @@
-﻿using Business.MessageBrokers.Kafka.Model;
+﻿using System;
+using System.Threading.Tasks;
+using Business.Fakes.Handlers.Clients;
+using Business.Fakes.Handlers.CustomerProjects;
+using Business.MessageBrokers.Kafka.Model;
+using Business.MessageBrokers.Models;
 using Confluent.Kafka;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
-using MassTransit;
-using MediatR;
-using Business.MessageBrokers.Models;
-using Business.Fakes.Handlers.Clients;
-using Business.Fakes.Handlers.CustomerProjects;
 
 namespace Business.MessageBrokers.Kafka
 {
     public class KafkaMessageBroker : IKafkaMessageBroker
     {
-        IConfiguration Configuration;
-        KafkaOptions kafkaOptions;
         private readonly IMediator _mediator;
+        private readonly IConfiguration Configuration;
+        private readonly KafkaOptions kafkaOptions;
 
         public KafkaMessageBroker(IMediator mediator)
         {
             _mediator = mediator;
             Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             kafkaOptions = Configuration.GetSection("ApacheKafka").Get<KafkaOptions>();
-
         }
 
         public async Task GetClientCreationMessage()
@@ -45,16 +43,15 @@ namespace Business.MessageBrokers.Kafka
 
 
             using (var consumer = new ConsumerBuilder<Ignore, string>(config)
-           .SetErrorHandler((_, e) => Console.WriteLine($"Error: {e.Reason}"))
-           .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))
-           .Build())
+                .SetErrorHandler((_, e) => Console.WriteLine($"Error: {e.Reason}"))
+                .SetStatisticsHandler((_, json) => Console.WriteLine($"Statistics: {json}"))
+                .Build())
             {
                 consumer.Subscribe("CreateClientMessageComamnd");
 
                 try
                 {
                     while (true)
-                    {
                         try
                         {
                             var consumeResult = consumer.Consume();
@@ -67,14 +64,16 @@ namespace Business.MessageBrokers.Kafka
                                 continue;
                             }
 
-                            Console.WriteLine($"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
+                            Console.WriteLine(
+                                $"Received message at {consumeResult.TopicPartitionOffset}: {consumeResult.Message.Value}");
 
-                            
-                              var createClientMessageComamnd = JsonConvert.DeserializeObject<CreateClientMessageComamnd>(consumeResult.Message.Value,
-                              new JsonSerializerSettings
-                              {
-                                  PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                              });
+
+                            var createClientMessageComamnd = JsonConvert.DeserializeObject<CreateClientMessageComamnd>(
+                                consumeResult.Message.Value,
+                                new JsonSerializerSettings
+                                {
+                                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                                });
 
                             var resultProject = await _mediator.Send(new GetCustomerProjectInternalQuery
                             {
@@ -91,7 +90,6 @@ namespace Business.MessageBrokers.Kafka
                             });
 
                             if (result.Success)
-                            {
                                 try
                                 {
                                     consumer.Commit(consumeResult);
@@ -100,15 +98,11 @@ namespace Business.MessageBrokers.Kafka
                                 {
                                     Console.WriteLine($"Commit error: {e.Error.Reason}");
                                 }
-                            }
-                           
-
                         }
                         catch (ConsumeException e)
                         {
                             Console.WriteLine($"Consume error: {e.Error.Reason}");
                         }
-                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -116,13 +110,11 @@ namespace Business.MessageBrokers.Kafka
                     consumer.Close();
                 }
             }
-
         }
 
 
-
         public async Task<IResult> SendMessageAsync<T>(T messageModel) where T :
-         class, new()
+            class, new()
         {
             var producerConfig = new ProducerConfig
             {
@@ -139,14 +131,12 @@ namespace Business.MessageBrokers.Kafka
                     var partitionCount = KafkaAdminHelper.SetPartitionCountAsync(topicName);
 
                     await p.ProduceAsync(new TopicPartition(topicName,
-                        new Partition(new Random().Next(0, partitionCount)))
-                    , new Message<Null, string>
-                    {
-                        Value = message
-
-                    });
+                            new Partition(new Random().Next(0, partitionCount)))
+                        , new Message<Null, string>
+                        {
+                            Value = message
+                        });
                     return new SuccessResult();
-
                 }
 
                 catch (ProduceException<Null, string> e)

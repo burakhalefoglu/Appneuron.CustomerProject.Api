@@ -30,7 +30,8 @@ namespace Tests.Business.Handlers
             _languageRepository = new Mock<ILanguageRepository>();
             _mediator = new Mock<IMediator>();
 
-            _createLanguageCommandHandler = new CreateLanguageCommandHandler(_languageRepository.Object,_mediator.Object);
+            _createLanguageCommandHandler =
+                new CreateLanguageCommandHandler(_languageRepository.Object, _mediator.Object);
             _getLanguageQueryHandler = new GetLanguageQueryHandler(_languageRepository.Object, _mediator.Object);
             _getLanguagesQueryHandler = new GetLanguagesQueryHandler(_languageRepository.Object, _mediator.Object);
             _updateLanguageCommandHandler =

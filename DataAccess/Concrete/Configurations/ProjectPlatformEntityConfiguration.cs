@@ -11,7 +11,7 @@ namespace DataAccess.Concrete.Configurations
             builder.HasKey(x => new { x.Id });
 
             builder.HasIndex(e => new { e.ProjectId, e.GamePlatformId }, "uk_ProjectPlatform")
-                    .IsUnique();
+                .IsUnique();
 
             builder.HasOne(d => d.GamePlatform)
                 .WithMany(p => p.ProjectPlatforms)

@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Discounts.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -7,10 +9,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Discounts.Commands
 {
@@ -38,10 +37,7 @@ namespace Business.Handlers.Discounts.Commands
             public async Task<IResult> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
             {
                 var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.Id == request.Id);
-                if (isThereDiscountRecord == null)
-                {
-                    return new ErrorResult(Messages.DiscountNotFound);
-                }
+                if (isThereDiscountRecord == null) return new ErrorResult(Messages.DiscountNotFound);
 
                 isThereDiscountRecord.DiscountName = request.DiscountName;
                 isThereDiscountRecord.Percent = request.Percent;

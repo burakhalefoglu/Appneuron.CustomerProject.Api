@@ -26,16 +26,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class ClientHandlerTests
     {
-        private Mock<IClientRepository> _clientRepository;
-        private Mock<IMediator> _mediator;
-
-        private GetClientQueryHandler _getClientQueryHandler;
-        private GetClientsQueryHandler _getClientsQueryHandler;
-        private CreateClientCommandHandler _createClientCommandHandler;
-        private UpdateClientCommandHandler _updateClientCommandHandler;
-        private DeleteClientCommandHandler _deleteClientCommandHandler;
-
-
         [SetUp]
         public void Setup()
         {
@@ -47,8 +37,16 @@ namespace Tests.Business.Handlers
             _createClientCommandHandler = new CreateClientCommandHandler(_clientRepository.Object, _mediator.Object);
             _updateClientCommandHandler = new UpdateClientCommandHandler(_clientRepository.Object, _mediator.Object);
             _deleteClientCommandHandler = new DeleteClientCommandHandler(_clientRepository.Object, _mediator.Object);
-
         }
+
+        private Mock<IClientRepository> _clientRepository;
+        private Mock<IMediator> _mediator;
+
+        private GetClientQueryHandler _getClientQueryHandler;
+        private GetClientsQueryHandler _getClientsQueryHandler;
+        private CreateClientCommandHandler _createClientCommandHandler;
+        private UpdateClientCommandHandler _updateClientCommandHandler;
+        private DeleteClientCommandHandler _deleteClientCommandHandler;
 
         [Test]
         public async Task Client_GetQuery_Success()
@@ -59,7 +57,7 @@ namespace Tests.Business.Handlers
                 Id = 1
             };
 
-            _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>())).ReturnsAsync(new Client()
+            _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>())).ReturnsAsync(new Client
             {
                 ClientId = "clientIdTest",
                 ProjectId = 99
@@ -81,21 +79,20 @@ namespace Tests.Business.Handlers
             var query = new GetClientsQuery();
 
             _clientRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .ReturnsAsync(new List<Client> {
+                .ReturnsAsync(new List<Client>
+                {
+                    new()
+                    {
+                        ProjectId = 99,
+                        ClientId = "ClientIdTest1"
+                    },
 
-                        new()
-                        {
-                            ProjectId = 99,
-                            ClientId = "ClientIdTest1"
-                        },
-                        
-                        new()
-                        {
-                            ProjectId = 100,
-                            ClientId = "ClientIdTest2"
-                        }
-
-                        });
+                    new()
+                    {
+                        ProjectId = 100,
+                        ClientId = "ClientIdTest2"
+                    }
+                });
 
 
             //Act
@@ -123,11 +120,13 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new SuccessDataResult<CustomerProject>(new CustomerProject()));
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .Returns(Task.FromResult<Client>(null));
+                .Returns(Task.FromResult<Client>(null));
 
             _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
 
             var x = await _createClientCommandHandler.Handle(command, new CancellationToken());
+
+            _clientRepository.Verify(c=> c.SaveChangesAsync());
 
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
@@ -150,7 +149,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new SuccessDataResult<CustomerProject>());
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .Returns(Task.FromResult<Client>(null));
+                .Returns(Task.FromResult<Client>(null));
 
             _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
 
@@ -160,7 +159,7 @@ namespace Tests.Business.Handlers
             x.Message.Should().Be(Messages.ProjectNotFound);
         }
 
-       [Test]
+        [Test]
         public async Task Client_CreateCommand_ClientAlreadyExist()
         {
             //Arrange
@@ -177,7 +176,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new SuccessDataResult<CustomerProject>(new CustomerProject()));
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .Returns(Task.FromResult(new Client()));
+                .Returns(Task.FromResult(new Client()));
 
             _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
 
@@ -198,7 +197,7 @@ namespace Tests.Business.Handlers
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .ReturnsAsync(new Client());
+                .ReturnsAsync(new Client());
 
             _clientRepository.Setup(x => x.Update(It.IsAny<Client>())).Returns(new Client());
 
@@ -220,7 +219,7 @@ namespace Tests.Business.Handlers
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .Returns(Task.FromResult<Client>(null));
+                .Returns(Task.FromResult<Client>(null));
 
             _clientRepository.Setup(x => x.Update(It.IsAny<Client>())).Returns(new Client());
 
@@ -240,7 +239,7 @@ namespace Tests.Business.Handlers
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
-                        .ReturnsAsync(new Client());
+                .ReturnsAsync(new Client());
 
             _clientRepository.Setup(x => x.Delete(It.IsAny<Client>()));
 

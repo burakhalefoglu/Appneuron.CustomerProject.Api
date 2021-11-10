@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Fakes.Handlers.CustomerProjects;
 using Business.Handlers.Clients.ValidationRules;
@@ -10,19 +13,16 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Clients.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateClientCommand : IRequest<IResult>
     {
         public string ClientId { get; set; }
         public string ProjectKey { get; set; }
-        public System.DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
         public class CreateClientCommandHandler : IRequestHandler<CreateClientCommand, IResult>
@@ -47,17 +47,11 @@ namespace Business.Handlers.Clients.Commands
                     ProjectKey = request.ProjectKey
                 });
 
-                if (resultProject.Data == null)
-                {
-                    return new ErrorResult(Messages.ProjectNotFound);
-                }
+                if (resultProject.Data == null) return new ErrorResult(Messages.ProjectNotFound);
 
                 var resultClient = await _clientRepository.GetAsync(c => c.ClientId == request.ClientId &&
-                                                c.ProjectKey == request.ProjectKey);
-                if (resultClient != null)
-                {
-                    return new ErrorResult(Messages.ClientAlreadyExist);
-                }
+                                                                         c.ProjectKey == request.ProjectKey);
+                if (resultClient != null) return new ErrorResult(Messages.ClientAlreadyExist);
 
                 var addedClient = new Client
                 {

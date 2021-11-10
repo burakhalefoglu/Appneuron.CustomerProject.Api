@@ -10,8 +10,8 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => new { x.Id });
             builder.Property(e => e.CreatedAt)
-                    .HasColumnType("date")
-                    .HasDefaultValueSql("CURRENT_DATE");
+                .HasColumnType("date")
+                .HasDefaultValueSql("CURRENT_DATE");
 
             builder.Property(e => e.ProjectBody).HasMaxLength(100);
 

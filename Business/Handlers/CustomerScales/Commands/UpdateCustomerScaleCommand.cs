@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerScales.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -8,9 +10,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
-using ServiceStack.Messaging;
 
 namespace Business.Handlers.CustomerScales.Commands
 {
@@ -25,7 +24,8 @@ namespace Business.Handlers.CustomerScales.Commands
             private readonly ICustomerScaleRepository _customerScaleRepository;
             private readonly IMediator _mediator;
 
-            public UpdateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository, IMediator mediator)
+            public UpdateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
+                IMediator mediator)
             {
                 _customerScaleRepository = customerScaleRepository;
                 _mediator = mediator;
@@ -38,10 +38,7 @@ namespace Business.Handlers.CustomerScales.Commands
             public async Task<IResult> Handle(UpdateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
                 var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Id == request.Id);
-                if (isThereCustomerScaleRecord == null)
-                {
-                    return new ErrorResult(Messages.CustomerScaleNotFound);
-                }
+                if (isThereCustomerScaleRecord == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 isThereCustomerScaleRecord.Name = request.Name;
                 isThereCustomerScaleRecord.Description = request.Description;
 

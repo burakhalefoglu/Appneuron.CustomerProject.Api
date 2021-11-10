@@ -1,23 +1,23 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
+using Business.Handlers.GamePlatforms.Commands;
 using Business.Handlers.GamePlatforms.Queries;
 using DataAccess.Abstract;
+using Entities.Concrete;
+using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using static Business.Handlers.GamePlatforms.Queries.GetGamePlatformQuery;
-using Entities.Concrete;
 using static Business.Handlers.GamePlatforms.Queries.GetGamePlatformsQuery;
 using static Business.Handlers.GamePlatforms.Commands.CreateGamePlatformCommand;
-using Business.Handlers.GamePlatforms.Commands;
-using Business.Constants;
 using static Business.Handlers.GamePlatforms.Commands.UpdateGamePlatformCommand;
 using static Business.Handlers.GamePlatforms.Commands.DeleteGamePlatformCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
 
 
 namespace Tests.Business.Handlers
@@ -25,6 +25,24 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class GamePlatformHandlerTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            _gamePlatformRepository = new Mock<IGamePlatformRepository>();
+            _mediator = new Mock<IMediator>();
+
+            _getGamePlatformQueryHandler =
+                new GetGamePlatformQueryHandler(_gamePlatformRepository.Object, _mediator.Object);
+            _getGamePlatformsQueryHandler =
+                new GetGamePlatformsQueryHandler(_gamePlatformRepository.Object, _mediator.Object);
+            _createGamePlatformCommandHandler =
+                new CreateGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
+            _updateGamePlatformCommandHandler =
+                new UpdateGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
+            _deleteGamePlatformCommandHandler =
+                new DeleteGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
+        }
+
         private Mock<IGamePlatformRepository> _gamePlatformRepository;
         private Mock<IMediator> _mediator;
 
@@ -33,21 +51,6 @@ namespace Tests.Business.Handlers
         private CreateGamePlatformCommandHandler _createGamePlatformCommandHandler;
         private UpdateGamePlatformCommandHandler _updateGamePlatformCommandHandler;
         private DeleteGamePlatformCommandHandler _deleteGamePlatformCommandHandler;
-
-
-        [SetUp]
-        public void Setup()
-        {
-            _gamePlatformRepository = new Mock<IGamePlatformRepository>();
-            _mediator = new Mock<IMediator>();
-
-            _getGamePlatformQueryHandler = new GetGamePlatformQueryHandler(_gamePlatformRepository.Object, _mediator.Object);
-            _getGamePlatformsQueryHandler = new GetGamePlatformsQueryHandler(_gamePlatformRepository.Object, _mediator.Object);
-            _createGamePlatformCommandHandler = new CreateGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
-            _updateGamePlatformCommandHandler = new UpdateGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
-            _deleteGamePlatformCommandHandler = new DeleteGamePlatformCommandHandler(_gamePlatformRepository.Object, _mediator.Object);
-
-        }
 
         [Test]
         public async Task GamePlatform_GetQuery_Success()
@@ -58,19 +61,19 @@ namespace Tests.Business.Handlers
                 Id = 1
             };
 
-            _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>())).ReturnsAsync(new GamePlatform()
-            {
-                Id = 1,
-                PlatformName = "Test"
-            });
+            _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
+                .ReturnsAsync(new GamePlatform
+                {
+                    Id = 1,
+                    PlatformName = "Test"
+                });
 
             //Act
-            var x = await _getGamePlatformQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getGamePlatformQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             x.Data.Id.Should().Be(1);
-
         }
 
         [Test]
@@ -78,31 +81,30 @@ namespace Tests.Business.Handlers
         {
             //Arrange
             var query = new GetGamePlatformsQuery();
-            
+
             _gamePlatformRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync(new List<GamePlatform>
-                        {
-                            new()
-                            {
-                                Id = 1,
-                                PlatformDescription = "TestDesc"
-                            },
-                            
-                            new()
-                            {
-                                Id = 2,
-                                PlatformDescription = "TestDesc2"
-                            }
-                        });
+                .ReturnsAsync(new List<GamePlatform>
+                {
+                    new()
+                    {
+                        Id = 1,
+                        PlatformDescription = "TestDesc"
+                    },
+
+                    new()
+                    {
+                        Id = 2,
+                        PlatformDescription = "TestDesc2"
+                    }
+                });
 
 
             //Act
-            var x = await _getGamePlatformsQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getGamePlatformsQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             x.Data.ToList().Count.Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -117,11 +119,11 @@ namespace Tests.Business.Handlers
 
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync((GamePlatform)null);
+                .ReturnsAsync((GamePlatform)null);
 
             _gamePlatformRepository.Setup(x => x.Add(It.IsAny<GamePlatform>())).Returns(new GamePlatform());
 
-            var x = await _createGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             _gamePlatformRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -144,7 +146,7 @@ namespace Tests.Business.Handlers
 
             _gamePlatformRepository.Setup(x => x.Add(It.IsAny<GamePlatform>())).Returns(new GamePlatform());
 
-            var x = await _createGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.NameAlreadyExist);
@@ -163,14 +165,14 @@ namespace Tests.Business.Handlers
 
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync(new GamePlatform()
-                        {
-                            Id = 1
-                        });
+                .ReturnsAsync(new GamePlatform
+                {
+                    Id = 1
+                });
 
             _gamePlatformRepository.Setup(x => x.Update(It.IsAny<GamePlatform>())).Returns(new GamePlatform());
 
-            var x = await _updateGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             _gamePlatformRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -189,11 +191,11 @@ namespace Tests.Business.Handlers
 
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync((GamePlatform)null);
+                .ReturnsAsync((GamePlatform)null);
 
             _gamePlatformRepository.Setup(x => x.Update(It.IsAny<GamePlatform>())).Returns(new GamePlatform());
 
-            var x = await _updateGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.GamePlatformNotFound);
@@ -209,11 +211,11 @@ namespace Tests.Business.Handlers
             };
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync(new GamePlatform());
+                .ReturnsAsync(new GamePlatform());
 
             _gamePlatformRepository.Setup(x => x.Delete(It.IsAny<GamePlatform>()));
 
-            var x = await _deleteGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             _gamePlatformRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -231,17 +233,14 @@ namespace Tests.Business.Handlers
             };
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
-                        .ReturnsAsync((GamePlatform)null);
+                .ReturnsAsync((GamePlatform)null);
 
             _gamePlatformRepository.Setup(x => x.Delete(It.IsAny<GamePlatform>()));
 
-            var x = await _deleteGamePlatformCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.GamePlatformNotFound);
         }
-
-
     }
 }
-

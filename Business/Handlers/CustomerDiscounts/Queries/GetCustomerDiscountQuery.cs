@@ -1,4 +1,8 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
@@ -6,10 +10,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerDiscounts.Queries
 {
@@ -17,11 +17,12 @@ namespace Business.Handlers.CustomerDiscounts.Queries
     {
         public short DiscountId { get; set; }
 
-        public class GetCustomerDiscountQueryHandler : IRequestHandler<GetCustomerDiscountQuery, IDataResult<CustomerDiscount>>
+        public class
+            GetCustomerDiscountQueryHandler : IRequestHandler<GetCustomerDiscountQuery, IDataResult<CustomerDiscount>>
         {
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
-            private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly IMediator _mediator;
 
             public GetCustomerDiscountQueryHandler(ICustomerDiscountRepository customerDiscountRepository,
                 IMediator mediator,
@@ -34,11 +35,15 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request,
+                CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var customerDiscount = await _customerDiscountRepository.GetAsync(p => p.DiscountId == request.DiscountId && p.UserId == userId);
+                var customerDiscount =
+                    await _customerDiscountRepository.GetAsync(p =>
+                        p.DiscountId == request.DiscountId && p.UserId == userId);
                 return new SuccessDataResult<CustomerDiscount>(customerDiscount);
             }
         }

@@ -10,8 +10,8 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => new { x.Id });
             builder.Property(e => e.BillNo)
-                   .IsRequired()
-                   .HasMaxLength(500);
+                .IsRequired()
+                .HasMaxLength(500);
 
             builder.Property(e => e.CreatedAt)
                 .HasColumnType("date")

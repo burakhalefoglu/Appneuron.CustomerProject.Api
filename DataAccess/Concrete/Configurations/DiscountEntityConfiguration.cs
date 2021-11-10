@@ -10,8 +10,8 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => new { x.Id });
             builder.Property(e => e.DiscountName)
-                           .IsRequired()
-                           .HasMaxLength(50);
+                .IsRequired()
+                .HasMaxLength(50);
             builder.Property(x => x.Percent).IsRequired();
         }
     }

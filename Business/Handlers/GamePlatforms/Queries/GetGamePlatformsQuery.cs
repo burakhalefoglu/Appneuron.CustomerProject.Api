@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -7,15 +10,14 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.GamePlatforms.Queries
 {
     public class GetGamePlatformsQuery : IRequest<IDataResult<IEnumerable<GamePlatform>>>
     {
-        public class GetGamePlatformsQueryHandler : IRequestHandler<GetGamePlatformsQuery, IDataResult<IEnumerable<GamePlatform>>>
+        public class
+            GetGamePlatformsQueryHandler : IRequestHandler<GetGamePlatformsQuery,
+                IDataResult<IEnumerable<GamePlatform>>>
         {
             private readonly IGamePlatformRepository _gamePlatformRepository;
             private readonly IMediator _mediator;
@@ -30,7 +32,11 @@ namespace Business.Handlers.GamePlatforms.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<GamePlatform>>> Handle(GetGamePlatformsQuery request, CancellationToken cancellationToken) => new SuccessDataResult<IEnumerable<GamePlatform>>(await _gamePlatformRepository.GetListAsync());
+            public async Task<IDataResult<IEnumerable<GamePlatform>>> Handle(GetGamePlatformsQuery request,
+                CancellationToken cancellationToken)
+            {
+                return new SuccessDataResult<IEnumerable<GamePlatform>>(await _gamePlatformRepository.GetListAsync());
+            }
         }
     }
 }

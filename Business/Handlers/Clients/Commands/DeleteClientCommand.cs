@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Clients.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteClientCommand : IRequest<IResult>
     {
@@ -36,10 +35,7 @@ namespace Business.Handlers.Clients.Commands
             {
                 var clientToDelete = await _clientRepository.GetAsync(p => p.Id == request.Id);
 
-                if (clientToDelete == null)
-                {
-                    return new ErrorResult(Messages.ClientNotFound);
-                }
+                if (clientToDelete == null) return new ErrorResult(Messages.ClientNotFound);
 
                 _clientRepository.Delete(clientToDelete);
                 await _clientRepository.SaveChangesAsync();

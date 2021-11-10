@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Votes.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteVoteCommand : IRequest<IResult>
     {
@@ -20,8 +19,8 @@ namespace Business.Handlers.Votes.Commands
 
         public class DeleteVoteCommandHandler : IRequestHandler<DeleteVoteCommand, IResult>
         {
-            private readonly IVoteRepository _voteRepository;
             private readonly IMediator _mediator;
+            private readonly IVoteRepository _voteRepository;
 
             public DeleteVoteCommandHandler(IVoteRepository voteRepository, IMediator mediator)
             {
@@ -34,8 +33,8 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteVoteCommand request, CancellationToken cancellationToken)
             {
-                var voteToDelete = _voteRepository.Get(p => p.Id == request.Id);
-
+                var voteToDelete = await _voteRepository.GetAsync(p => p.Id == request.Id);
+                if (voteToDelete == null) return new ErrorResult(Messages.VoteNotFound);
                 _voteRepository.Delete(voteToDelete);
                 await _voteRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

@@ -10,7 +10,7 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => new { x.Id });
             builder.HasIndex(e => new { e.UserId, e.DiscountId }, "uk_CustomerDiscount")
-                    .IsUnique();
+                .IsUnique();
 
             builder.HasOne(d => d.Discount)
                 .WithMany(p => p.CustomerDiscounts)

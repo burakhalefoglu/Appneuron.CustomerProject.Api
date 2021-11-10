@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Votes.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -7,10 +9,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Votes.Commands
 {
@@ -22,8 +21,8 @@ namespace Business.Handlers.Votes.Commands
 
         public class UpdateVoteCommandHandler : IRequestHandler<UpdateVoteCommand, IResult>
         {
-            private readonly IVoteRepository _voteRepository;
             private readonly IMediator _mediator;
+            private readonly IVoteRepository _voteRepository;
 
             public UpdateVoteCommandHandler(IVoteRepository voteRepository, IMediator mediator)
             {
@@ -38,6 +37,8 @@ namespace Business.Handlers.Votes.Commands
             public async Task<IResult> Handle(UpdateVoteCommand request, CancellationToken cancellationToken)
             {
                 var isThereVoteRecord = await _voteRepository.GetAsync(u => u.Id == request.Id);
+
+                if (isThereVoteRecord == null) return new ErrorResult(Messages.VoteNotFound);
 
                 isThereVoteRecord.VoteName = request.VoteName;
                 isThereVoteRecord.VoteValue = request.VoteValue;

@@ -10,7 +10,7 @@ namespace DataAccess.Concrete.Configurations
         {
             builder.HasKey(x => new { x.Id });
             builder.HasIndex(e => new { e.ProductId, e.ProjectId }, "Uk_CustomerProjectsProduct")
-                    .IsUnique();
+                .IsUnique();
 
             builder.HasOne(d => d.Product)
                 .WithMany(p => p.CustomerProjectHasProducts)

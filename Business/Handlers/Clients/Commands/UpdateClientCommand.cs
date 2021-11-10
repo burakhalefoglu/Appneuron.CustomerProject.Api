@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Clients.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -8,8 +11,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Clients.Commands
 {
@@ -18,7 +19,7 @@ namespace Business.Handlers.Clients.Commands
         public long Id { get; set; }
         public string ClientId { get; set; }
         public long ProjectId { get; set; }
-        public System.DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
         public class UpdateClientCommandHandler : IRequestHandler<UpdateClientCommand, IResult>
@@ -40,10 +41,7 @@ namespace Business.Handlers.Clients.Commands
             {
                 var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id);
 
-                if (isThereClientRecord == null)
-                {
-                    return new ErrorResult(Messages.ClientNotFound);
-                }
+                if (isThereClientRecord == null) return new ErrorResult(Messages.ClientNotFound);
 
                 isThereClientRecord.ClientId = request.ClientId;
                 isThereClientRecord.ProjectId = request.ProjectId;

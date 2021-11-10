@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
@@ -7,9 +10,6 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Votes.Queries
 {
@@ -17,8 +17,8 @@ namespace Business.Handlers.Votes.Queries
     {
         public class GetVotesQueryHandler : IRequestHandler<GetVotesQuery, IDataResult<IEnumerable<Vote>>>
         {
-            private readonly IVoteRepository _voteRepository;
             private readonly IMediator _mediator;
+            private readonly IVoteRepository _voteRepository;
 
             public GetVotesQueryHandler(IVoteRepository voteRepository, IMediator mediator)
             {
@@ -30,7 +30,8 @@ namespace Business.Handlers.Votes.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<Vote>>> Handle(GetVotesQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<IEnumerable<Vote>>> Handle(GetVotesQuery request,
+                CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<Vote>>(await _voteRepository.GetListAsync());
             }

@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Fakes.Handlers.ProjectCounts;
 using Core.Aspects.Autofac.Caching;
@@ -7,13 +9,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.ProjectPlatforms.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteProjectPlatformCommand : IRequest<IResult>
     {
@@ -22,10 +21,11 @@ namespace Business.Handlers.ProjectPlatforms.Commands
 
         public class DeleteProjectPlatformCommandHandler : IRequestHandler<DeleteProjectPlatformCommand, IResult>
         {
-            private readonly IProjectPlatformRepository _projectPlatformRepository;
             private readonly IMediator _mediator;
+            private readonly IProjectPlatformRepository _projectPlatformRepository;
 
-            public DeleteProjectPlatformCommandHandler(IProjectPlatformRepository projectPlatformRepository, IMediator mediator)
+            public DeleteProjectPlatformCommandHandler(IProjectPlatformRepository projectPlatformRepository,
+                IMediator mediator)
             {
                 _projectPlatformRepository = projectPlatformRepository;
                 _mediator = mediator;
@@ -36,13 +36,13 @@ namespace Business.Handlers.ProjectPlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteProjectPlatformCommand request, CancellationToken cancellationToken)
             {
-                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId });
-                if (result.Data <= 0)
-                {
-                    return new ErrorResult(Messages.ProjectNotFound);
-                }
+                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId },
+                    cancellationToken);
+                if (result.Data <= 0) return new ErrorResult(Messages.ProjectNotFound);
 
-                var projectPlatformToDelete = _projectPlatformRepository.Get(p => p.Id == request.Id);
+                var projectPlatformToDelete = await _projectPlatformRepository.GetAsync(p => p.Id == request.Id);
+
+                if (projectPlatformToDelete == null) return new ErrorResult(Messages.ProjectPlatformNotFound);
 
                 _projectPlatformRepository.Delete(projectPlatformToDelete);
                 await _projectPlatformRepository.SaveChangesAsync();

@@ -1,17 +1,15 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerProjects.Queries
 {
@@ -19,11 +17,12 @@ namespace Business.Handlers.CustomerProjects.Queries
     {
         public string ProjectKey { get; set; }
 
-        public class GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectQuery, IDataResult<CustomerProject>>
+        public class
+            GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectQuery, IDataResult<CustomerProject>>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
-            private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
+            private readonly IMediator _mediator;
 
             public GetCustomerProjectQueryHandler(ICustomerProjectRepository customerProjectRepository,
                 IMediator mediator, IHttpContextAccessor httpContextAccessor)
@@ -35,11 +34,14 @@ namespace Business.Handlers.CustomerProjects.Queries
 
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request,
+                CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
-                var customerProject = await _customerProjectRepository.GetAsync(p => p.CustomerId == userId && p.ProjectKey == request.ProjectKey);
+                var customerProject = await _customerProjectRepository.GetAsync(p =>
+                    p.CustomerId == userId && p.ProjectKey == request.ProjectKey);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

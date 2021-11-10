@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Discounts.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Discounts.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateDiscountCommand : IRequest<IResult>
     {
@@ -40,7 +38,8 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateDiscountCommand request, CancellationToken cancellationToken)
             {
-                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.DiscountName == request.DiscountName);
+                var isThereDiscountRecord =
+                    await _discountRepository.GetAsync(u => u.DiscountName == request.DiscountName);
 
                 if (isThereDiscountRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -48,7 +47,7 @@ namespace Business.Handlers.Discounts.Commands
                 var addedDiscount = new Discount
                 {
                     DiscountName = request.DiscountName,
-                    Percent = request.Percent,
+                    Percent = request.Percent
                 };
 
                 _discountRepository.Add(addedDiscount);

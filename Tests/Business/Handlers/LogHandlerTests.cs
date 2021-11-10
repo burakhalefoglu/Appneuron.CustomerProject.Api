@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-using DataAccess.Abstract;
-using MediatR;
-using Moq;
-using NUnit.Framework;
 using System.Threading.Tasks;
 using Business.Handlers.Logs.Queries;
 using Core.Entities.Concrete;
+using DataAccess.Abstract;
 using FluentAssertions;
+using MediatR;
+using Moq;
+using NUnit.Framework;
 using static Business.Handlers.Logs.Queries.GetLogDtoQuery;
 
 namespace Tests.Business.Handlers
@@ -18,23 +18,23 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class LogHandlerTests
     {
-        private Mock<ILogRepository> _logRepository;
-        private Mock<IMediator> _mediator;
-
-        private GetLogDtoQueryHandler _getLogDtoQueryHandler;
-
         [SetUp]
         public void Setup()
         {
             _logRepository = new Mock<ILogRepository>();
             _mediator = new Mock<IMediator>();
 
-            
+
             _getLogDtoQueryHandler = new GetLogDtoQueryHandler(_logRepository.Object,
                 _mediator.Object);
         }
 
-   public async Task Log_GetQuery_Success()
+        private Mock<ILogRepository> _logRepository;
+        private Mock<IMediator> _mediator;
+
+        private GetLogDtoQueryHandler _getLogDtoQueryHandler;
+
+        public async Task Log_GetQuery_Success()
         {
             var query = new GetLogDtoQuery();
 

@@ -10,6 +10,10 @@
 		  <Compile Remove="Helpers\EnumerableExtensions.cs" />
 		</ItemGroup>
 
+		<ItemGroup>
+		  <None Remove="Handlers\ProjectPlatforms\Queries\GetProjectPlatformQuery.cs~RF73dbf9.TMP" />
+		</ItemGroup>
+
 <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />

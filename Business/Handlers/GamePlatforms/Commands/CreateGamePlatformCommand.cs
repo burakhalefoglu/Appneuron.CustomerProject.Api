@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.GamePlatforms.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.GamePlatforms.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateGamePlatformCommand : IRequest<IResult>
     {
@@ -40,7 +38,8 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.PlatformName == request.PlatformName);
+                var isThereGamePlatformRecord =
+                    await _gamePlatformRepository.GetAsync(u => u.PlatformName == request.PlatformName);
 
                 if (isThereGamePlatformRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

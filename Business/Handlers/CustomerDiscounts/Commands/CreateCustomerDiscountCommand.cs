@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerDiscounts.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerDiscounts.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateCustomerDiscountCommand : IRequest<IResult>
     {
@@ -28,7 +26,8 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
             private readonly IMediator _mediator;
 
-            public CreateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository, IMediator mediator)
+            public CreateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository,
+                IMediator mediator)
             {
                 _customerDiscountRepository = customerDiscountRepository;
                 _mediator = mediator;
@@ -38,9 +37,11 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateCustomerDiscountCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateCustomerDiscountCommand request,
+                CancellationToken cancellationToken)
             {
-                var isThereCustomerDiscountRecord = await _customerDiscountRepository.GetAsync(u => u.UserId == request.CustomerId);
+                var isThereCustomerDiscountRecord =
+                    await _customerDiscountRepository.GetAsync(u => u.UserId == request.CustomerId);
 
                 if (isThereCustomerDiscountRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -48,7 +49,7 @@ namespace Business.Handlers.CustomerDiscounts.Commands
                 var addedCustomerDiscount = new CustomerDiscount
                 {
                     UserId = request.CustomerId,
-                    DiscountId = request.DiscountId,
+                    DiscountId = request.DiscountId
                 };
 
                 _customerDiscountRepository.Add(addedCustomerDiscount);

@@ -5,7 +5,8 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class CustomerProjectRepository : EfEntityRepositoryBase<CustomerProject, ProjectDbContext>, ICustomerProjectRepository
+    public class CustomerProjectRepository : EfEntityRepositoryBase<CustomerProject, ProjectDbContext>,
+        ICustomerProjectRepository
     {
         public CustomerProjectRepository(ProjectDbContext context) : base(context)
         {

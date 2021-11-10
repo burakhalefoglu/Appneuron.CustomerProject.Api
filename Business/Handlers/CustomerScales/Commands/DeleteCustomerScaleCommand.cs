@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerScales.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteCustomerScaleCommand : IRequest<IResult>
     {
@@ -23,7 +22,8 @@ namespace Business.Handlers.CustomerScales.Commands
             private readonly ICustomerScaleRepository _customerScaleRepository;
             private readonly IMediator _mediator;
 
-            public DeleteCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository, IMediator mediator)
+            public DeleteCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
+                IMediator mediator)
             {
                 _customerScaleRepository = customerScaleRepository;
                 _mediator = mediator;
@@ -35,10 +35,7 @@ namespace Business.Handlers.CustomerScales.Commands
             public async Task<IResult> Handle(DeleteCustomerScaleCommand request, CancellationToken cancellationToken)
             {
                 var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
-                if (customerScaleToDelete == null)
-                {
-                    return new ErrorResult(Messages.CustomerScaleNotFound);
-                }
+                if (customerScaleToDelete == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 _customerScaleRepository.Delete(customerScaleToDelete);
                 await _customerScaleRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

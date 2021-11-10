@@ -1,7 +1,7 @@
 ﻿namespace Business.Constants
 {
     /// <summary>
-    /// This class was created to get rid of magic strings and write more readable code.
+    ///     This class was created to get rid of magic strings and write more readable code.
     /// </summary>
     public static class Messages
     {
@@ -43,10 +43,14 @@
         public static string ResetPasswordSuccess => "Password changed successfully!";
         public static string ProjectNotFound => "Project not found!";
         public static string CustomerDemographicNotFound => " Customer demographic not found!";
-        public static string CustomerDiscountNotFound  => " Customer Discount not found!";
+        public static string CustomerDiscountNotFound => " Customer Discount not found!";
         public static string CustomerNotFound => " Customer not found!";
-        public static string CustomerScaleNotFound  => " Customer Scale not found!";
-        public static string DiscountNotFound  => " Discount not found!";
+        public static string CustomerScaleNotFound => " Customer Scale not found!";
+        public static string DiscountNotFound => " Discount not found!";
         public static string GamePlatformNotFound => " GamePlatform not found!";
+        public static string IndustryNotFound => " Industry not found!";
+        public static string InvoiceNotFound => " Invoice not found!";
+        public static string ProjectPlatformNotFound => " Project platform not found!";
+        public static string VoteNotFound => " Vote not found!";
     }
 }

@@ -1,23 +1,22 @@
-﻿
-using Business.Handlers.AppneuronProducts.Queries;
-using DataAccess.Abstract;
-using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
-using static Business.Handlers.AppneuronProducts.Queries.GetAppneuronProductQuery;
+using Business.Constants;
+using Business.Handlers.AppneuronProducts.Commands;
+using Business.Handlers.AppneuronProducts.Queries;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using FluentAssertions;
+using MediatR;
+using Moq;
+using NUnit.Framework;
+using static Business.Handlers.AppneuronProducts.Queries.GetAppneuronProductQuery;
 using static Business.Handlers.AppneuronProducts.Queries.GetAppneuronProductsQuery;
 using static Business.Handlers.AppneuronProducts.Commands.CreateAppneuronProductCommand;
-using Business.Handlers.AppneuronProducts.Commands;
-using Business.Constants;
 using static Business.Handlers.AppneuronProducts.Commands.UpdateAppneuronProductCommand;
 using static Business.Handlers.AppneuronProducts.Commands.DeleteAppneuronProductCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
 
 
 namespace Tests.Business.Handlers
@@ -25,6 +24,24 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class AppneuronProductHandlerTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            _appneuronProductRepository = new Mock<IAppneuronProductRepository>();
+            _mediator = new Mock<IMediator>();
+
+            _getAppneuronProductQueryHandler =
+                new GetAppneuronProductQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
+            _getAppneuronProductsQueryHandler =
+                new GetAppneuronProductsQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
+            _createAppneuronProductCommandHandler =
+                new CreateAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
+            _updateAppneuronProductCommandHandler =
+                new UpdateAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
+            _deleteAppneuronProductCommandHandler =
+                new DeleteAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
+        }
+
         private Mock<IAppneuronProductRepository> _appneuronProductRepository;
         private Mock<IMediator> _mediator;
 
@@ -33,20 +50,6 @@ namespace Tests.Business.Handlers
         private CreateAppneuronProductCommandHandler _createAppneuronProductCommandHandler;
         private UpdateAppneuronProductCommandHandler _updateAppneuronProductCommandHandler;
         private DeleteAppneuronProductCommandHandler _deleteAppneuronProductCommandHandler;
-
-        [SetUp]
-        public void Setup()
-        {
-            _appneuronProductRepository = new Mock<IAppneuronProductRepository>();
-            _mediator = new Mock<IMediator>();
-
-            _getAppneuronProductQueryHandler = new GetAppneuronProductQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
-            _getAppneuronProductsQueryHandler = new GetAppneuronProductsQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
-            _createAppneuronProductCommandHandler = new CreateAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
-            _updateAppneuronProductCommandHandler = new UpdateAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
-            _deleteAppneuronProductCommandHandler = new DeleteAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
-
-        }
 
         [Test]
         public async Task AppneuronProduct_GetQuery_Success()
@@ -57,21 +60,21 @@ namespace Tests.Business.Handlers
                 Id = 1
             };
 
-            _appneuronProductRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>())).ReturnsAsync(new AppneuronProduct
-            {
-                ProductName = "Test",
-                Id = 1
-            }
-            );
+            _appneuronProductRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
+                .ReturnsAsync(new AppneuronProduct
+                    {
+                        ProductName = "Test",
+                        Id = 1
+                    }
+                );
 
 
             //Act
-            var x = await _getAppneuronProductQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getAppneuronProductQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             x.Data.ProductName.Should().Be("Test");
-
         }
 
         [Test]
@@ -81,27 +84,26 @@ namespace Tests.Business.Handlers
             var query = new GetAppneuronProductsQuery();
 
             _appneuronProductRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
-                        .ReturnsAsync(new List<AppneuronProduct> {
+                .ReturnsAsync(new List<AppneuronProduct>
+                {
+                    new()
+                    {
+                        ProductName = "Test",
+                        Id = 1
+                    },
 
-                            new AppneuronProduct()
-                            {
-                                ProductName = "Test",
-                                Id = 1
-                            },
-
-                            new AppneuronProduct()
-                            {
-                                ProductName = "Test2",
-                                Id = 2
-                            },
-                        });
+                    new()
+                    {
+                        ProductName = "Test2",
+                        Id = 2
+                    }
+                });
             //Act
-            var x = await _getAppneuronProductsQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getAppneuronProductsQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             ((List<AppneuronProduct>)x.Data).Count.Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -119,7 +121,9 @@ namespace Tests.Business.Handlers
 
             _appneuronProductRepository.Setup(x => x.Add(It.IsAny<AppneuronProduct>())).Returns(new AppneuronProduct());
 
-            var x = await _createAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createAppneuronProductCommandHandler.Handle(command, new CancellationToken());
+
+            _appneuronProductRepository.Verify(c=> c.SaveChangesAsync());
 
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
@@ -136,11 +140,11 @@ namespace Tests.Business.Handlers
 
             _appneuronProductRepository.Setup(x => x.GetAsync(
                     It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
-                .Returns(Task.FromResult<AppneuronProduct>(new AppneuronProduct()));
+                .Returns(Task.FromResult(new AppneuronProduct()));
 
             _appneuronProductRepository.Setup(x => x.Add(It.IsAny<AppneuronProduct>())).Returns(new AppneuronProduct());
 
-            var x = await _createAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createAppneuronProductCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.NameAlreadyExist);
@@ -154,15 +158,18 @@ namespace Tests.Business.Handlers
             command.ProductName = "test";
 
             _appneuronProductRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
-                        .ReturnsAsync(new AppneuronProduct()
-                        {
-                            ProductName = "Test",
-                            Id = 1
-                        });
+                .ReturnsAsync(new AppneuronProduct
+                {
+                    ProductName = "Test",
+                    Id = 1
+                });
 
-            _appneuronProductRepository.Setup(x => x.Update(It.IsAny<AppneuronProduct>())).Returns(new AppneuronProduct());
+            _appneuronProductRepository.Setup(x => x.Update(It.IsAny<AppneuronProduct>()))
+                .Returns(new AppneuronProduct());
 
-            var x = await _updateAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateAppneuronProductCommandHandler.Handle(command, new CancellationToken());
+
+            _appneuronProductRepository.Verify(c=> c.SaveChangesAsync());
 
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
@@ -178,9 +185,10 @@ namespace Tests.Business.Handlers
             _appneuronProductRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
                 .Returns(Task.FromResult<AppneuronProduct>(null));
 
-            _appneuronProductRepository.Setup(x => x.Update(It.IsAny<AppneuronProduct>())).Returns(new AppneuronProduct());
+            _appneuronProductRepository.Setup(x => x.Update(It.IsAny<AppneuronProduct>()))
+                .Returns(new AppneuronProduct());
 
-            var x = await _updateAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateAppneuronProductCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.AppneuronProductNotFound);
@@ -193,15 +201,17 @@ namespace Tests.Business.Handlers
             var command = new DeleteAppneuronProductCommand();
 
             _appneuronProductRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<AppneuronProduct, bool>>>()))
-                        .ReturnsAsync(new AppneuronProduct()
-                        {
-                            ProductName = "Test",
-                            Id = 1
-                        });
+                .ReturnsAsync(new AppneuronProduct
+                {
+                    ProductName = "Test",
+                    Id = 1
+                });
 
             _appneuronProductRepository.Setup(x => x.Delete(It.IsAny<AppneuronProduct>()));
 
-            var x = await _deleteAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteAppneuronProductCommandHandler.Handle(command, new CancellationToken());
+
+            _appneuronProductRepository.Verify(c=> c.SaveChangesAsync());
 
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
@@ -218,11 +228,10 @@ namespace Tests.Business.Handlers
 
             _appneuronProductRepository.Setup(x => x.Delete(It.IsAny<AppneuronProduct>()));
 
-            var x = await _deleteAppneuronProductCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteAppneuronProductCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.AppneuronProductNotFound);
         }
     }
 }
-

@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Invoices.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -8,8 +11,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Invoices.Commands
 {
@@ -17,8 +18,8 @@ namespace Business.Handlers.Invoices.Commands
     {
         public long Id { get; set; }
         public string BillNo { get; set; }
-        public System.DateTime CreatedAt { get; set; }
-        public System.DateTime LastPaymentTime { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastPaymentTime { get; set; }
         public int UserId { get; set; }
         public short? DiscountId { get; set; }
         public int UnitPrice { get; set; }
@@ -42,6 +43,8 @@ namespace Business.Handlers.Invoices.Commands
             public async Task<IResult> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
             {
                 var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.Id == request.Id);
+
+                if (isThereInvoiceRecord == null) return new ErrorResult(Messages.InvoiceNotFound);
 
                 isThereInvoiceRecord.BillNo = request.BillNo;
                 isThereInvoiceRecord.CreatedAt = request.CreatedAt;

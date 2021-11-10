@@ -9,8 +9,8 @@ namespace DataAccess.Concrete.Configurations
         public void Configure(EntityTypeBuilder<Client> builder)
         {
             builder.Property(e => e.ClientId)
-                    .IsRequired()
-                    .HasMaxLength(500);
+                .IsRequired()
+                .HasMaxLength(500);
 
             builder.Property(e => e.CreatedAt)
                 .HasColumnType("date")
@@ -19,10 +19,10 @@ namespace DataAccess.Concrete.Configurations
             builder.Property(e => e.IsPaidClient).HasColumnName("isPaidClient");
 
             builder.HasOne(d => d.CustomerProject)
-               .WithMany(p => p.Clients)
-               .HasForeignKey(d => d.ProjectId)
-               .OnDelete(DeleteBehavior.Cascade)
-               .HasConstraintName("fk_Client_CustomerProject_id");
+                .WithMany(p => p.Clients)
+                .HasForeignKey(d => d.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_Client_CustomerProject_id");
         }
     }
 }

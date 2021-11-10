@@ -9,7 +9,7 @@ namespace DataAccess.Concrete.Configurations
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
             builder.HasKey(e => e.UserId)
-                    .HasName("Customers_pkey");
+                .HasName("Customers_pkey");
 
             builder.Property(e => e.UserId).ValueGeneratedNever();
 

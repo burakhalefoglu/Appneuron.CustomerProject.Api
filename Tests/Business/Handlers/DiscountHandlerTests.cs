@@ -1,23 +1,22 @@
-﻿
-using Business.Handlers.Discounts.Queries;
-using DataAccess.Abstract;
-using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
-using static Business.Handlers.Discounts.Queries.GetDiscountQuery;
+using Business.Constants;
+using Business.Handlers.Discounts.Commands;
+using Business.Handlers.Discounts.Queries;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using FluentAssertions;
+using MediatR;
+using Moq;
+using NUnit.Framework;
+using static Business.Handlers.Discounts.Queries.GetDiscountQuery;
 using static Business.Handlers.Discounts.Queries.GetDiscountsQuery;
 using static Business.Handlers.Discounts.Commands.CreateDiscountCommand;
-using Business.Handlers.Discounts.Commands;
-using Business.Constants;
 using static Business.Handlers.Discounts.Commands.UpdateDiscountCommand;
 using static Business.Handlers.Discounts.Commands.DeleteDiscountCommand;
-using MediatR;
-using System.Linq;
-using FluentAssertions;
 
 
 namespace Tests.Business.Handlers
@@ -25,16 +24,6 @@ namespace Tests.Business.Handlers
     [TestFixture]
     public class DiscountHandlerTests
     {
-        private Mock<IDiscountRepository> _discountRepository;
-        private Mock<IMediator> _mediator;
-
-        private GetDiscountQueryHandler _getDiscountQueryHandler;
-        private GetDiscountsQueryHandler _getDiscountsQueryHandler;
-        private CreateDiscountCommandHandler _createDiscountCommandHandler;
-        private UpdateDiscountCommandHandler _updateDiscountCommandHandler;
-        private DeleteDiscountCommandHandler _deleteDiscountCommandHandler;
-
-
         [SetUp]
         public void Setup()
         {
@@ -43,11 +32,22 @@ namespace Tests.Business.Handlers
 
             _getDiscountQueryHandler = new GetDiscountQueryHandler(_discountRepository.Object, _mediator.Object);
             _getDiscountsQueryHandler = new GetDiscountsQueryHandler(_discountRepository.Object, _mediator.Object);
-            _createDiscountCommandHandler = new CreateDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
-            _updateDiscountCommandHandler = new UpdateDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
-            _deleteDiscountCommandHandler = new DeleteDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
-
+            _createDiscountCommandHandler =
+                new CreateDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
+            _updateDiscountCommandHandler =
+                new UpdateDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
+            _deleteDiscountCommandHandler =
+                new DeleteDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
         }
+
+        private Mock<IDiscountRepository> _discountRepository;
+        private Mock<IMediator> _mediator;
+
+        private GetDiscountQueryHandler _getDiscountQueryHandler;
+        private GetDiscountsQueryHandler _getDiscountsQueryHandler;
+        private CreateDiscountCommandHandler _createDiscountCommandHandler;
+        private UpdateDiscountCommandHandler _updateDiscountCommandHandler;
+        private DeleteDiscountCommandHandler _deleteDiscountCommandHandler;
 
         [Test]
         public async Task Discount_GetQuery_Success()
@@ -58,19 +58,19 @@ namespace Tests.Business.Handlers
                 Id = 1
             };
 
-            _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>())).ReturnsAsync(new Discount()
-            {
-                Id = 1,
-                DiscountName = "Test"
-            });
+            _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>())).ReturnsAsync(
+                new Discount
+                {
+                    Id = 1,
+                    DiscountName = "Test"
+                });
 
             //Act
-            var x = await _getDiscountQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getDiscountQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             x.Data.Id.Should().Be(1);
-
         }
 
         [Test]
@@ -80,28 +80,27 @@ namespace Tests.Business.Handlers
             var query = new GetDiscountsQuery();
 
             _discountRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync(new List<Discount> {
-                        new()
-                        {
-                            DiscountName = "Test",
-                            Id = 1
-                        },
+                .ReturnsAsync(new List<Discount>
+                {
+                    new()
+                    {
+                        DiscountName = "Test",
+                        Id = 1
+                    },
 
-                        new()
-                        {
-                            DiscountName = "Test",
-                            Id = 1
-                        },
-
-                        });
+                    new()
+                    {
+                        DiscountName = "Test",
+                        Id = 1
+                    }
+                });
 
             //Act
-            var x = await _getDiscountsQueryHandler.Handle(query, new System.Threading.CancellationToken());
+            var x = await _getDiscountsQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
             ((List<Discount>)x.Data).Count.Should().BeGreaterThan(1);
-
         }
 
         [Test]
@@ -115,11 +114,11 @@ namespace Tests.Business.Handlers
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync((Discount)null);
+                .ReturnsAsync((Discount)null);
 
             _discountRepository.Setup(x => x.Add(It.IsAny<Discount>())).Returns(new Discount());
 
-            var x = await _createDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createDiscountCommandHandler.Handle(command, new CancellationToken());
 
             _discountRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -141,7 +140,7 @@ namespace Tests.Business.Handlers
 
             _discountRepository.Setup(x => x.Add(It.IsAny<Discount>())).Returns(new Discount());
 
-            var x = await _createDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _createDiscountCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.NameAlreadyExist);
@@ -159,16 +158,15 @@ namespace Tests.Business.Handlers
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync(new Discount()
-                        {
-                            DiscountName = "Test",
-                            Id = 1
-                                
-                        });
+                .ReturnsAsync(new Discount
+                {
+                    DiscountName = "Test",
+                    Id = 1
+                });
 
             _discountRepository.Setup(x => x.Update(It.IsAny<Discount>())).Returns(new Discount());
 
-            var x = await _updateDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateDiscountCommandHandler.Handle(command, new CancellationToken());
 
             _discountRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -187,11 +185,11 @@ namespace Tests.Business.Handlers
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync((Discount)null);
+                .ReturnsAsync((Discount)null);
 
             _discountRepository.Setup(x => x.Update(It.IsAny<Discount>())).Returns(new Discount());
 
-            var x = await _updateDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _updateDiscountCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.DiscountNotFound);
@@ -208,15 +206,15 @@ namespace Tests.Business.Handlers
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync(new Discount()
-                        {
-                            Id = 1,
-                            Percent = 20
-                        });
+                .ReturnsAsync(new Discount
+                {
+                    Id = 1,
+                    Percent = 20
+                });
 
             _discountRepository.Setup(x => x.Delete(It.IsAny<Discount>()));
 
-            var x = await _deleteDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteDiscountCommandHandler.Handle(command, new CancellationToken());
 
             _discountRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
@@ -233,17 +231,14 @@ namespace Tests.Business.Handlers
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
-                        .ReturnsAsync((Discount)null);
+                .ReturnsAsync((Discount)null);
 
             _discountRepository.Setup(x => x.Delete(It.IsAny<Discount>()));
 
-            var x = await _deleteDiscountCommandHandler.Handle(command, new System.Threading.CancellationToken());
+            var x = await _deleteDiscountCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.DiscountNotFound);
         }
-
-
     }
 }
-

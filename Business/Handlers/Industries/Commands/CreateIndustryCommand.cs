@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.Industries.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Industries.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateIndustryCommand : IRequest<IResult>
     {
@@ -39,14 +37,14 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateIndustryCommand request, CancellationToken cancellationToken)
             {
-                var isThereIndustryRecord = _industryRepository.Query().Any(u => u.Name == request.Name);
+                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Name == request.Name);
 
-                if (isThereIndustryRecord)
+                if (isThereIndustryRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedIndustry = new Industry
                 {
-                    Name = request.Name,
+                    Name = request.Name
                 };
 
                 _industryRepository.Add(addedIndustry);

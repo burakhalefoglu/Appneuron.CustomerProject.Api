@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Industries.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteIndustryCommand : IRequest<IResult>
     {
@@ -34,7 +33,9 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteIndustryCommand request, CancellationToken cancellationToken)
             {
-                var industryToDelete = _industryRepository.Get(p => p.Id == request.Id);
+                var industryToDelete = await _industryRepository.GetAsync(p => p.Id == request.Id);
+
+                if (industryToDelete == null) return new ErrorResult(Messages.IndustryNotFound);
 
                 _industryRepository.Delete(industryToDelete);
                 await _industryRepository.SaveChangesAsync();

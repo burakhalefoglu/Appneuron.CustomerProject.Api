@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -8,15 +11,14 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerScales.Queries
 {
     public class GetCustomerScalesQuery : IRequest<IDataResult<IEnumerable<CustomerScale>>>
     {
-        public class GetCustomerScalesQueryHandler : IRequestHandler<GetCustomerScalesQuery, IDataResult<IEnumerable<CustomerScale>>>
+        public class
+            GetCustomerScalesQueryHandler : IRequestHandler<GetCustomerScalesQuery,
+                IDataResult<IEnumerable<CustomerScale>>>
         {
             private readonly ICustomerScaleRepository _customerScaleRepository;
             private readonly IMediator _mediator;
@@ -31,7 +33,12 @@ namespace Business.Handlers.CustomerScales.Queries
             [CacheAspect(10)]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request, CancellationToken cancellationToken) => new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(), Messages.DefaultSuccess);
+            public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request,
+                CancellationToken cancellationToken)
+            {
+                return new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(),
+                    Messages.DefaultSuccess);
+            }
         }
     }
 }

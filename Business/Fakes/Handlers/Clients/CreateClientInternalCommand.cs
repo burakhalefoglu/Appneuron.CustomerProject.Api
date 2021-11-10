@@ -1,10 +1,11 @@
-﻿using Business.Constants;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Fakes.Handlers.Clients
 {
@@ -13,7 +14,7 @@ namespace Business.Fakes.Handlers.Clients
         public string ClientId { get; set; }
         public long ProjectId { get; set; }
         public string ProjectKey { get; set; }
-        public System.DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
         public class CreateClientCommandHandler : IRequestHandler<CreateClientInternalCommand, IResult>
@@ -35,7 +36,7 @@ namespace Business.Fakes.Handlers.Clients
                     ProjectId = request.ProjectId,
                     CreatedAt = request.CreatedAt,
                     IsPaidClient = request.IsPaidClient,
-                    ProjectKey = request.ProjectKey,
+                    ProjectKey = request.ProjectKey
                 };
 
                 _clientRepository.Add(addedClient);

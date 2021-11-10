@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -6,13 +8,10 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.Discounts.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class DeleteDiscountCommand : IRequest<IResult>
     {
@@ -35,10 +34,7 @@ namespace Business.Handlers.Discounts.Commands
             public async Task<IResult> Handle(DeleteDiscountCommand request, CancellationToken cancellationToken)
             {
                 var discountToDelete = await _discountRepository.GetAsync(p => p.Id == request.Id);
-                if (discountToDelete == null)
-                { 
-                    return new ErrorResult(Messages.DiscountNotFound);
-                }
+                if (discountToDelete == null) return new ErrorResult(Messages.DiscountNotFound);
                 _discountRepository.Delete(discountToDelete);
                 await _discountRepository.SaveChangesAsync();
                 return new SuccessResult(Messages.Deleted);

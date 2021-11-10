@@ -1,4 +1,8 @@
-﻿using Business.BusinessAspects;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
 using Business.MessageBrokers.Kafka;
@@ -8,24 +12,16 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
-using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
 using Entities.Concrete;
-using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerProjects.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateCustomerProjectCommand : IRequest<IResult>
     {
@@ -35,10 +31,10 @@ namespace Business.Handlers.CustomerProjects.Commands
         public class CreateCustomerProjectCommandHandler : IRequestHandler<CreateCustomerProjectCommand, IResult>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
-            private readonly IMediator _mediator;
             private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly IKafkaMessageBroker _kafkaMessageBroker;
-            
+            private readonly IMediator _mediator;
+
             public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
                 IMediator mediator,
                 IKafkaMessageBroker kafkaMessageBroker,
@@ -57,8 +53,8 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims.
-                    FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.ProjectName == request.ProjectName &&
@@ -75,7 +71,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                     Statuse = true,
                     CreatedAt = DateTime.Now,
                     CustomerId = userId,
-                    ProjectBody = request.ProjectBody,
+                    ProjectBody = request.ProjectBody
                 };
 
                 _customerProjectRepository.Add(addedCustomerProject);

@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Fakes.Handlers.ProjectCounts;
 using Business.Handlers.ProjectPlatforms.ValidationRules;
@@ -10,14 +12,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.ProjectPlatforms.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateProjectPlatformCommand : IRequest<IResult>
     {
@@ -26,10 +24,11 @@ namespace Business.Handlers.ProjectPlatforms.Commands
 
         public class CreateProjectPlatformCommandHandler : IRequestHandler<CreateProjectPlatformCommand, IResult>
         {
-            private readonly IProjectPlatformRepository _projectPlatformRepository;
             private readonly IMediator _mediator;
+            private readonly IProjectPlatformRepository _projectPlatformRepository;
 
-            public CreateProjectPlatformCommandHandler(IProjectPlatformRepository projectPlatformRepository, IMediator mediator)
+            public CreateProjectPlatformCommandHandler(IProjectPlatformRepository projectPlatformRepository,
+                IMediator mediator)
             {
                 _projectPlatformRepository = projectPlatformRepository;
                 _mediator = mediator;
@@ -41,21 +40,20 @@ namespace Business.Handlers.ProjectPlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateProjectPlatformCommand request, CancellationToken cancellationToken)
             {
-                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId });
-                if (result.Data <= 0)
-                {
-                    return new ErrorDataResult<ProjectPlatform>(Messages.ProjectNotFound);
-                }
+                var result = await _mediator.Send(new GetProjectCountInternalQuery { Id = request.ProjectId },
+                    cancellationToken);
+                if (result.Data <= 0) return new ErrorDataResult<ProjectPlatform>(Messages.ProjectNotFound);
 
-                var isThereProjectPlatformRecord = _projectPlatformRepository.Query().Any(u => u.ProjectId == request.ProjectId);
+                var isThereProjectPlatformRecord =
+                    await _projectPlatformRepository.GetAsync(u => u.ProjectId == request.ProjectId);
 
-                if (isThereProjectPlatformRecord)
+                if (isThereProjectPlatformRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedProjectPlatform = new ProjectPlatform
                 {
                     ProjectId = request.ProjectId,
-                    GamePlatformId = request.GamePlatformId,
+                    GamePlatformId = request.GamePlatformId
                 };
 
                 _projectPlatformRepository.Add(addedProjectPlatform);

@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerScales.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerScales.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateCustomerScaleCommand : IRequest<IResult>
     {
@@ -28,7 +26,8 @@ namespace Business.Handlers.CustomerScales.Commands
             private readonly ICustomerScaleRepository _customerScaleRepository;
             private readonly IMediator _mediator;
 
-            public CreateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository, IMediator mediator)
+            public CreateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
+                IMediator mediator)
             {
                 _customerScaleRepository = customerScaleRepository;
                 _mediator = mediator;
@@ -48,7 +47,7 @@ namespace Business.Handlers.CustomerScales.Commands
                 var addedCustomerScale = new CustomerScale
                 {
                     Name = request.Name,
-                    Description = request.Description,
+                    Description = request.Description
                 };
 
                 _customerScaleRepository.Add(addedCustomerScale);

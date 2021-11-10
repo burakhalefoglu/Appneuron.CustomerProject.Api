@@ -1,4 +1,7 @@
-﻿using Business.BusinessAspects;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerDemographics.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,26 +12,24 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerDemographics.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateCustomerDemographicCommand : IRequest<IResult>
     {
         public string CustomerDesc { get; set; }
-        public System.Collections.Generic.ICollection<Customer> Customers { get; set; }
+        public ICollection<Customer> Customers { get; set; }
 
-        public class CreateCustomerDemographicCommandHandler : IRequestHandler<CreateCustomerDemographicCommand, IResult>
+        public class
+            CreateCustomerDemographicCommandHandler : IRequestHandler<CreateCustomerDemographicCommand, IResult>
         {
             private readonly ICustomerDemographicRepository _customerDemographicRepository;
             private readonly IMediator _mediator;
 
-            public CreateCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository, IMediator mediator)
+            public CreateCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository,
+                IMediator mediator)
             {
                 _customerDemographicRepository = customerDemographicRepository;
                 _mediator = mediator;
@@ -38,9 +39,11 @@ namespace Business.Handlers.CustomerDemographics.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateCustomerDemographicCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateCustomerDemographicCommand request,
+                CancellationToken cancellationToken)
             {
-                var isThereCustomerDemographicRecord = await  _customerDemographicRepository.GetAsync(u => u.CustomerDesc == request.CustomerDesc);
+                var isThereCustomerDemographicRecord =
+                    await _customerDemographicRepository.GetAsync(u => u.CustomerDesc == request.CustomerDesc);
 
                 if (isThereCustomerDemographicRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
@@ -48,7 +51,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 var addedCustomerDemographic = new CustomerDemographic
                 {
                     CustomerDesc = request.CustomerDesc,
-                    Customers = request.Customers,
+                    Customers = request.Customers
                 };
 
                 _customerDemographicRepository.Add(addedCustomerDemographic);

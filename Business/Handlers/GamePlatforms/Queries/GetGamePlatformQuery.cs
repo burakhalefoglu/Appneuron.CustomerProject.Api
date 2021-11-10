@@ -1,12 +1,12 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.GamePlatforms.Queries
 {
@@ -27,7 +27,8 @@ namespace Business.Handlers.GamePlatforms.Queries
 
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<GamePlatform>> Handle(GetGamePlatformQuery request, CancellationToken cancellationToken)
+            public async Task<IDataResult<GamePlatform>> Handle(GetGamePlatformQuery request,
+                CancellationToken cancellationToken)
             {
                 var gamePlatform = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<GamePlatform>(gamePlatform);

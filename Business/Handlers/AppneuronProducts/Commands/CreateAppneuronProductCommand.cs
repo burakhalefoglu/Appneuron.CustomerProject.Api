@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.AppneuronProducts.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -9,14 +11,10 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.AppneuronProducts.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     public class CreateAppneuronProductCommand : IRequest<IResult>
     {
@@ -27,7 +25,8 @@ namespace Business.Handlers.AppneuronProducts.Commands
             private readonly IAppneuronProductRepository _appneuronProductRepository;
             private readonly IMediator _mediator;
 
-            public CreateAppneuronProductCommandHandler(IAppneuronProductRepository appneuronProductRepository, IMediator mediator)
+            public CreateAppneuronProductCommandHandler(IAppneuronProductRepository appneuronProductRepository,
+                IMediator mediator)
             {
                 _appneuronProductRepository = appneuronProductRepository;
                 _mediator = mediator;
@@ -37,16 +36,18 @@ namespace Business.Handlers.AppneuronProducts.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(CreateAppneuronProductCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(CreateAppneuronProductCommand request,
+                CancellationToken cancellationToken)
             {
-                var isThereAppneuronProductRecord = await _appneuronProductRepository.GetAsync(u => u.ProductName == request.ProductName);
+                var isThereAppneuronProductRecord =
+                    await _appneuronProductRepository.GetAsync(u => u.ProductName == request.ProductName);
 
                 if (isThereAppneuronProductRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
                 var addedAppneuronProduct = new AppneuronProduct
                 {
-                    ProductName = request.ProductName,
+                    ProductName = request.ProductName
                 };
 
                 _appneuronProductRepository.Add(addedAppneuronProduct);

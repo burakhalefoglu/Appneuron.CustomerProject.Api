@@ -1,4 +1,6 @@
-﻿using Business.BusinessAspects;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerDiscounts.ValidationRules;
 using Core.Aspects.Autofac.Caching;
@@ -8,8 +10,6 @@ using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Business.Handlers.CustomerDiscounts.Commands
 {
@@ -24,7 +24,8 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
             private readonly IMediator _mediator;
 
-            public UpdateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository, IMediator mediator)
+            public UpdateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository,
+                IMediator mediator)
             {
                 _customerDiscountRepository = customerDiscountRepository;
                 _mediator = mediator;
@@ -34,14 +35,12 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(UpdateCustomerDiscountCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(UpdateCustomerDiscountCommand request,
+                CancellationToken cancellationToken)
             {
                 var isThereCustomerDiscountRecord = await _customerDiscountRepository.GetAsync(u => u.Id == request.Id);
 
-                if (isThereCustomerDiscountRecord == null)
-                {
-                    return new ErrorResult(Messages.CustomerDiscountNotFound);
-                }
+                if (isThereCustomerDiscountRecord == null) return new ErrorResult(Messages.CustomerDiscountNotFound);
 
                 isThereCustomerDiscountRecord.UserId = request.CustomerId;
                 isThereCustomerDiscountRecord.DiscountId = request.DiscountId;
