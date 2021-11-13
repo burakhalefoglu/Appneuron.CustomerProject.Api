@@ -1,14 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
-using Business.Fakes.Handlers.Clients;
-using Business.Fakes.Handlers.CustomerProjects;
 using Business.MessageBrokers;
-using Business.MessageBrokers.Kafka;
 using Business.MessageBrokers.Manager.GetClientCreationMessage;
 using Business.MessageBrokers.Models;
-using Core.Utilities.Results;
-using MediatR;
+using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,8 +22,11 @@ namespace WebAPI
         /// <param name="args"></param>
         public static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).Build().RunAsync();
-            await ConsumerAdapter();
+            Console.WriteLine("Server start");
+            var result =  CreateHostBuilder(args).Build().RunAsync();
+            var consumer = ConsumerAdapter();
+            result.Wait();
+            consumer.Wait();
         }
 
         /// <summary>
@@ -51,14 +51,15 @@ namespace WebAPI
 
         private static async Task ConsumerAdapter()
         {
-            IServiceCollection services = new ServiceCollection();
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
+            Console.WriteLine("Kafka Listening");
+            var messageBroker = ServiceTool.ServiceProvider.GetService<IMessageBroker>();
+            var clientCreationMessageService = ServiceTool.ServiceProvider.GetService<IGetClientCreationMessageService>();
 
-            var kafka = serviceProvider.GetService<IMessageBroker>();
-            var getClientCreationMessageService = serviceProvider.GetService<IGetClientCreationMessageService>();
+            await messageBroker.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
+                "CreateClientConsumerGroup",
+                clientCreationMessageService.GetClientCreationMessageQuery);
 
-            await kafka.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
-                getClientCreationMessageService.GetClientCreationMessageQuery);
+
         }
     }
 }

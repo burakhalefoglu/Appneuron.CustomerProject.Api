@@ -113,19 +113,22 @@ namespace WebAPI
             switch (configurationManager.Mode)
             {
                 case ApplicationMode.Development:
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
+                    app.UseDbFakeDataCreator();
+                    app.UseDeveloperExceptionPage();
+                    break;
                 case ApplicationMode.Profiling:
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
+                    break;
                 case ApplicationMode.Staging:
-
+                    app.UseSwagger();
+                    app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
                     break;
 
                 case ApplicationMode.Production:
                     break;
-            }
-
-            if (configurationManager.Mode == ApplicationMode.Development)
-            {
-                app.UseDbFakeDataCreator();
-                app.UseDeveloperExceptionPage();
             }
 
             //güvenlik için gerekli...
@@ -134,10 +137,6 @@ namespace WebAPI
             app.UseSecurityHeaders();
 
             app.ConfigureCustomExceptionMiddleware();
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
 
             app.UseHttpsRedirection();
 

@@ -35,7 +35,7 @@ namespace Core.Extensions
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             _ = e.Message;
             string message;
-            message = e.Message;
+            message = e.Message; 
 
             if (e.GetType() == typeof(ValidationException))
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -44,7 +44,7 @@ namespace Core.Extensions
             else if (e.GetType() == typeof(UnauthorizedAccessException))
                 httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
             else if (e.GetType() == typeof(SecurityException))
-                httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
             else
                 message = ExceptionMessage.InternalServerError;
 

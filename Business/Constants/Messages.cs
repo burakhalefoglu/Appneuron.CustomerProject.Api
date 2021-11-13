@@ -16,6 +16,7 @@
         public static string VerifyCid => "VerifyCid";
         public static string OperationClaimExists => "Operation claim exists";
         public static string AuthorizationsDenied => "Authorizations denied";
+        public static string UnauthorizedAccess => "Unauthorized access";
         public static string Added => "Added";
         public static string Deleted => "Deleted";
         public static string Updated => "Updated";
