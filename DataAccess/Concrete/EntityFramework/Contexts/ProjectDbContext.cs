@@ -1,6 +1,4 @@
 using System.Reflection;
-using Core.Entities.Concrete;
-using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -37,23 +35,6 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         {
             Configuration = configuration;
         }
-
-        public DbSet<Log> Logs { get; set; }
-        public DbSet<Language> Languages { get; set; }
-        public DbSet<Translate> Translates { get; set; }
-        public DbSet<CustomerProject> CustomerProjects { get; set; }
-        public DbSet<CustomerDiscount> CustomerDiscounts { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<AppneuronProduct> AppneuronProducts { get; set; }
-        public DbSet<CustomerDemographic> CustomerDemographics { get; set; }
-        public DbSet<Discount> Discounts { get; set; }
-        public DbSet<Industry> Industries { get; set; }
-        public DbSet<Vote> Votes { get; set; }
-        public DbSet<CustomerScale> CustomerScales { get; set; }
-        public DbSet<GamePlatform> GamePlatforms { get; set; }
-        public DbSet<ProjectPlatform> ProjectPlatforms { get; set; }
-        public DbSet<Client> Clients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

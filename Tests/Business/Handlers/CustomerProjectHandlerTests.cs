@@ -8,12 +8,12 @@ using Business.Constants;
 using Business.Handlers.CustomerProjects.Commands;
 using Business.Handlers.CustomerProjects.Queries;
 using Business.MessageBrokers;
-using Business.MessageBrokers.Kafka;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.CustomerProjects.Queries.GetCustomerProjectQuery;
@@ -45,19 +45,19 @@ namespace Tests.Business.Handlers
                 new GetCustomerProjectsQueryHandler(_customerProjectRepository.Object, _mediator.Object,
                     _httpContextAccessor.Object);
             _createCustomerProjectCommandHandler =
-                new CreateCustomerProjectCommandHandler(_customerProjectRepository.Object, _mediator.Object,
+                new CreateCustomerProjectCommandHandler(_customerProjectRepository.Object,
                     _kafkaMessageBroker.Object, _httpContextAccessor.Object);
             _updateCustomerProjectCommandHandler =
                 new UpdateCustomerProjectCommandHandler(_customerProjectRepository.Object, _mediator.Object,
                     _httpContextAccessor.Object);
             _deleteCustomerProjectCommandHandler =
-                new DeleteCustomerProjectCommandHandler(_customerProjectRepository.Object, _mediator.Object,
+                new DeleteCustomerProjectCommandHandler(_customerProjectRepository.Object,
                     _httpContextAccessor.Object);
             _getProjectCountQueryHandler =
-                new GetProjectCountQueryHandler(_customerProjectRepository.Object, _mediator.Object,
+                new GetProjectCountQueryHandler(_customerProjectRepository.Object,
                     _httpContextAccessor.Object);
             _getCustomerProjectLookupQueryHandler =
-                new GetCustomerProjectLookupQueryHandler(_customerProjectRepository.Object, _mediator.Object,
+                new GetCustomerProjectLookupQueryHandler(_customerProjectRepository.Object,
                     _httpContextAccessor.Object);
         }
 
@@ -78,18 +78,22 @@ namespace Tests.Business.Handlers
         public async Task CustomerProject_GetQuery_Success()
         {
             //Arrange
-            var query = new GetCustomerProjectQuery();
-            query.ProjectKey = "TestKey";
+            var query = new GetCustomerProjectQuery
+            {
+                ProjectId = "507f191e810c19729de860ea"
+            };
+
             _httpContextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
 
 
-            _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
+            _customerProjectRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                     {
-                        Id = 1,
+                        Id = ObjectId.GenerateNewId(),
                         CreatedAt = DateTime.Now,
                         ProjectName = "Test",
-                        ProjectKey = "TestKey"
+                        ProjectId = "507f191e810c19729de860ea"
                     }
                 );
 
@@ -116,20 +120,20 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = 1,
+                            Id = ObjectId.GenerateNewId(),
                             CreatedAt = DateTime.Now,
                             ProjectName = "Test",
-                            ProjectKey = "TestKey"
+                            ProjectId = "507f191e810c19729de860ea"
                         },
 
                         new()
                         {
-                            Id = 1,
+                            Id = ObjectId.GenerateNewId(),
                             CreatedAt = DateTime.Now,
                             ProjectName = "Test",
-                            ProjectKey = "TestKey"
+                            ProjectId = "107f191e810c19729de860ea"
                         }
-                    }
+                    }.AsQueryable
                 );
 
             //Act
@@ -150,16 +154,25 @@ namespace Tests.Business.Handlers
             _httpContextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
 
 
-            _customerProjectRepository.Setup(x => x.GetCountAsync(
+            _customerProjectRepository.Setup(x => x.GetListAsync(
                     It.IsAny<Expression<Func<CustomerProject, bool>>>()))
-                .ReturnsAsync(5);
-
+                .ReturnsAsync(new List<CustomerProject>
+                {
+                    new()
+                    {
+                        ProjectId = "107f191e810c19729de860ea"
+                    },
+                    new()
+                    {
+                        ProjectId = "507f191e810c19729de860ea"
+                    }
+                }.AsQueryable);
             //Act
             var x = await _getProjectCountQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Should().Be(5);
+            x.Data.Should().Be(2);
         }
 
         [Test]
@@ -168,18 +181,19 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomerProjectsQuery();
 
-            _customerProjectRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
+            _customerProjectRepository.Setup(x
+                    => x.GetListAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new List<CustomerProject>
                 {
                     new()
                     {
-                        ProjectKey = "TestKey1"
+                        ProjectId = "107f191e810c19729de860ea"
                     },
                     new()
                     {
-                        ProjectKey = "TestKey2"
+                        ProjectId = "507f191e810c19729de860ea"
                     }
-                });
+                }.AsQueryable);
 
 
             //Act
@@ -201,13 +215,11 @@ namespace Tests.Business.Handlers
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
-                .ReturnsAsync((CustomerProject)null);
+                .ReturnsAsync((CustomerProject) null);
 
-            _customerProjectRepository.Setup(x => x.Add(It.IsAny<CustomerProject>())).Returns(new CustomerProject());
+            _customerProjectRepository.Setup(x => x.AddAsync(It.IsAny<CustomerProject>()));
 
             var x = await _createCustomerProjectCommandHandler.Handle(command, new CancellationToken());
-
-            _customerProjectRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -225,7 +237,7 @@ namespace Tests.Business.Handlers
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject());
 
-            _customerProjectRepository.Setup(x => x.Add(It.IsAny<CustomerProject>())).Returns(new CustomerProject());
+            _customerProjectRepository.Setup(x => x.AddAsync(It.IsAny<CustomerProject>()));
 
             var x = await _createCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -239,20 +251,19 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerProjectCommand
             {
-                ProjectKey = "test"
+                ProjectId = "107f191e810c19729de860ea"
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                 {
-                    ProjectKey = "test"
+                    ProjectId = "507f191e810c19729de860ea"
                 });
 
-            _customerProjectRepository.Setup(x => x.Update(It.IsAny<CustomerProject>())).Returns(new CustomerProject());
+            _customerProjectRepository.Setup(x => x.Update(It.IsAny<CustomerProject>(),
+                It.IsAny<Expression<Func<CustomerProject, bool>>>()));
 
             var x = await _updateCustomerProjectCommandHandler.Handle(command, new CancellationToken());
-
-            _customerProjectRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -263,13 +274,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerProjectCommand
             {
-                ProjectKey = "test"
+                ProjectId = "107f191e810c19729de860ea"
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
-                .ReturnsAsync((CustomerProject)null);
+                .ReturnsAsync((CustomerProject) null);
 
-            _customerProjectRepository.Setup(x => x.Update(It.IsAny<CustomerProject>())).Returns(new CustomerProject());
+            _customerProjectRepository.Setup(x =>
+                x.Update(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
 
             var x = await _updateCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -283,20 +295,20 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerProjectCommand
             {
-                Id = "idTest"
+                Id = ObjectId.GenerateNewId().ToString()
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                 {
-                    ProjectKey = "idTest"
+                    ProjectId = "107f191e810c19729de860ea"
                 });
 
-            _customerProjectRepository.Setup(x => x.Delete(It.IsAny<CustomerProject>()));
+            _customerProjectRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
 
             var x = await _deleteCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 
-            _customerProjectRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -307,13 +319,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerProjectCommand
             {
-                Id = "idTest"
+                Id = ObjectId.GenerateNewId().ToString()
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
-                .ReturnsAsync((CustomerProject)null);
+                .ReturnsAsync((CustomerProject) null);
 
-            _customerProjectRepository.Setup(x => x.Delete(It.IsAny<CustomerProject>()));
+            _customerProjectRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
 
             var x = await _deleteCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 

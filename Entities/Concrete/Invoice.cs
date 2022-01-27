@@ -5,17 +5,15 @@ using Core.Entities;
 
 namespace Entities.Concrete
 {
-    public class Invoice : IEntity
+    public class Invoice : DocumentDbEntity
     {
-        public long Id { get; set; }
+        public bool Status = true;
         public string BillNo { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastPaymentTime { get; set; }
-        public int UserId { get; set; }
-        public short? DiscountId { get; set; }
+        public string UserId { get; set; }
+        public string DiscountId { get; set; }
         public int UnitPrice { get; set; }
         public bool IsItPaid { get; set; }
-
-        public virtual Discount Discount { get; set; }
     }
 }

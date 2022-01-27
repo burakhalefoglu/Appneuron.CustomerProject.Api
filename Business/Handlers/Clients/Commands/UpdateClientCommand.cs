@@ -16,9 +16,9 @@ namespace Business.Handlers.Clients.Commands
 {
     public class UpdateClientCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string ClientId { get; set; }
-        public long ProjectId { get; set; }
+        public string ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
@@ -39,7 +39,7 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
             {
-                var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id);
+                var isThereClientRecord = await _clientRepository.GetAsync(u => u.ObjectId == request.Id);
 
                 if (isThereClientRecord == null) return new ErrorResult(Messages.ClientNotFound);
 
@@ -48,8 +48,8 @@ namespace Business.Handlers.Clients.Commands
                 isThereClientRecord.CreatedAt = request.CreatedAt;
                 isThereClientRecord.IsPaidClient = request.IsPaidClient;
 
-                _clientRepository.Update(isThereClientRecord);
-                await _clientRepository.SaveChangesAsync();
+                await _clientRepository.UpdateAsync(isThereClientRecord,
+                    x => x.ObjectId == isThereClientRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

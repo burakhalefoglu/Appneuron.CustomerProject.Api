@@ -15,18 +15,16 @@ namespace Business.Handlers.Industries.Commands
 {
     public class UpdateIndustryCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
 
         public class UpdateIndustryCommandHandler : IRequestHandler<UpdateIndustryCommand, IResult>
         {
             private readonly IIndustryRepository _industryRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateIndustryCommandHandler(IIndustryRepository industryRepository, IMediator mediator)
+            public UpdateIndustryCommandHandler(IIndustryRepository industryRepository)
             {
                 _industryRepository = industryRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateIndustryValidator), Priority = 1)]
@@ -35,14 +33,14 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateIndustryCommand request, CancellationToken cancellationToken)
             {
-                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Id == request.Id);
+                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.ObjectId == request.Id);
 
                 if (isThereIndustryRecord == null) return new ErrorResult(Messages.IndustryNotFound);
 
                 isThereIndustryRecord.Name = request.Name;
 
-                _industryRepository.Update(isThereIndustryRecord);
-                await _industryRepository.SaveChangesAsync();
+                await _industryRepository.UpdateAsync(isThereIndustryRecord,
+                    x => x.ObjectId == isThereIndustryRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

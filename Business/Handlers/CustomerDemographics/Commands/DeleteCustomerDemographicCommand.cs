@@ -15,7 +15,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
     /// </summary>
     public class DeleteCustomerDemographicCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class
             DeleteCustomerDemographicCommandHandler : IRequestHandler<DeleteCustomerDemographicCommand, IResult>
@@ -37,10 +37,11 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var customerDemographicToDelete =
-                    await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
+                    await _customerDemographicRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (customerDemographicToDelete == null) return new ErrorResult(Messages.CustomerDemographicNotFound);
-                _customerDemographicRepository.Delete(customerDemographicToDelete);
-                await _customerDemographicRepository.SaveChangesAsync();
+                customerDemographicToDelete.Status = false;
+                await _customerDemographicRepository.UpdateAsync(customerDemographicToDelete,
+                    x => x.ObjectId == customerDemographicToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

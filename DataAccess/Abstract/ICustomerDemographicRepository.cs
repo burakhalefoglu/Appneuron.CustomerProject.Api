@@ -3,7 +3,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface ICustomerDemographicRepository : IEntityRepository<CustomerDemographic>
+    public interface ICustomerDemographicRepository : IDocumentDbRepository<CustomerDemographic>
     {
     }
 }

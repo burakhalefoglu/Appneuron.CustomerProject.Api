@@ -15,18 +15,15 @@ namespace Business.Handlers.CustomerDiscounts.Commands
     /// </summary>
     public class DeleteCustomerDiscountCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteCustomerDiscountCommandHandler : IRequestHandler<DeleteCustomerDiscountCommand, IResult>
         {
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository,
-                IMediator mediator)
+            public DeleteCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository)
             {
                 _customerDiscountRepository = customerDiscountRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -35,11 +32,12 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             public async Task<IResult> Handle(DeleteCustomerDiscountCommand request,
                 CancellationToken cancellationToken)
             {
-                var customerDiscountToDelete = await _customerDiscountRepository.GetAsync(p => p.Id == request.Id);
+                var customerDiscountToDelete =
+                    await _customerDiscountRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (customerDiscountToDelete == null) return new ErrorResult(Messages.CustomerDiscountNotFound);
-
-                _customerDiscountRepository.Delete(customerDiscountToDelete);
-                await _customerDiscountRepository.SaveChangesAsync();
+                customerDiscountToDelete.Status = false;
+                await _customerDiscountRepository.UpdateAsync(customerDiscountToDelete,
+                    x => x.ObjectId == customerDiscountToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

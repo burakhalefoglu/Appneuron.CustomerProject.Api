@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using Core.Entities;
+﻿using Core.Entities;
 
 #nullable disable
 
 namespace Entities.Concrete
 {
-    public class Vote : IEntity
+    public class Vote : DocumentDbEntity
     {
-        public short Id { get; set; }
+        public bool Status = true;
         public string VoteName { get; set; }
         public short VoteValue { get; set; }
-
-        public virtual ICollection<CustomerProject> CustomerProjects { get; set; }
     }
 }

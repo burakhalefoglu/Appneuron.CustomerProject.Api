@@ -12,17 +12,15 @@ namespace Business.Handlers.Discounts.Queries
 {
     public class GetDiscountQuery : IRequest<IDataResult<Discount>>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class GetDiscountQueryHandler : IRequestHandler<GetDiscountQuery, IDataResult<Discount>>
         {
             private readonly IDiscountRepository _discountRepository;
-            private readonly IMediator _mediator;
 
-            public GetDiscountQueryHandler(IDiscountRepository discountRepository, IMediator mediator)
+            public GetDiscountQueryHandler(IDiscountRepository discountRepository)
             {
                 _discountRepository = discountRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(FileLogger))]
@@ -30,7 +28,7 @@ namespace Business.Handlers.Discounts.Queries
             public async Task<IDataResult<Discount>> Handle(GetDiscountQuery request,
                 CancellationToken cancellationToken)
             {
-                var discount = await _discountRepository.GetAsync(p => p.Id == request.Id);
+                var discount = await _discountRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<Discount>(discount);
             }
         }

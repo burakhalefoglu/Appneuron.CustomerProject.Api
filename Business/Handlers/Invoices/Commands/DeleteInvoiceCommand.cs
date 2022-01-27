@@ -15,17 +15,15 @@ namespace Business.Handlers.Invoices.Commands
     /// </summary>
     public class DeleteInvoiceCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteInvoiceCommandHandler : IRequestHandler<DeleteInvoiceCommand, IResult>
         {
             private readonly IInvoiceRepository _invoiceRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteInvoiceCommandHandler(IInvoiceRepository invoiceRepository, IMediator mediator)
+            public DeleteInvoiceCommandHandler(IInvoiceRepository invoiceRepository)
             {
                 _invoiceRepository = invoiceRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,11 +31,11 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.Id == request.Id);
+                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (invoiceToDelete == null) return new ErrorResult(Messages.InvoiceNotFound);
-
-                _invoiceRepository.Delete(invoiceToDelete);
-                await _invoiceRepository.SaveChangesAsync();
+                invoiceToDelete.Status = false;
+                await _invoiceRepository.UpdateAsync(invoiceToDelete,
+                    x => x.ObjectId == invoiceToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

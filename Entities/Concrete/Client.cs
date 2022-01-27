@@ -5,15 +5,12 @@ using Core.Entities;
 
 namespace Entities.Concrete
 {
-    public class Client : IEntity
+    public class Client : DocumentDbEntity
     {
-        public long Id { get; set; }
+        public bool Status = true;
         public string ClientId { get; set; }
-        public long ProjectId { get; set; }
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
-
-        public virtual CustomerProject CustomerProject { get; set; }
     }
 }

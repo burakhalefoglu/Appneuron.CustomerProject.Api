@@ -12,24 +12,22 @@ namespace Business.Handlers.Clients.Queries
 {
     public class GetClientQuery : IRequest<IDataResult<Client>>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class GetClientQueryHandler : IRequestHandler<GetClientQuery, IDataResult<Client>>
         {
             private readonly IClientRepository _clientRepository;
-            private readonly IMediator _mediator;
 
-            public GetClientQueryHandler(IClientRepository clientRepository, IMediator mediator)
+            public GetClientQueryHandler(IClientRepository clientRepository)
             {
                 _clientRepository = clientRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(FileLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Client>> Handle(GetClientQuery request, CancellationToken cancellationToken)
             {
-                var client = await _clientRepository.GetAsync(p => p.Id == request.Id);
+                var client = await _clientRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<Client>(client);
             }
         }

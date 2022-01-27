@@ -15,19 +15,17 @@ namespace Business.Handlers.Votes.Commands
 {
     public class UpdateVoteCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string VoteName { get; set; }
         public short VoteValue { get; set; }
 
         public class UpdateVoteCommandHandler : IRequestHandler<UpdateVoteCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IVoteRepository _voteRepository;
 
-            public UpdateVoteCommandHandler(IVoteRepository voteRepository, IMediator mediator)
+            public UpdateVoteCommandHandler(IVoteRepository voteRepository)
             {
                 _voteRepository = voteRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateVoteValidator), Priority = 1)]
@@ -36,15 +34,15 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateVoteCommand request, CancellationToken cancellationToken)
             {
-                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.Id == request.Id);
+                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.ObjectId == request.Id);
 
                 if (isThereVoteRecord == null) return new ErrorResult(Messages.VoteNotFound);
 
                 isThereVoteRecord.VoteName = request.VoteName;
                 isThereVoteRecord.VoteValue = request.VoteValue;
 
-                _voteRepository.Update(isThereVoteRecord);
-                await _voteRepository.SaveChangesAsync();
+                await _voteRepository.UpdateAsync(isThereVoteRecord,
+                    x => x.ObjectId == isThereVoteRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

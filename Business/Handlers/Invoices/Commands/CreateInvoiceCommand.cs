@@ -22,8 +22,8 @@ namespace Business.Handlers.Invoices.Commands
         public string BillNo { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastPaymentTime { get; set; }
-        public int UserId { get; set; }
-        public short? DiscountId { get; set; }
+        public string UserId { get; set; }
+        public string DiscountId { get; set; }
         public int UnitPrice { get; set; }
         public bool IsItPaid { get; set; }
 
@@ -59,9 +59,7 @@ namespace Business.Handlers.Invoices.Commands
                     UnitPrice = request.UnitPrice,
                     IsItPaid = request.IsItPaid
                 };
-
-                _invoiceRepository.Add(addedInvoice);
-                await _invoiceRepository.SaveChangesAsync();
+                await _invoiceRepository.AddAsync(addedInvoice);
                 return new SuccessResult(Messages.Added);
             }
         }

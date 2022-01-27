@@ -11,6 +11,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.CustomerDemographics.Queries.GetCustomerDemographicQuery;
@@ -32,13 +33,13 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
 
             _getCustomerDemographicQueryHandler =
-                new GetCustomerDemographicQueryHandler(_customerDemographicRepository.Object, _mediator.Object);
+                new GetCustomerDemographicQueryHandler(_customerDemographicRepository.Object);
             _getCustomerDemographicsQueryHandler =
                 new GetCustomerDemographicsQueryHandler(_customerDemographicRepository.Object, _mediator.Object);
             _createCustomerDemographicCommandHandler =
                 new CreateCustomerDemographicCommandHandler(_customerDemographicRepository.Object, _mediator.Object);
             _updateCustomerDemographicCommandHandler =
-                new UpdateCustomerDemographicCommandHandler(_customerDemographicRepository.Object, _mediator.Object);
+                new UpdateCustomerDemographicCommandHandler(_customerDemographicRepository.Object);
             _deleteCustomerDemographicCommandHandler =
                 new DeleteCustomerDemographicCommandHandler(_customerDemographicRepository.Object, _mediator.Object);
         }
@@ -58,14 +59,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomerDemographicQuery
             {
-                Id = 1
+                Id = "107f191e810c19729de860ea"
             };
 
             _customerDemographicRepository.Setup(x => x
                     .GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .ReturnsAsync(new CustomerDemographic
                 {
-                    Id = 1,
+                    Id = new ObjectId("107f191e810c19729de860ea"),
                     CustomerDesc = "Test"
                 });
 
@@ -74,7 +75,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(1);
+            x.Data.Id.Should().Be(new ObjectId("107f191e810c19729de860ea"));
             x.Data.CustomerDesc.Should().Be("Test");
         }
 
@@ -85,21 +86,22 @@ namespace Tests.Business.Handlers
             var query = new GetCustomerDemographicsQuery();
 
             _customerDemographicRepository
-                .Setup(x => x.GetListAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
+                .Setup(x =>
+                    x.GetListAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .ReturnsAsync(new List<CustomerDemographic>
                 {
                     new()
                     {
-                        CustomerDesc = "Test",
-                        Id = 1
+                        CustomerDesc = "Test_desc",
+                        Id = new ObjectId("107f191e810c19729de860ea")
                     },
 
                     new()
                     {
                         CustomerDesc = "Test2",
-                        Id = 2
+                        Id = new ObjectId("507f191e810c19729de860ea")
                     }
-                });
+                }.AsQueryable);
 
 
             //Act
@@ -116,19 +118,15 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateCustomerDemographicCommand
             {
-                CustomerDesc = "Test"
+                CustomerDesc = "Test_desc"
             };
 
             _customerDemographicRepository
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .Returns(Task.FromResult<CustomerDemographic>(null));
 
-            _customerDemographicRepository.Setup(x => x.Add(It.IsAny<CustomerDemographic>()))
-                .Returns(new CustomerDemographic());
-
+            _customerDemographicRepository.Setup(x => x.AddAsync(It.IsAny<CustomerDemographic>()));
             var x = await _createCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
-
-            _customerDemographicRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -146,8 +144,7 @@ namespace Tests.Business.Handlers
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .Returns(Task.FromResult(new CustomerDemographic()));
 
-            _customerDemographicRepository.Setup(x => x.Add(It.IsAny<CustomerDemographic>()))
-                .Returns(new CustomerDemographic());
+            _customerDemographicRepository.Setup(x => x.AddAsync(It.IsAny<CustomerDemographic>()));
 
             var x = await _createCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
 
@@ -166,12 +163,11 @@ namespace Tests.Business.Handlers
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .ReturnsAsync(new CustomerDemographic());
 
-            _customerDemographicRepository.Setup(x => x.Update(It.IsAny<CustomerDemographic>()))
-                .Returns(new CustomerDemographic());
+            _customerDemographicRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerDemographic>(),
+                    It.IsAny<Expression<Func<CustomerDemographic, bool>>>()));
 
             var x = await _updateCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
-
-            _customerDemographicRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -180,17 +176,19 @@ namespace Tests.Business.Handlers
         public async Task CustomerDemographic_UpdateCommand_CustomerDemographicNotFound()
         {
             //Arrange
-            var command = new UpdateCustomerDemographicCommand();
-            command.Id = 1;
-            command.Customers = new List<Customer>();
-            command.CustomerDesc = "Test";
+            var command = new UpdateCustomerDemographicCommand
+            {
+                Id = "107f191e810c19729de860ea",
+                Customers = new List<Customer>(),
+                CustomerDesc = "Test_desc"
+            };
 
             _customerDemographicRepository
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .Returns(Task.FromResult<CustomerDemographic>(null));
 
-            _customerDemographicRepository.Setup(x => x.Update(It.IsAny<CustomerDemographic>()))
-                .Returns(new CustomerDemographic());
+            _customerDemographicRepository.Setup(x
+                => x.Update(It.IsAny<CustomerDemographic>(), It.IsAny<Expression<Func<CustomerDemographic, bool>>>()));
 
             var x = await _updateCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
 
@@ -209,11 +207,11 @@ namespace Tests.Business.Handlers
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .ReturnsAsync(new CustomerDemographic());
 
-            _customerDemographicRepository.Setup(x => x.Delete(It.IsAny<CustomerDemographic>()));
+            _customerDemographicRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerDemographic>(),
+                    It.IsAny<Expression<Func<CustomerDemographic, bool>>>()));
 
             var x = await _deleteCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
-
-            _customerDemographicRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -229,7 +227,9 @@ namespace Tests.Business.Handlers
                 .Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerDemographic, bool>>>()))
                 .Returns(Task.FromResult<CustomerDemographic>(null));
 
-            _customerDemographicRepository.Setup(x => x.Delete(It.IsAny<CustomerDemographic>()));
+            _customerDemographicRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerDemographic>(),
+                    It.IsAny<Expression<Func<CustomerDemographic, bool>>>()));
 
             var x = await _deleteCustomerDemographicCommandHandler.Handle(command, new CancellationToken());
 

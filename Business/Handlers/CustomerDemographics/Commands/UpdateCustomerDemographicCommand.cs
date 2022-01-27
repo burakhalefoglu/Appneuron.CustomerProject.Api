@@ -17,7 +17,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
 {
     public class UpdateCustomerDemographicCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string CustomerDesc { get; set; }
         public ICollection<Customer> Customers { get; set; }
 
@@ -25,13 +25,10 @@ namespace Business.Handlers.CustomerDemographics.Commands
             UpdateCustomerDemographicCommandHandler : IRequestHandler<UpdateCustomerDemographicCommand, IResult>
         {
             private readonly ICustomerDemographicRepository _customerDemographicRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository,
-                IMediator mediator)
+            public UpdateCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository)
             {
                 _customerDemographicRepository = customerDemographicRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateCustomerDemographicValidator), Priority = 1)]
@@ -42,16 +39,15 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereCustomerDemographicRecord =
-                    await _customerDemographicRepository.GetAsync(u => u.Id == request.Id);
+                    await _customerDemographicRepository.GetAsync(u => u.ObjectId == request.Id);
 
                 if (isThereCustomerDemographicRecord == null)
                     return new ErrorResult(Messages.CustomerDemographicNotFound);
 
                 isThereCustomerDemographicRecord.CustomerDesc = request.CustomerDesc;
-                isThereCustomerDemographicRecord.Customers = request.Customers;
 
-                _customerDemographicRepository.Update(isThereCustomerDemographicRecord);
-                await _customerDemographicRepository.SaveChangesAsync();
+                await _customerDemographicRepository.UpdateAsync(isThereCustomerDemographicRecord,
+                    x => x.ObjectId == isThereCustomerDemographicRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

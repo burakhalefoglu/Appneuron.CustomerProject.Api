@@ -33,15 +33,12 @@ namespace Business.Handlers.CustomerProjects.Commands
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly IMessageBroker _messageBroker;
-            private readonly IMediator _mediator;
 
             public CreateCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator,
                 IMessageBroker messageBroker,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
                 _messageBroker = messageBroker;
             }
@@ -53,8 +50,8 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.ProjectName == request.ProjectName &&
@@ -66,16 +63,15 @@ namespace Business.Handlers.CustomerProjects.Commands
                 var projectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower();
                 var addedCustomerProject = new CustomerProject
                 {
-                    ProjectKey = projectKey,
+                    ProjectId = projectKey,
                     ProjectName = request.ProjectName,
-                    Statuse = true,
+                    Status = true,
                     CreatedAt = DateTime.Now,
                     CustomerId = userId,
                     ProjectBody = request.ProjectBody
                 };
 
-                _customerProjectRepository.Add(addedCustomerProject);
-                await _customerProjectRepository.SaveChangesAsync();
+                await _customerProjectRepository.AddAsync(addedCustomerProject);
 
                 var projectModel = new ProjectMessageCommand
                 {

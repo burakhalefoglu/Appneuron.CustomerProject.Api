@@ -50,12 +50,10 @@ namespace Business.Handlers.CustomerDemographics.Commands
 
                 var addedCustomerDemographic = new CustomerDemographic
                 {
-                    CustomerDesc = request.CustomerDesc,
-                    Customers = request.Customers
+                    CustomerDesc = request.CustomerDesc
                 };
 
-                _customerDemographicRepository.Add(addedCustomerDemographic);
-                await _customerDemographicRepository.SaveChangesAsync();
+                await _customerDemographicRepository.AddAsync(addedCustomerDemographic);
                 return new SuccessResult(Messages.Added);
             }
         }

@@ -16,8 +16,8 @@ using Core.Extensions;
 using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
 using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.EntityFramework.Contexts;
+using DataAccess.Concrete.MongoDb;
 using DataAccess.Concrete.MongoDb.Context;
 using FluentValidation;
 using MediatR;
@@ -86,7 +86,6 @@ namespace Business
         {
             ConfigureServices(services);
             services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
@@ -99,8 +98,6 @@ namespace Business
             services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
             services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
             services.AddTransient<IMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext, DArchInMemory>(ServiceLifetime.Transient);
@@ -115,7 +112,6 @@ namespace Business
         {
             ConfigureServices(services);
             services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
@@ -128,8 +124,6 @@ namespace Business
             services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
             services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
             services.AddTransient<IMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext>();
@@ -145,7 +139,6 @@ namespace Business
         {
             ConfigureServices(services);
             services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IProjectPlatformRepository, ProjectPlatformRepository>();
             services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
             services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
@@ -158,8 +151,6 @@ namespace Business
             services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
             services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
             services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<ITranslateRepository, TranslateRepository>();
-            services.AddTransient<ILanguageRepository, LanguageRepository>();
             services.AddTransient<IMessageBroker, KafkaMessageBroker>();
 
             services.AddDbContext<ProjectDbContext>();

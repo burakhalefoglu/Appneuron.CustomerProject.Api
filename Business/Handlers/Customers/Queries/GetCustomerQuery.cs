@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -19,13 +18,11 @@ namespace Business.Handlers.Customers.Queries
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public GetCustomerQueryHandler(ICustomerRepository customerRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -34,10 +31,10 @@ namespace Business.Handlers.Customers.Queries
             public async Task<IDataResult<Customer>> Handle(GetCustomerQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var customer = await _customerRepository.GetAsync(p => p.UserId == userId);
+                var customer = await _customerRepository.GetAsync(p => p.ObjectId == userId);
                 return new SuccessDataResult<Customer>(customer);
             }
         }

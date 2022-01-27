@@ -15,20 +15,17 @@ namespace Business.Handlers.CustomerDiscounts.Commands
 {
     public class UpdateCustomerDiscountCommand : IRequest<IResult>
     {
-        public int Id { get; set; }
-        public int CustomerId { get; set; }
-        public short DiscountId { get; set; }
+        public string Id { get; set; }
+        public string CustomerId { get; set; }
+        public string DiscountId { get; set; }
 
         public class UpdateCustomerDiscountCommandHandler : IRequestHandler<UpdateCustomerDiscountCommand, IResult>
         {
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository,
-                IMediator mediator)
+            public UpdateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository)
             {
                 _customerDiscountRepository = customerDiscountRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateCustomerDiscountValidator), Priority = 1)]
@@ -38,15 +35,16 @@ namespace Business.Handlers.CustomerDiscounts.Commands
             public async Task<IResult> Handle(UpdateCustomerDiscountCommand request,
                 CancellationToken cancellationToken)
             {
-                var isThereCustomerDiscountRecord = await _customerDiscountRepository.GetAsync(u => u.Id == request.Id);
+                var isThereCustomerDiscountRecord =
+                    await _customerDiscountRepository.GetAsync(u => u.ObjectId == request.Id);
 
                 if (isThereCustomerDiscountRecord == null) return new ErrorResult(Messages.CustomerDiscountNotFound);
 
                 isThereCustomerDiscountRecord.UserId = request.CustomerId;
                 isThereCustomerDiscountRecord.DiscountId = request.DiscountId;
 
-                _customerDiscountRepository.Update(isThereCustomerDiscountRecord);
-                await _customerDiscountRepository.SaveChangesAsync();
+                await _customerDiscountRepository.UpdateAsync(isThereCustomerDiscountRecord,
+                    x => x.ObjectId == isThereCustomerDiscountRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

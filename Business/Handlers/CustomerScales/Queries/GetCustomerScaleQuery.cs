@@ -12,17 +12,15 @@ namespace Business.Handlers.CustomerScales.Queries
 {
     public class GetCustomerScaleQuery : IRequest<IDataResult<CustomerScale>>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class GetCustomerScaleQueryHandler : IRequestHandler<GetCustomerScaleQuery, IDataResult<CustomerScale>>
         {
             private readonly ICustomerScaleRepository _customerScaleRepository;
-            private readonly IMediator _mediator;
 
-            public GetCustomerScaleQueryHandler(ICustomerScaleRepository customerScaleRepository, IMediator mediator)
+            public GetCustomerScaleQueryHandler(ICustomerScaleRepository customerScaleRepository)
             {
                 _customerScaleRepository = customerScaleRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(FileLogger))]
@@ -30,7 +28,7 @@ namespace Business.Handlers.CustomerScales.Queries
             public async Task<IDataResult<CustomerScale>> Handle(GetCustomerScaleQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerScale = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
+                var customerScale = await _customerScaleRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<CustomerScale>(customerScale);
             }
         }

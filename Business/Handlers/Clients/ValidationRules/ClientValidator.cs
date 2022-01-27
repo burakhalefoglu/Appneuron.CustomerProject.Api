@@ -8,7 +8,6 @@ namespace Business.Handlers.Clients.ValidationRules
         public CreateClientValidator()
         {
             RuleFor(x => x.ClientId).NotEmpty();
-            RuleFor(x => x.ProjectKey).NotEmpty();
             RuleFor(x => x.CreatedAt).NotEmpty();
             RuleFor(x => x.IsPaidClient).NotEmpty();
         }

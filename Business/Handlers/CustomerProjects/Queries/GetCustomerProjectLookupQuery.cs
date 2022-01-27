@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,14 +22,12 @@ namespace Business.Handlers.CustomerProjects.Queries
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public GetCustomerProjectLookupQueryHandler(ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _httpContextAccessor = httpContextAccessor;
                 _customerProjectRepository = customerProjectRepository;
-                _mediator = mediator;
             }
 
             [PerformanceAspect(5)]
@@ -40,8 +37,8 @@ namespace Business.Handlers.CustomerProjects.Queries
             public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectLookupQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
                     await _customerProjectRepository.GetListAsync(p => p.CustomerId == userId));

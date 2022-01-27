@@ -12,7 +12,7 @@ namespace Business.Fakes.Handlers.ProjectCounts
 {
     public class GetProjectCountInternalQuery : IRequest<IDataResult<int>>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountInternalQuery, IDataResult<int>>
         {
@@ -30,12 +30,13 @@ namespace Business.Fakes.Handlers.ProjectCounts
             public async Task<IDataResult<int>> Handle(GetProjectCountInternalQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = int.Parse(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var result =
-                    await _customerProjectRepository.GetCountAsync(p => p.CustomerId == userId && p.Id == request.Id);
-                return new SuccessDataResult<int>(result);
+                    await _customerProjectRepository.GetListAsync(p =>
+                        p.CustomerId == userId && p.ObjectId == request.Id);
+                return new SuccessDataResult<int>(result.ToList().Count);
             }
         }
     }

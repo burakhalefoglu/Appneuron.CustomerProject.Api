@@ -12,8 +12,7 @@ namespace Business.Fakes.Handlers.Clients
     public class CreateClientInternalCommand : IRequest<IResult>
     {
         public string ClientId { get; set; }
-        public long ProjectId { get; set; }
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
@@ -35,12 +34,10 @@ namespace Business.Fakes.Handlers.Clients
                     ClientId = request.ClientId,
                     ProjectId = request.ProjectId,
                     CreatedAt = request.CreatedAt,
-                    IsPaidClient = request.IsPaidClient,
-                    ProjectKey = request.ProjectKey
+                    IsPaidClient = request.IsPaidClient
                 };
 
-                _clientRepository.Add(addedClient);
-                await _clientRepository.SaveChangesAsync();
+                await _clientRepository.AddAsync(addedClient);
                 return new SuccessResult(Messages.Added);
             }
         }

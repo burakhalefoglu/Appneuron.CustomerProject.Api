@@ -15,17 +15,15 @@ namespace Business.Handlers.Discounts.Commands
     /// </summary>
     public class DeleteDiscountCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteDiscountCommandHandler : IRequestHandler<DeleteDiscountCommand, IResult>
         {
             private readonly IDiscountRepository _discountRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteDiscountCommandHandler(IDiscountRepository discountRepository, IMediator mediator)
+            public DeleteDiscountCommandHandler(IDiscountRepository discountRepository)
             {
                 _discountRepository = discountRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,10 +31,10 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteDiscountCommand request, CancellationToken cancellationToken)
             {
-                var discountToDelete = await _discountRepository.GetAsync(p => p.Id == request.Id);
+                var discountToDelete = await _discountRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (discountToDelete == null) return new ErrorResult(Messages.DiscountNotFound);
-                _discountRepository.Delete(discountToDelete);
-                await _discountRepository.SaveChangesAsync();
+                discountToDelete.Status = false;
+                await _discountRepository.UpdateAsync(discountToDelete, x => x.ObjectId == discountToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

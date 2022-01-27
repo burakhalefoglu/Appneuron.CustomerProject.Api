@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Invoices.Queries.GetInvoiceQuery;
@@ -30,12 +32,12 @@ namespace Tests.Business.Handlers
             _invoiceRepository = new Mock<IInvoiceRepository>();
             _mediator = new Mock<IMediator>();
 
-            _getInvoiceQueryHandler = new GetInvoiceQueryHandler(_invoiceRepository.Object, _mediator.Object);
+            _getInvoiceQueryHandler = new GetInvoiceQueryHandler(_invoiceRepository.Object);
             _getInvoicesQueryHandler = new GetInvoicesQueryHandler(_invoiceRepository.Object, _mediator.Object);
             _getCreateInvoiceCommandHandler =
                 new CreateInvoiceCommandHandler(_invoiceRepository.Object, _mediator.Object);
-            _updateInvoiceCommandHandler = new UpdateInvoiceCommandHandler(_invoiceRepository.Object, _mediator.Object);
-            _deleteInvoiceCommandHandler = new DeleteInvoiceCommandHandler(_invoiceRepository.Object, _mediator.Object);
+            _updateInvoiceCommandHandler = new UpdateInvoiceCommandHandler(_invoiceRepository.Object);
+            _deleteInvoiceCommandHandler = new DeleteInvoiceCommandHandler(_invoiceRepository.Object);
         }
 
         private Mock<IInvoiceRepository> _invoiceRepository;
@@ -53,15 +55,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetInvoiceQuery
             {
-                Id = 1,
-                UserId = 16
+                Id = "107f191e810c19729de860ea"
             };
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>())).ReturnsAsync(
                 new Invoice
                 {
-                    Id = 1,
-                    UserId = 16
+                    Id = new ObjectId("107f191e810c19729de860ea"),
+                    UserId = "107f191e810c19729de860ea"
                 });
 
             //Act
@@ -69,7 +70,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.UserId.Should().Be(16);
+            x.Data.UserId.Should().Be("107f191e810c19729de860ea");
         }
 
         [Test]
@@ -83,23 +84,23 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = 1,
-                        UserId = 16
+                        Id = new ObjectId("107f191e810c19729de860ea"),
+                        UserId = "487f191e810c19729de860ea"
                     },
 
                     new()
                     {
-                        Id = 2,
-                        UserId = 22
+                        Id = new ObjectId("507f191e810c19729de860ea"),
+                        UserId = "933f191e810c19729de860ea"
                     }
-                });
+                }.AsQueryable());
 
             //Act
             var x = await _getInvoicesQueryHandler.Handle(query, new CancellationToken());
 
             //Asset
             x.Success.Should().BeTrue();
-            ((List<Invoice>)x.Data).Count.Should().BeGreaterThan(1);
+            x.Data.ToList().Count.Should().BeGreaterThan(1);
         }
 
         [Test]
@@ -108,18 +109,16 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateInvoiceCommand
             {
-                UserId = 1,
+                UserId = "107f191e810c19729de860ea",
                 BillNo = "AB252D"
             };
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
-                .ReturnsAsync((Invoice)null);
+                .ReturnsAsync((Invoice) null);
 
-            _invoiceRepository.Setup(x => x.Add(It.IsAny<Invoice>())).Returns(new Invoice());
+            _invoiceRepository.Setup(x => x.AddAsync(It.IsAny<Invoice>()));
 
             var x = await _getCreateInvoiceCommandHandler.Handle(command, new CancellationToken());
-
-            _invoiceRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -130,14 +129,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateInvoiceCommand
             {
-                UserId = 1,
+                UserId = "107f191e810c19729de860ea",
                 BillNo = "AB252D"
             };
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
                 .ReturnsAsync(new Invoice());
 
-            _invoiceRepository.Setup(x => x.Add(It.IsAny<Invoice>())).Returns(new Invoice());
+            _invoiceRepository.Setup(x => x.Add(It.IsAny<Invoice>()));
 
             var x = await _getCreateInvoiceCommandHandler.Handle(command, new CancellationToken());
 
@@ -152,17 +151,16 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateInvoiceCommand
             {
-                Id = 1
+                Id = "107f191e810c19729de860ea"
             };
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
                 .ReturnsAsync(new Invoice());
 
-            _invoiceRepository.Setup(x => x.Update(It.IsAny<Invoice>())).Returns(new Invoice());
+            _invoiceRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<Invoice>(), It.IsAny<Expression<Func<Invoice, bool>>>()));
 
             var x = await _updateInvoiceCommandHandler.Handle(command, new CancellationToken());
-
-            _invoiceRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -173,16 +171,15 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateInvoiceCommand
             {
-                Id = 1
+                Id = "107f191e810c19729de860ea"
             };
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
-                .ReturnsAsync((Invoice)null);
+                .ReturnsAsync((Invoice) null);
 
-            _invoiceRepository.Setup(x => x.Update(It.IsAny<Invoice>())).Returns(new Invoice());
+            _invoiceRepository.Setup(x => x.Update(It.IsAny<Invoice>(), It.IsAny<Expression<Func<Invoice, bool>>>()));
 
             var x = await _updateInvoiceCommandHandler.Handle(command, new CancellationToken());
-
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.InvoiceNotFound);
         }
@@ -197,11 +194,10 @@ namespace Tests.Business.Handlers
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
                 .ReturnsAsync(new Invoice());
 
-            _invoiceRepository.Setup(x => x.Delete(It.IsAny<Invoice>()));
+            _invoiceRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<Invoice>(), It.IsAny<Expression<Func<Invoice, bool>>>()));
 
             var x = await _deleteInvoiceCommandHandler.Handle(command, new CancellationToken());
-
-            _invoiceRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -213,12 +209,12 @@ namespace Tests.Business.Handlers
             var command = new DeleteInvoiceCommand();
 
             _invoiceRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Invoice, bool>>>()))
-                .ReturnsAsync((Invoice)null);
+                .ReturnsAsync((Invoice) null);
 
-            _invoiceRepository.Setup(x => x.Delete(It.IsAny<Invoice>()));
+            _invoiceRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<Invoice>(), It.IsAny<Expression<Func<Invoice, bool>>>()));
 
             var x = await _deleteInvoiceCommandHandler.Handle(command, new CancellationToken());
-
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.InvoiceNotFound);
         }

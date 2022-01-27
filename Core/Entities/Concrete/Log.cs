@@ -2,9 +2,8 @@
 
 namespace Core.Entities.Concrete
 {
-    public class Log : IEntity
+    public class Log : DocumentDbEntity
     {
-        public int Id { get; set; }
         public string MessageTemplate { get; set; }
         public string Level { get; set; }
         public DateTimeOffset TimeStamp { get; set; }

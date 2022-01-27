@@ -15,7 +15,7 @@ namespace Business.Handlers.Discounts.Commands
 {
     public class UpdateDiscountCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string DiscountName { get; set; }
         public short Percent { get; set; }
 
@@ -36,14 +36,14 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
             {
-                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.Id == request.Id);
+                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.ObjectId == request.Id);
                 if (isThereDiscountRecord == null) return new ErrorResult(Messages.DiscountNotFound);
 
                 isThereDiscountRecord.DiscountName = request.DiscountName;
                 isThereDiscountRecord.Percent = request.Percent;
 
-                _discountRepository.Update(isThereDiscountRecord);
-                await _discountRepository.SaveChangesAsync();
+                await _discountRepository.UpdateAsync(isThereDiscountRecord,
+                    x => x.ObjectId == isThereDiscountRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

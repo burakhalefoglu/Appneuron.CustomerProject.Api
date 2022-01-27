@@ -43,9 +43,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<Client>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var result = await Mediator.Send(new GetClientQuery { Id = id });
+            var result = await Mediator.Send(new GetClientQuery {Id = id});
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }

@@ -15,17 +15,15 @@ namespace Business.Handlers.Industries.Commands
     /// </summary>
     public class DeleteIndustryCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteIndustryCommandHandler : IRequestHandler<DeleteIndustryCommand, IResult>
         {
             private readonly IIndustryRepository _industryRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteIndustryCommandHandler(IIndustryRepository industryRepository, IMediator mediator)
+            public DeleteIndustryCommandHandler(IIndustryRepository industryRepository)
             {
                 _industryRepository = industryRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,12 +31,12 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteIndustryCommand request, CancellationToken cancellationToken)
             {
-                var industryToDelete = await _industryRepository.GetAsync(p => p.Id == request.Id);
+                var industryToDelete = await _industryRepository.GetAsync(p => p.ObjectId == request.Id);
 
                 if (industryToDelete == null) return new ErrorResult(Messages.IndustryNotFound);
-
-                _industryRepository.Delete(industryToDelete);
-                await _industryRepository.SaveChangesAsync();
+                industryToDelete.Status = false;
+                await _industryRepository.UpdateAsync(industryToDelete,
+                    x => x.ObjectId == industryToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

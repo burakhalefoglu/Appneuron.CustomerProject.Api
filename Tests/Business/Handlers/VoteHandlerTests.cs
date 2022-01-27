@@ -11,6 +11,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Votes.Queries.GetVoteQuery;
@@ -31,11 +32,11 @@ namespace Tests.Business.Handlers
             _voteRepository = new Mock<IVoteRepository>();
             _mediator = new Mock<IMediator>();
 
-            _getVoteQueryHandler = new GetVoteQueryHandler(_voteRepository.Object, _mediator.Object);
+            _getVoteQueryHandler = new GetVoteQueryHandler(_voteRepository.Object);
             _getVotesQueryHandler = new GetVotesQueryHandler(_voteRepository.Object, _mediator.Object);
-            _createVoteCommandHandler = new CreateVoteCommandHandler(_voteRepository.Object, _mediator.Object);
-            _updateVoteCommandHandler = new UpdateVoteCommandHandler(_voteRepository.Object, _mediator.Object);
-            _deleteVoteCommandHandler = new DeleteVoteCommandHandler(_voteRepository.Object, _mediator.Object);
+            _createVoteCommandHandler = new CreateVoteCommandHandler(_voteRepository.Object);
+            _updateVoteCommandHandler = new UpdateVoteCommandHandler(_voteRepository.Object);
+            _deleteVoteCommandHandler = new DeleteVoteCommandHandler(_voteRepository.Object);
         }
 
         private Mock<IVoteRepository> _voteRepository;
@@ -53,12 +54,12 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetVoteQuery
             {
-                Id = 1
+                Id = "507f191e810c19729de860ea"
             };
 
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>())).ReturnsAsync(new Vote
             {
-                Id = 1,
+                Id = new ObjectId("507f191e810c19729de860ea"),
                 VoteName = "Test"
             });
 
@@ -67,7 +68,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(1);
+            x.Data.Id.Should().Be(new ObjectId("507f191e810c19729de860ea"));
         }
 
         [Test]
@@ -81,15 +82,15 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = 1,
+                        Id = ObjectId.GenerateNewId(),
                         VoteName = "Test"
                     },
                     new()
                     {
-                        Id = 2,
+                        Id = ObjectId.GenerateNewId(),
                         VoteName = "Test2"
                     }
-                });
+                }.AsQueryable);
 
 
             //Act
@@ -111,13 +112,11 @@ namespace Tests.Business.Handlers
             };
 
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
-                .ReturnsAsync((Vote)null);
+                .ReturnsAsync((Vote) null);
 
-            _voteRepository.Setup(x => x.Add(It.IsAny<Vote>())).Returns(new Vote());
+            _voteRepository.Setup(x => x.AddAsync(It.IsAny<Vote>()));
 
             var x = await _createVoteCommandHandler.Handle(command, new CancellationToken());
-
-            _voteRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -135,10 +134,9 @@ namespace Tests.Business.Handlers
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
                 .ReturnsAsync(new Vote());
 
-            _voteRepository.Setup(x => x.Add(It.IsAny<Vote>())).Returns(new Vote());
+            _voteRepository.Setup(x => x.Add(It.IsAny<Vote>()));
 
             var x = await _createVoteCommandHandler.Handle(command, new CancellationToken());
-
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.NameAlreadyExist);
         }
@@ -150,18 +148,16 @@ namespace Tests.Business.Handlers
             var command = new UpdateVoteCommand
             {
                 VoteName = "test",
-                Id = 1,
+                Id = "507f191e810c19729de860ea",
                 VoteValue = 1
             };
 
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
                 .ReturnsAsync(new Vote());
 
-            _voteRepository.Setup(x => x.Update(It.IsAny<Vote>())).Returns(new Vote());
+            _voteRepository.Setup(x => x.Update(It.IsAny<Vote>(), It.IsAny<Expression<Func<Vote, bool>>>()));
 
             var x = await _updateVoteCommandHandler.Handle(command, new CancellationToken());
-
-            _voteRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -173,14 +169,15 @@ namespace Tests.Business.Handlers
             var command = new UpdateVoteCommand
             {
                 VoteName = "test",
-                Id = 1,
+                Id = "507f191e810c19729de860ea",
                 VoteValue = 1
             };
 
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
-                .ReturnsAsync((Vote)null);
+                .ReturnsAsync((Vote) null);
 
-            _voteRepository.Setup(x => x.Update(It.IsAny<Vote>())).Returns(new Vote());
+            _voteRepository.Setup(x
+                => x.Update(It.IsAny<Vote>(), It.IsAny<Expression<Func<Vote, bool>>>()));
 
             var x = await _updateVoteCommandHandler.Handle(command, new CancellationToken());
 
@@ -197,11 +194,9 @@ namespace Tests.Business.Handlers
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
                 .ReturnsAsync(new Vote());
 
-            _voteRepository.Setup(x => x.Delete(It.IsAny<Vote>()));
+            _voteRepository.Setup(x => x.UpdateAsync(It.IsAny<Vote>(), It.IsAny<Expression<Func<Vote, bool>>>()));
 
             var x = await _deleteVoteCommandHandler.Handle(command, new CancellationToken());
-
-            _voteRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -213,12 +208,11 @@ namespace Tests.Business.Handlers
             var command = new DeleteVoteCommand();
 
             _voteRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Vote, bool>>>()))
-                .ReturnsAsync((Vote)null);
+                .ReturnsAsync((Vote) null);
 
-            _voteRepository.Setup(x => x.Delete(It.IsAny<Vote>()));
+            _voteRepository.Setup(x => x.UpdateAsync(It.IsAny<Vote>(), It.IsAny<Expression<Func<Vote, bool>>>()));
 
             var x = await _deleteVoteCommandHandler.Handle(command, new CancellationToken());
-
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.VoteNotFound);
         }

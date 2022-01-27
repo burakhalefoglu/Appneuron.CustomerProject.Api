@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -15,7 +14,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 {
     public class GetCustomerProjectQuery : IRequest<IDataResult<CustomerProject>>
     {
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
 
         public class
             GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectQuery, IDataResult<CustomerProject>>
@@ -37,11 +36,11 @@ namespace Business.Handlers.CustomerProjects.Queries
             public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerProject = await _customerProjectRepository.GetAsync(p =>
-                    p.CustomerId == userId && p.ProjectKey == request.ProjectKey);
+                    p.CustomerId == userId && p.ProjectId == request.ProjectId);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

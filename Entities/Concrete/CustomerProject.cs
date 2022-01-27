@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using Core.Entities;
 
 #nullable disable
 
 namespace Entities.Concrete
 {
-    public class CustomerProject : IEntity
+    public class CustomerProject : DocumentDbEntity
     {
-        public long Id { get; set; }
-        public int CustomerId { get; set; }
-        public short? VoteId { get; set; }
+        public bool Status = true;
+        public string CustomerId { get; set; }
+        public string VoteId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectBody { get; set; }
-        public bool? Statuse { get; set; }
-
-        public virtual Customer Customer { get; set; }
-        public virtual Vote Vote { get; set; }
-        public virtual ICollection<CustomerProjectHasProduct> CustomerProjectHasProducts { get; set; }
-        public virtual ICollection<ProjectPlatform> ProjectPlatforms { get; set; }
-        public virtual ICollection<Client> Clients { get; set; }
     }
 }

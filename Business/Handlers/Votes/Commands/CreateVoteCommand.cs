@@ -23,13 +23,11 @@ namespace Business.Handlers.Votes.Commands
 
         public class CreateVoteCommandHandler : IRequestHandler<CreateVoteCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IVoteRepository _voteRepository;
 
-            public CreateVoteCommandHandler(IVoteRepository voteRepository, IMediator mediator)
+            public CreateVoteCommandHandler(IVoteRepository voteRepository)
             {
                 _voteRepository = voteRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateVoteValidator), Priority = 1)]
@@ -49,8 +47,7 @@ namespace Business.Handlers.Votes.Commands
                     VoteValue = request.VoteValue
                 };
 
-                _voteRepository.Add(addedVote);
-                await _voteRepository.SaveChangesAsync();
+                await _voteRepository.AddAsync(addedVote);
                 return new SuccessResult(Messages.Added);
             }
         }

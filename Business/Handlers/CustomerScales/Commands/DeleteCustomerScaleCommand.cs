@@ -15,18 +15,15 @@ namespace Business.Handlers.CustomerScales.Commands
     /// </summary>
     public class DeleteCustomerScaleCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteCustomerScaleCommandHandler : IRequestHandler<DeleteCustomerScaleCommand, IResult>
         {
             private readonly ICustomerScaleRepository _customerScaleRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
-                IMediator mediator)
+            public DeleteCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository)
             {
                 _customerScaleRepository = customerScaleRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -34,10 +31,11 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
+                var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (customerScaleToDelete == null) return new ErrorResult(Messages.CustomerScaleNotFound);
-                _customerScaleRepository.Delete(customerScaleToDelete);
-                await _customerScaleRepository.SaveChangesAsync();
+                customerScaleToDelete.Status = false;
+                await _customerScaleRepository.UpdateAsync(customerScaleToDelete,
+                    x => x.ObjectId == customerScaleToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

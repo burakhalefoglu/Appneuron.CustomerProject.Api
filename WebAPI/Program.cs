@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Business.MessageBrokers;
@@ -23,7 +22,7 @@ namespace WebAPI
         public static async Task Main(string[] args)
         {
             Console.WriteLine("Server start");
-            var result =  CreateHostBuilder(args).Build().RunAsync();
+            var result = CreateHostBuilder(args).Build().RunAsync();
             var consumer = ConsumerAdapter();
             result.Wait();
             consumer.Wait();
@@ -53,13 +52,12 @@ namespace WebAPI
         {
             Console.WriteLine("Kafka Listening");
             var messageBroker = ServiceTool.ServiceProvider.GetService<IMessageBroker>();
-            var clientCreationMessageService = ServiceTool.ServiceProvider.GetService<IGetClientCreationMessageService>();
+            var clientCreationMessageService =
+                ServiceTool.ServiceProvider.GetService<IGetClientCreationMessageService>();
 
             await messageBroker.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
                 "CreateClientConsumerGroup",
                 clientCreationMessageService.GetClientCreationMessageQuery);
-
-
         }
     }
 }

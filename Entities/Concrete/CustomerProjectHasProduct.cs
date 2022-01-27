@@ -4,13 +4,9 @@
 
 namespace Entities.Concrete
 {
-    public class CustomerProjectHasProduct : IEntity
+    public class CustomerProjectHasProduct : DocumentDbEntity
     {
-        public long Id { get; set; }
-        public short ProductId { get; set; }
-        public long ProjectId { get; set; }
-
-        public virtual AppneuronProduct Product { get; set; }
-        public virtual CustomerProject Project { get; set; }
+        public string ProductId { get; set; }
+        public string ProjectId { get; set; }
     }
 }

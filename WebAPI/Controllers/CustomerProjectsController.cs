@@ -62,7 +62,7 @@ namespace WebAPI.Controllers
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetByProjectKey(string id)
         {
-            var result = await Mediator.Send(new GetCustomerProjectQuery { ProjectKey = id });
+            var result = await Mediator.Send(new GetCustomerProjectQuery {ProjectId = id});
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }

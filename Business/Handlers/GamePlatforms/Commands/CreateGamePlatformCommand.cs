@@ -24,12 +24,10 @@ namespace Business.Handlers.GamePlatforms.Commands
         public class CreateGamePlatformCommandHandler : IRequestHandler<CreateGamePlatformCommand, IResult>
         {
             private readonly IGamePlatformRepository _gamePlatformRepository;
-            private readonly IMediator _mediator;
 
-            public CreateGamePlatformCommandHandler(IGamePlatformRepository gamePlatformRepository, IMediator mediator)
+            public CreateGamePlatformCommandHandler(IGamePlatformRepository gamePlatformRepository)
             {
                 _gamePlatformRepository = gamePlatformRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateGamePlatformValidator), Priority = 1)]
@@ -50,8 +48,7 @@ namespace Business.Handlers.GamePlatforms.Commands
                     PlatformDescription = request.PlatformDescription
                 };
 
-                _gamePlatformRepository.Add(addedGamePlatform);
-                await _gamePlatformRepository.SaveChangesAsync();
+                await _gamePlatformRepository.AddAsync(addedGamePlatform);
                 return new SuccessResult(Messages.Added);
             }
         }

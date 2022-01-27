@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -14,19 +13,17 @@ namespace Business.Handlers.CustomerProjects.Queries
 {
     public class GetProjectCountQuery : IRequest<IDataResult<int>>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountQuery, IDataResult<int>>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public GetProjectCountQueryHandler(ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -35,12 +32,13 @@ namespace Business.Handlers.CustomerProjects.Queries
             public async Task<IDataResult<int>> Handle(GetProjectCountQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var result =
-                    await _customerProjectRepository.GetCountAsync(p => p.CustomerId == userId && p.Id == request.Id);
-                return new SuccessDataResult<int>(result);
+                    await _customerProjectRepository.GetListAsync(p =>
+                        p.CustomerId == userId && p.ObjectId == request.Id);
+                return new SuccessDataResult<int>(result.ToList().Count);
             }
         }
     }

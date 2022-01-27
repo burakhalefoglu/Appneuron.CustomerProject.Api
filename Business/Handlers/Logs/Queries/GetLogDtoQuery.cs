@@ -19,12 +19,10 @@ namespace Business.Handlers.Logs.Queries
         public class GetLogDtoQueryHandler : IRequestHandler<GetLogDtoQuery, IDataResult<IEnumerable<LogDto>>>
         {
             private readonly ILogRepository _logRepository;
-            private readonly IMediator _mediator;
 
-            public GetLogDtoQueryHandler(ILogRepository logRepository, IMediator mediator)
+            public GetLogDtoQueryHandler(ILogRepository logRepository)
             {
                 _logRepository = logRepository;
-                _mediator = mediator;
             }
 
             [SecuredOperation(Priority = 1)]
@@ -46,7 +44,7 @@ namespace Business.Handlers.Logs.Queries
 
                     var list = new LogDto
                     {
-                        Id = item.Id,
+                        Id = item.ObjectId,
                         Level = item.Level,
                         TimeStamp = item.TimeStamp,
                         Type = msg.Parameters[0].Type,

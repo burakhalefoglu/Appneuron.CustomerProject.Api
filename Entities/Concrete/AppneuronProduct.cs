@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Entities;
+﻿using Core.Entities;
 
 #nullable disable
 
 namespace Entities.Concrete
 {
-    public class AppneuronProduct : IEntity
+    public class AppneuronProduct : DocumentDbEntity
     {
-        public short Id { get; set; }
+        public bool Status = true;
         public string ProductName { get; set; }
-
-        public virtual ICollection<CustomerProjectHasProduct> CustomerProjectHasProducts { get; set; }
     }
 }

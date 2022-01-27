@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization;
 using Business;
-using Business.Helpers;
 using Business.MessageBrokers.Manager.GetClientCreationMessage;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Extensions;
@@ -115,7 +114,6 @@ namespace WebAPI
                 case ApplicationMode.Development:
                     app.UseSwagger();
                     app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "DevArchitecture"); });
-                    app.UseDbFakeDataCreator();
                     app.UseDeveloperExceptionPage();
                     break;
                 case ApplicationMode.Profiling:

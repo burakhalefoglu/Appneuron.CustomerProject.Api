@@ -24,12 +24,10 @@ namespace Business.Handlers.Discounts.Commands
         public class CreateDiscountCommandHandler : IRequestHandler<CreateDiscountCommand, IResult>
         {
             private readonly IDiscountRepository _discountRepository;
-            private readonly IMediator _mediator;
 
-            public CreateDiscountCommandHandler(IDiscountRepository discountRepository, IMediator mediator)
+            public CreateDiscountCommandHandler(IDiscountRepository discountRepository)
             {
                 _discountRepository = discountRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateDiscountValidator), Priority = 1)]
@@ -50,8 +48,7 @@ namespace Business.Handlers.Discounts.Commands
                     Percent = request.Percent
                 };
 
-                _discountRepository.Add(addedDiscount);
-                await _discountRepository.SaveChangesAsync();
+                await _discountRepository.AddAsync(addedDiscount);
                 return new SuccessResult(Messages.Added);
             }
         }

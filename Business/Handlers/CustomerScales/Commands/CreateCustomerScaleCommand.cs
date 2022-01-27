@@ -24,13 +24,10 @@ namespace Business.Handlers.CustomerScales.Commands
         public class CreateCustomerScaleCommandHandler : IRequestHandler<CreateCustomerScaleCommand, IResult>
         {
             private readonly ICustomerScaleRepository _customerScaleRepository;
-            private readonly IMediator _mediator;
 
-            public CreateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
-                IMediator mediator)
+            public CreateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository)
             {
                 _customerScaleRepository = customerScaleRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateCustomerScaleValidator), Priority = 1)]
@@ -49,9 +46,7 @@ namespace Business.Handlers.CustomerScales.Commands
                     Name = request.Name,
                     Description = request.Description
                 };
-
-                _customerScaleRepository.Add(addedCustomerScale);
-                await _customerScaleRepository.SaveChangesAsync();
+                await _customerScaleRepository.AddAsync(addedCustomerScale);
                 return new SuccessResult(Messages.Added);
             }
         }

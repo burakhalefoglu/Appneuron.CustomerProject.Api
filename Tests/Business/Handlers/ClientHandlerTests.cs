@@ -32,11 +32,11 @@ namespace Tests.Business.Handlers
             _clientRepository = new Mock<IClientRepository>();
             _mediator = new Mock<IMediator>();
 
-            _getClientQueryHandler = new GetClientQueryHandler(_clientRepository.Object, _mediator.Object);
+            _getClientQueryHandler = new GetClientQueryHandler(_clientRepository.Object);
             _getClientsQueryHandler = new GetClientsQueryHandler(_clientRepository.Object, _mediator.Object);
             _createClientCommandHandler = new CreateClientCommandHandler(_clientRepository.Object, _mediator.Object);
             _updateClientCommandHandler = new UpdateClientCommandHandler(_clientRepository.Object, _mediator.Object);
-            _deleteClientCommandHandler = new DeleteClientCommandHandler(_clientRepository.Object, _mediator.Object);
+            _deleteClientCommandHandler = new DeleteClientCommandHandler(_clientRepository.Object);
         }
 
         private Mock<IClientRepository> _clientRepository;
@@ -54,13 +54,13 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetClientQuery
             {
-                Id = 1
+                Id = "507f191e810c19729de860ea"
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>())).ReturnsAsync(new Client
             {
-                ClientId = "clientIdTest",
-                ProjectId = 99
+                ClientId = "507f191e810c19729de860ea",
+                ProjectId = "107f191e810c19729de860ea"
             });
 
 
@@ -69,7 +69,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.ClientId.Should().Be("clientIdTest");
+            x.Data.ClientId.Should().Be("507f191e810c19729de860ea");
         }
 
         [Test]
@@ -83,16 +83,16 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        ProjectId = 99,
-                        ClientId = "ClientIdTest1"
+                        ProjectId = "507f191e810c19729de860ea",
+                        ClientId = "300f191e810c19729de860ea"
                     },
 
                     new()
                     {
-                        ProjectId = 100,
-                        ClientId = "ClientIdTest2"
+                        ProjectId = "107f191e810c19729de860ea",
+                        ClientId = "207f191e810c19729de860ea"
                     }
-                });
+                }.AsQueryable);
 
 
             //Act
@@ -109,8 +109,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateClientCommand
             {
-                ClientId = "ClientIdTest",
-                ProjectKey = "TestProject",
+                ClientId = "507f191e810c19729de860ea",
+                ProjectId = "107f191e810c19729de860ea",
                 IsPaidClient = false,
                 CreatedAt = DateTime.Now
             };
@@ -122,12 +122,9 @@ namespace Tests.Business.Handlers
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult<Client>(null));
 
-            _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
+            _clientRepository.Setup(x => x.AddAsync(It.IsAny<Client>()));
 
             var x = await _createClientCommandHandler.Handle(command, new CancellationToken());
-
-            _clientRepository.Verify(c=> c.SaveChangesAsync());
-
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -138,8 +135,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateClientCommand
             {
-                ClientId = "ClientIdTest",
-                ProjectKey = "TestProject",
+                ClientId = "507f191e810c19729de860ea",
+                ProjectId = "107f191e810c19729de860ea",
                 IsPaidClient = false,
                 CreatedAt = DateTime.Now
             };
@@ -151,7 +148,7 @@ namespace Tests.Business.Handlers
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult<Client>(null));
 
-            _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
+            _clientRepository.Setup(x => x.AddAsync(It.IsAny<Client>()));
 
             var x = await _createClientCommandHandler.Handle(command, new CancellationToken());
 
@@ -165,8 +162,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateClientCommand
             {
-                ClientId = "ClientIdTest",
-                ProjectKey = "TestProject",
+                ClientId = "507f191e810c19729de860ea",
+                ProjectId = "107f191e810c19729de860ea",
                 IsPaidClient = false,
                 CreatedAt = DateTime.Now
             };
@@ -178,7 +175,7 @@ namespace Tests.Business.Handlers
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult(new Client()));
 
-            _clientRepository.Setup(x => x.Add(It.IsAny<Client>())).Returns(new Client());
+            _clientRepository.Setup(x => x.AddAsync(It.IsAny<Client>()));
 
             var x = await _createClientCommandHandler.Handle(command, new CancellationToken());
 
@@ -192,18 +189,15 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateClientCommand
             {
-                ClientId = "test",
-                Id = 1
+                ClientId = "507f191e810c19729de860ea",
+                Id = "107f191e810c19729de860ea"
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .ReturnsAsync(new Client());
 
-            _clientRepository.Setup(x => x.Update(It.IsAny<Client>())).Returns(new Client());
-
+            _clientRepository.Setup(x => x.Update(It.IsAny<Client>(), It.IsAny<Expression<Func<Client, bool>>>()));
             var x = await _updateClientCommandHandler.Handle(command, new CancellationToken());
-
-            _clientRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -214,17 +208,15 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateClientCommand
             {
-                ClientId = "test",
-                Id = 1
+                ClientId = "507f191e810c19729de860ea",
+                Id = "107f191e810c19729de860ea"
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult<Client>(null));
 
-            _clientRepository.Setup(x => x.Update(It.IsAny<Client>())).Returns(new Client());
-
+            _clientRepository.Setup(x => x.Update(It.IsAny<Client>(), It.IsAny<Expression<Func<Client, bool>>>()));
             var x = await _updateClientCommandHandler.Handle(command, new CancellationToken());
-
             x.Success.Should().BeFalse();
             x.Message.Should().Be(Messages.ClientNotFound);
         }
@@ -235,17 +227,15 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteClientCommand
             {
-                Id = 1
+                Id = "107f191e810c19729de860ea"
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .ReturnsAsync(new Client());
 
-            _clientRepository.Setup(x => x.Delete(It.IsAny<Client>()));
-
+            _clientRepository.Setup(x => x.UpdateAsync(It.IsAny<Client>(),
+                It.IsAny<Expression<Func<Client, bool>>>()));
             var x = await _deleteClientCommandHandler.Handle(command, new CancellationToken());
-
-            _clientRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -256,13 +246,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteClientCommand
             {
-                Id = 1
+                Id = "107f191e810c19729de860ea"
             };
 
             _clientRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Client, bool>>>()))
                 .Returns(Task.FromResult<Client>(null));
 
-            _clientRepository.Setup(x => x.Delete(It.IsAny<Client>()));
+            _clientRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<Client>(), It.IsAny<Expression<Func<Client, bool>>>()));
 
             var x = await _deleteClientCommandHandler.Handle(command, new CancellationToken());
 

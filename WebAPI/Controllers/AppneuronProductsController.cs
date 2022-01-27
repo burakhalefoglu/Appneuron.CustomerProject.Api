@@ -43,9 +43,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<AppneuronProduct>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(short id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var result = await Mediator.Send(new GetAppneuronProductQuery { Id = id });
+            var result = await Mediator.Send(new GetAppneuronProductQuery {Id = id});
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }

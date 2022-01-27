@@ -12,7 +12,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
 {
     public class GetAppneuronProductQuery : IRequest<IDataResult<AppneuronProduct>>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class
             GetAppneuronProductQueryHandler : IRequestHandler<GetAppneuronProductQuery, IDataResult<AppneuronProduct>>
@@ -32,7 +32,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
             public async Task<IDataResult<AppneuronProduct>> Handle(GetAppneuronProductQuery request,
                 CancellationToken cancellationToken)
             {
-                var appneuronProduct = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);
+                var appneuronProduct = await _appneuronProductRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<AppneuronProduct>(appneuronProduct);
             }
         }

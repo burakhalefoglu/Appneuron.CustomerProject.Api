@@ -12,17 +12,15 @@ namespace Business.Handlers.Industries.Queries
 {
     public class GetIndustryQuery : IRequest<IDataResult<Industry>>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class GetIndustryQueryHandler : IRequestHandler<GetIndustryQuery, IDataResult<Industry>>
         {
             private readonly IIndustryRepository _industryRepository;
-            private readonly IMediator _mediator;
 
-            public GetIndustryQueryHandler(IIndustryRepository industryRepository, IMediator mediator)
+            public GetIndustryQueryHandler(IIndustryRepository industryRepository)
             {
                 _industryRepository = industryRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(FileLogger))]
@@ -30,7 +28,7 @@ namespace Business.Handlers.Industries.Queries
             public async Task<IDataResult<Industry>> Handle(GetIndustryQuery request,
                 CancellationToken cancellationToken)
             {
-                var industry = await _industryRepository.GetAsync(p => p.Id == request.Id);
+                var industry = await _industryRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<Industry>(industry);
             }
         }

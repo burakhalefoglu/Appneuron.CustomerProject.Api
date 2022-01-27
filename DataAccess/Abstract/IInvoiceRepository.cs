@@ -3,7 +3,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IInvoiceRepository : IEntityRepository<Invoice>
+    public interface IInvoiceRepository : IDocumentDbRepository<Invoice>
     {
     }
 }

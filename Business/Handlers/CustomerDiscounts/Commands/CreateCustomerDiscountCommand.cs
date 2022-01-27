@@ -18,19 +18,16 @@ namespace Business.Handlers.CustomerDiscounts.Commands
     /// </summary>
     public class CreateCustomerDiscountCommand : IRequest<IResult>
     {
-        public int CustomerId { get; set; }
-        public short DiscountId { get; set; }
+        public string CustomerId { get; set; }
+        public string DiscountId { get; set; }
 
         public class CreateCustomerDiscountCommandHandler : IRequestHandler<CreateCustomerDiscountCommand, IResult>
         {
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
-            private readonly IMediator _mediator;
 
-            public CreateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository,
-                IMediator mediator)
+            public CreateCustomerDiscountCommandHandler(ICustomerDiscountRepository customerDiscountRepository)
             {
                 _customerDiscountRepository = customerDiscountRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateCustomerDiscountValidator), Priority = 1)]
@@ -52,8 +49,7 @@ namespace Business.Handlers.CustomerDiscounts.Commands
                     DiscountId = request.DiscountId
                 };
 
-                _customerDiscountRepository.Add(addedCustomerDiscount);
-                await _customerDiscountRepository.SaveChangesAsync();
+                await _customerDiscountRepository.AddAsync(addedCustomerDiscount);
                 return new SuccessResult(Messages.Added);
             }
         }

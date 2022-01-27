@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -24,13 +23,11 @@ namespace Business.Handlers.CustomerProjects.Commands
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public DeleteCustomerProjectCommandHandler(ICustomerProjectRepository customerProjectRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerProjectRepository = customerProjectRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -39,15 +36,16 @@ namespace Business.Handlers.CustomerProjects.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerProjectCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerProjectToDelete =
                     await _customerProjectRepository.GetAsync(p =>
-                        p.ProjectKey == request.Id && p.CustomerId == userId);
+                        p.ProjectId == request.Id && p.CustomerId == userId);
                 if (customerProjectToDelete == null) return new ErrorResult(Messages.ProjectNotFound);
-                _customerProjectRepository.Delete(customerProjectToDelete);
-                await _customerProjectRepository.SaveChangesAsync();
+                customerProjectToDelete.Status = false;
+                await _customerProjectRepository.UpdateAsync(customerProjectToDelete,
+                    x => x.ObjectId == customerProjectToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

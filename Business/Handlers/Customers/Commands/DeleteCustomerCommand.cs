@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -22,13 +21,11 @@ namespace Business.Handlers.Customers.Commands
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public DeleteCustomerCommandHandler(ICustomerRepository customerRepository,
-                IMediator mediator, IHttpContextAccessor httpContextAccessor)
+                IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -37,14 +34,14 @@ namespace Business.Handlers.Customers.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var customerToDelete = await _customerRepository.GetAsync(p => p.UserId == userId);
+                var customerToDelete = await _customerRepository.GetAsync(p => p.ObjectId == userId);
                 if (customerToDelete == null) return new ErrorResult(Messages.CustomerNotFound);
-
-                _customerRepository.Delete(customerToDelete);
-                await _customerRepository.SaveChangesAsync();
+                customerToDelete.Status = false;
+                await _customerRepository.UpdateAsync(customerToDelete,
+                    x => x.ObjectId == customerToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

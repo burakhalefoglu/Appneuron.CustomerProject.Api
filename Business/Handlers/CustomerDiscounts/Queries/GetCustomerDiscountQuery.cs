@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -15,21 +14,18 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 {
     public class GetCustomerDiscountQuery : IRequest<IDataResult<CustomerDiscount>>
     {
-        public short DiscountId { get; set; }
+        public string DiscountId { get; set; }
 
         public class
             GetCustomerDiscountQueryHandler : IRequestHandler<GetCustomerDiscountQuery, IDataResult<CustomerDiscount>>
         {
             private readonly ICustomerDiscountRepository _customerDiscountRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public GetCustomerDiscountQueryHandler(ICustomerDiscountRepository customerDiscountRepository,
-                IMediator mediator,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerDiscountRepository = customerDiscountRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -38,8 +34,8 @@ namespace Business.Handlers.CustomerDiscounts.Queries
             public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request,
                 CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerDiscount =
                     await _customerDiscountRepository.GetAsync(p =>

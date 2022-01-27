@@ -15,20 +15,17 @@ namespace Business.Handlers.CustomerScales.Commands
 {
     public class UpdateCustomerScaleCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
         public class UpdateCustomerScaleCommandHandler : IRequestHandler<UpdateCustomerScaleCommand, IResult>
         {
             private readonly ICustomerScaleRepository _customerScaleRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository,
-                IMediator mediator)
+            public UpdateCustomerScaleCommandHandler(ICustomerScaleRepository customerScaleRepository)
             {
                 _customerScaleRepository = customerScaleRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateCustomerScaleValidator), Priority = 1)]
@@ -37,13 +34,13 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Id == request.Id);
+                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.ObjectId == request.Id);
                 if (isThereCustomerScaleRecord == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 isThereCustomerScaleRecord.Name = request.Name;
                 isThereCustomerScaleRecord.Description = request.Description;
 
-                _customerScaleRepository.Update(isThereCustomerScaleRecord);
-                await _customerScaleRepository.SaveChangesAsync();
+                await _customerScaleRepository.UpdateAsync(isThereCustomerScaleRecord,
+                    x => x.ObjectId == isThereCustomerScaleRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

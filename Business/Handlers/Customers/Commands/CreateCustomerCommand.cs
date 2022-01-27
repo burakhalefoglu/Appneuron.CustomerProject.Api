@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -21,21 +20,18 @@ namespace Business.Handlers.Customers.Commands
     /// </summary>
     public class CreateCustomerCommand : IRequest<IResult>
     {
-        public short CustomerScaleId { get; set; }
-        public short IndustryId { get; set; }
+        public string CustomerScaleId { get; set; }
+        public string IndustryId { get; set; }
 
         public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, IResult>
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
             public CreateCustomerCommandHandler(ICustomerRepository customerRepository,
-                IMediator mediator,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
-                _mediator = mediator;
                 _httpContextAccessor = httpContextAccessor;
             }
 
@@ -45,20 +41,18 @@ namespace Business.Handlers.Customers.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
             {
-                var userId = Convert.ToInt32(_httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value);
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isCustomerExist = await _customerRepository.GetAsync(c => c.UserId == userId);
+                var isCustomerExist = await _customerRepository.GetAsync(c => c.ObjectId == userId);
                 if (isCustomerExist != null) return new ErrorResult(Messages.CustomerNotFound);
                 var addedCustomer = new Customer
                 {
-                    UserId = userId,
                     CustomerScaleId = request.CustomerScaleId,
                     IndustryId = request.IndustryId
                 };
 
-                _customerRepository.Add(addedCustomer);
-                await _customerRepository.SaveChangesAsync();
+                await _customerRepository.AddAsync(addedCustomer);
                 return new SuccessResult(Messages.Added);
             }
         }

@@ -15,7 +15,7 @@ namespace Business.Handlers.CustomerProjects.ValidationRules
     {
         public UpdateCustomerProjectValidator()
         {
-            RuleFor(x => x.ProjectKey).NotEmpty();
+            RuleFor(x => x.ProjectId).NotEmpty();
             RuleFor(x => x.ProjectName).NotEmpty();
             RuleFor(x => x.Statuse).NotNull();
         }

@@ -15,17 +15,15 @@ namespace Business.Handlers.Clients.Commands
     /// </summary>
     public class DeleteClientCommand : IRequest<IResult>
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteClientCommandHandler : IRequestHandler<DeleteClientCommand, IResult>
         {
             private readonly IClientRepository _clientRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteClientCommandHandler(IClientRepository clientRepository, IMediator mediator)
+            public DeleteClientCommandHandler(IClientRepository clientRepository)
             {
                 _clientRepository = clientRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,12 +31,11 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteClientCommand request, CancellationToken cancellationToken)
             {
-                var clientToDelete = await _clientRepository.GetAsync(p => p.Id == request.Id);
+                var clientToDelete = await _clientRepository.GetAsync(p => p.ObjectId == request.Id);
 
                 if (clientToDelete == null) return new ErrorResult(Messages.ClientNotFound);
-
-                _clientRepository.Delete(clientToDelete);
-                await _clientRepository.SaveChangesAsync();
+                clientToDelete.Status = false;
+                await _clientRepository.UpdateAsync(clientToDelete, x => x.ObjectId == clientToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

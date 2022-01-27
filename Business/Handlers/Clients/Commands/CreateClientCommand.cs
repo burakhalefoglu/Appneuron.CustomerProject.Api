@@ -21,7 +21,7 @@ namespace Business.Handlers.Clients.Commands
     public class CreateClientCommand : IRequest<IResult>
     {
         public string ClientId { get; set; }
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
@@ -44,26 +44,24 @@ namespace Business.Handlers.Clients.Commands
             {
                 var resultProject = await _mediator.Send(new GetCustomerProjectInternalQuery
                 {
-                    ProjectKey = request.ProjectKey
-                });
+                    ProjectId = request.ProjectId
+                }, cancellationToken);
 
                 if (resultProject.Data == null) return new ErrorResult(Messages.ProjectNotFound);
 
                 var resultClient = await _clientRepository.GetAsync(c => c.ClientId == request.ClientId &&
-                                                                         c.ProjectKey == request.ProjectKey);
+                                                                         c.ProjectId == request.ProjectId);
                 if (resultClient != null) return new ErrorResult(Messages.ClientAlreadyExist);
 
                 var addedClient = new Client
                 {
                     ClientId = request.ClientId,
-                    ProjectId = resultProject.Data.Id,
+                    ProjectId = resultProject.Data.ProjectId,
                     CreatedAt = request.CreatedAt,
-                    IsPaidClient = request.IsPaidClient,
-                    ProjectKey = request.ProjectKey
+                    IsPaidClient = request.IsPaidClient
                 };
 
-                _clientRepository.Add(addedClient);
-                await _clientRepository.SaveChangesAsync();
+                await _clientRepository.AddAsync(addedClient);
                 return new SuccessResult(Messages.Added);
             }
         }

@@ -15,7 +15,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
     /// </summary>
     public class DeleteAppneuronProductCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteAppneuronProductCommandHandler : IRequestHandler<DeleteAppneuronProductCommand, IResult>
         {
@@ -35,10 +35,12 @@ namespace Business.Handlers.AppneuronProducts.Commands
             public async Task<IResult> Handle(DeleteAppneuronProductCommand request,
                 CancellationToken cancellationToken)
             {
-                var appneuronProductToDelete = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);
+                var appneuronProductToDelete =
+                    await _appneuronProductRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (appneuronProductToDelete == null) return new ErrorResult(Messages.AppneuronProductNotFound);
-                _appneuronProductRepository.Delete(appneuronProductToDelete);
-                await _appneuronProductRepository.SaveChangesAsync();
+                appneuronProductToDelete.Status = false;
+                await _appneuronProductRepository.UpdateAsync(appneuronProductToDelete,
+                    x => x.ObjectId == appneuronProductToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

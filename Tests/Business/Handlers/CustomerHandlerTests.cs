@@ -12,6 +12,7 @@ using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Customers.Queries.GetCustomerQuery;
@@ -32,13 +33,13 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
-            _getCustomerQueryHandler = new GetCustomerQueryHandler(_customerRepository.Object,
-                _mediator.Object, _httpContextAccessor.Object);
+            _getCustomerQueryHandler =
+                new GetCustomerQueryHandler(_customerRepository.Object, _httpContextAccessor.Object);
             _getCustomersQueryHandler = new GetCustomersQueryHandler(_customerRepository.Object, _mediator.Object);
-            _createCustomerCommandHandler = new CreateCustomerCommandHandler(_customerRepository.Object,
-                _mediator.Object, _httpContextAccessor.Object);
-            _deleteCustomerCommandHandler = new DeleteCustomerCommandHandler(_customerRepository.Object,
-                _mediator.Object, _httpContextAccessor.Object);
+            _createCustomerCommandHandler =
+                new CreateCustomerCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
+            _deleteCustomerCommandHandler =
+                new DeleteCustomerCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
         }
 
         private Mock<ICustomerRepository> _customerRepository;
@@ -59,7 +60,7 @@ namespace Tests.Business.Handlers
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(
                 new Customer
                 {
-                    UserId = 1
+                    Id = new ObjectId("507f191e810c19729de860ea")
                 });
 
             //Act
@@ -67,7 +68,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.UserId.Should().Be(1);
+            x.Data.ObjectId.Should().Be("507f191e810c19729de860ea");
         }
 
 
@@ -77,19 +78,20 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomersQuery();
 
-            _customerRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
+            _customerRepository.Setup(x
+                    => x.GetListAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new List<Customer>
                 {
                     new()
                     {
-                        UserId = 1
+                        Id = ObjectId.GenerateNewId()
                     },
 
                     new()
                     {
-                        UserId = 2
+                        Id = ObjectId.GenerateNewId()
                     }
-                });
+                }.AsQueryable);
 
             //Act
             var x = await _getCustomersQueryHandler.Handle(query, new CancellationToken());
@@ -103,18 +105,18 @@ namespace Tests.Business.Handlers
         public async Task Customer_CreateCommand_Success()
         {
             //Arrange
-            var command = new CreateCustomerCommand();
-            command.CustomerScaleId = 2;
-            command.IndustryId = 1;
+            var command = new CreateCustomerCommand
+            {
+                CustomerScaleId = "107f191e810c19729de860ea",
+                IndustryId = "507f191e810c19729de860ea"
+            };
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync((Customer) null);
 
-            _customerRepository.Setup(x => x.Add(It.IsAny<Customer>())).Returns(new Customer());
+            _customerRepository.Setup(x => x.Add(It.IsAny<Customer>()));
 
             var x = await _createCustomerCommandHandler.Handle(command, new CancellationToken());
-
-            _customerRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -123,14 +125,16 @@ namespace Tests.Business.Handlers
         public async Task Customer_CreateCommand_CustomerNotFound()
         {
             //Arrange
-            var command = new CreateCustomerCommand();
-            command.CustomerScaleId = 2;
-            command.IndustryId = 1;
+            var command = new CreateCustomerCommand
+            {
+                CustomerScaleId = "107f191e810c19729de860ea",
+                IndustryId = "507f191e810c19729de860ea"
+            };
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new Customer());
 
-            _customerRepository.Setup(x => x.Add(It.IsAny<Customer>())).Returns(new Customer());
+            _customerRepository.Setup(x => x.Add(It.IsAny<Customer>()));
 
             var x = await _createCustomerCommandHandler.Handle(command, new CancellationToken());
 
@@ -147,11 +151,10 @@ namespace Tests.Business.Handlers
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new Customer());
 
-            _customerRepository.Setup(x => x.Delete(It.IsAny<Customer>()));
+            _customerRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<Expression<Func<Customer, bool>>>()));
 
             var x = await _deleteCustomerCommandHandler.Handle(command, new CancellationToken());
-
-            _customerRepository.Verify(c => c.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -164,9 +167,10 @@ namespace Tests.Business.Handlers
             var command = new DeleteCustomerCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync((Customer) null);
 
-            _customerRepository.Setup(x => x.Delete(It.IsAny<Customer>()));
+            _customerRepository.Setup(x =>
+                x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<Expression<Func<Customer, bool>>>()));
 
             var x = await _deleteCustomerCommandHandler.Handle(command, new CancellationToken());
 

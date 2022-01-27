@@ -11,6 +11,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.CustomerScales.Queries.GetCustomerScaleQuery;
@@ -32,15 +33,15 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
 
             _getCustomerScaleQueryHandler =
-                new GetCustomerScaleQueryHandler(_customerScaleRepository.Object, _mediator.Object);
+                new GetCustomerScaleQueryHandler(_customerScaleRepository.Object);
             _getCustomerScalesQueryHandler =
                 new GetCustomerScalesQueryHandler(_customerScaleRepository.Object, _mediator.Object);
             _createCustomerScaleCommandHandler =
-                new CreateCustomerScaleCommandHandler(_customerScaleRepository.Object, _mediator.Object);
+                new CreateCustomerScaleCommandHandler(_customerScaleRepository.Object);
             _updateCustomerScaleCommandHandler =
-                new UpdateCustomerScaleCommandHandler(_customerScaleRepository.Object, _mediator.Object);
+                new UpdateCustomerScaleCommandHandler(_customerScaleRepository.Object);
             _deleteCustomerScaleCommandHandler =
-                new DeleteCustomerScaleCommandHandler(_customerScaleRepository.Object, _mediator.Object);
+                new DeleteCustomerScaleCommandHandler(_customerScaleRepository.Object);
         }
 
         private Mock<ICustomerScaleRepository> _customerScaleRepository;
@@ -58,10 +59,11 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomerScaleQuery();
 
-            _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
+            _customerScaleRepository.Setup(x =>
+                    x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale
                 {
-                    Id = 1,
+                    Id = ObjectId.GenerateNewId(),
                     Name = "Test"
                 });
 
@@ -84,16 +86,16 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = 1,
+                        Id = ObjectId.GenerateNewId(),
                         Name = "Test1"
                     },
 
                     new()
                     {
-                        Id = 2,
+                        Id = ObjectId.GenerateNewId(),
                         Name = "Test2"
                     }
-                });
+                }.AsQueryable);
 
             //Act
             var x = await _getCustomerScalesQueryHandler.Handle(query, new CancellationToken());
@@ -114,13 +116,11 @@ namespace Tests.Business.Handlers
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
-                .ReturnsAsync((CustomerScale)null);
+                .ReturnsAsync((CustomerScale) null);
 
-            _customerScaleRepository.Setup(x => x.Add(It.IsAny<CustomerScale>())).Returns(new CustomerScale());
+            _customerScaleRepository.Setup(x => x.AddAsync(It.IsAny<CustomerScale>()));
 
             var x = await _createCustomerScaleCommandHandler.Handle(command, new CancellationToken());
-
-            _customerScaleRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Added);
         }
@@ -138,7 +138,7 @@ namespace Tests.Business.Handlers
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale());
 
-            _customerScaleRepository.Setup(x => x.Add(It.IsAny<CustomerScale>())).Returns(new CustomerScale());
+            _customerScaleRepository.Setup(x => x.Add(It.IsAny<CustomerScale>()));
 
             var x = await _createCustomerScaleCommandHandler.Handle(command, new CancellationToken());
 
@@ -152,7 +152,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerScaleCommand
             {
-                Id = 1,
+                Id = ObjectId.GenerateNewId().ToString(),
                 Description = "TestDescription",
                 Name = "Test"
             };
@@ -160,11 +160,10 @@ namespace Tests.Business.Handlers
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale());
 
-            _customerScaleRepository.Setup(x => x.Update(It.IsAny<CustomerScale>())).Returns(new CustomerScale());
+            _customerScaleRepository.Setup(x
+                => x.Update(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
 
             var x = await _updateCustomerScaleCommandHandler.Handle(command, new CancellationToken());
-
-            _customerScaleRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Updated);
         }
@@ -175,15 +174,16 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerScaleCommand
             {
-                Id = 1,
+                Id = ObjectId.GenerateNewId().ToString(),
                 Description = "TestDescription",
                 Name = "Test"
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
-                .ReturnsAsync((CustomerScale)null);
+                .ReturnsAsync((CustomerScale) null);
 
-            _customerScaleRepository.Setup(x => x.Update(It.IsAny<CustomerScale>())).Returns(new CustomerScale());
+            _customerScaleRepository.Setup(x
+                => x.Update(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
 
             var x = await _updateCustomerScaleCommandHandler.Handle(command, new CancellationToken());
 
@@ -197,17 +197,16 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerScaleCommand
             {
-                Id = 1
+                Id = ObjectId.GenerateNewId().ToString()
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale());
 
-            _customerScaleRepository.Setup(x => x.Delete(It.IsAny<CustomerScale>()));
+            _customerScaleRepository.Setup(x
+                => x.UpdateAsync(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
 
             var x = await _deleteCustomerScaleCommandHandler.Handle(command, new CancellationToken());
-
-            _customerScaleRepository.Verify(x => x.SaveChangesAsync());
             x.Success.Should().BeTrue();
             x.Message.Should().Be(Messages.Deleted);
         }
@@ -218,14 +217,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerScaleCommand
             {
-                Id = 1
+                Id = ObjectId.GenerateNewId().ToString()
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
-                .ReturnsAsync((CustomerScale)null);
+                .ReturnsAsync((CustomerScale) null);
 
             _customerScaleRepository.Setup(x =>
-                x.Delete(It.IsAny<CustomerScale>()));
+                x.UpdateAsync(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
 
             var x = await _deleteCustomerScaleCommandHandler.Handle(command, new CancellationToken());
 

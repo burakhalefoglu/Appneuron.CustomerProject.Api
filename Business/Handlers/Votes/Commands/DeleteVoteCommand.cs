@@ -15,17 +15,15 @@ namespace Business.Handlers.Votes.Commands
     /// </summary>
     public class DeleteVoteCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteVoteCommandHandler : IRequestHandler<DeleteVoteCommand, IResult>
         {
-            private readonly IMediator _mediator;
             private readonly IVoteRepository _voteRepository;
 
-            public DeleteVoteCommandHandler(IVoteRepository voteRepository, IMediator mediator)
+            public DeleteVoteCommandHandler(IVoteRepository voteRepository)
             {
                 _voteRepository = voteRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,10 +31,11 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteVoteCommand request, CancellationToken cancellationToken)
             {
-                var voteToDelete = await _voteRepository.GetAsync(p => p.Id == request.Id);
+                var voteToDelete = await _voteRepository.GetAsync(p => p.ObjectId == request.Id);
                 if (voteToDelete == null) return new ErrorResult(Messages.VoteNotFound);
-                _voteRepository.Delete(voteToDelete);
-                await _voteRepository.SaveChangesAsync();
+                voteToDelete.Status = false;
+                await _voteRepository.UpdateAsync(voteToDelete,
+                    x => x.ObjectId == voteToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

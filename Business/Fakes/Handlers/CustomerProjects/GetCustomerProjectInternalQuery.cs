@@ -9,7 +9,7 @@ namespace Business.Fakes.Handlers.CustomerProjects
 {
     public class GetCustomerProjectInternalQuery : IRequest<IDataResult<CustomerProject>>
     {
-        public string ProjectKey { get; set; }
+        public string ProjectId { get; set; }
 
         public class
             GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectInternalQuery,
@@ -27,7 +27,7 @@ namespace Business.Fakes.Handlers.CustomerProjects
                 CancellationToken cancellationToken)
             {
                 var customerProject =
-                    await _customerProjectRepository.GetAsync(p => p.ProjectKey == request.ProjectKey);
+                    await _customerProjectRepository.GetAsync(p => p.ProjectId == request.ProjectId);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

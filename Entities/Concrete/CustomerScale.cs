@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using Core.Entities;
+﻿using Core.Entities;
 
 #nullable disable
 
 namespace Entities.Concrete
 {
-    public class CustomerScale : IEntity
+    public class CustomerScale : DocumentDbEntity
     {
-        public short Id { get; set; }
+        public bool Status = true;
         public string Name { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<Customer> Customers { get; set; }
     }
 }

@@ -12,20 +12,17 @@ namespace Business.Handlers.CustomerDemographics.Queries
 {
     public class GetCustomerDemographicQuery : IRequest<IDataResult<CustomerDemographic>>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class
             GetCustomerDemographicQueryHandler : IRequestHandler<GetCustomerDemographicQuery,
                 IDataResult<CustomerDemographic>>
         {
             private readonly ICustomerDemographicRepository _customerDemographicRepository;
-            private readonly IMediator _mediator;
 
-            public GetCustomerDemographicQueryHandler(ICustomerDemographicRepository customerDemographicRepository,
-                IMediator mediator)
+            public GetCustomerDemographicQueryHandler(ICustomerDemographicRepository customerDemographicRepository)
             {
                 _customerDemographicRepository = customerDemographicRepository;
-                _mediator = mediator;
             }
 
             [LogAspect(typeof(FileLogger))]
@@ -33,7 +30,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
             public async Task<IDataResult<CustomerDemographic>> Handle(GetCustomerDemographicQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
+                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.ObjectId == request.Id);
                 return new SuccessDataResult<CustomerDemographic>(customerDemographic);
             }
         }

@@ -23,12 +23,10 @@ namespace Business.Handlers.Industries.Commands
         public class CreateIndustryCommandHandler : IRequestHandler<CreateIndustryCommand, IResult>
         {
             private readonly IIndustryRepository _industryRepository;
-            private readonly IMediator _mediator;
 
-            public CreateIndustryCommandHandler(IIndustryRepository industryRepository, IMediator mediator)
+            public CreateIndustryCommandHandler(IIndustryRepository industryRepository)
             {
                 _industryRepository = industryRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateIndustryValidator), Priority = 1)]
@@ -47,8 +45,7 @@ namespace Business.Handlers.Industries.Commands
                     Name = request.Name
                 };
 
-                _industryRepository.Add(addedIndustry);
-                await _industryRepository.SaveChangesAsync();
+                await _industryRepository.AddAsync(addedIndustry);
                 return new SuccessResult(Messages.Added);
             }
         }

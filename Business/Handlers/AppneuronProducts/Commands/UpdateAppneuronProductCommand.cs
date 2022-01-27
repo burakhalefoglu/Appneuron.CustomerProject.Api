@@ -15,7 +15,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
 {
     public class UpdateAppneuronProductCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
         public string ProductName { get; set; }
 
         public class UpdateAppneuronProductCommandHandler : IRequestHandler<UpdateAppneuronProductCommand, IResult>
@@ -37,12 +37,13 @@ namespace Business.Handlers.AppneuronProducts.Commands
             public async Task<IResult> Handle(UpdateAppneuronProductCommand request,
                 CancellationToken cancellationToken)
             {
-                var isThereAppneuronProductRecord = await _appneuronProductRepository.GetAsync(u => u.Id == request.Id);
+                var isThereAppneuronProductRecord =
+                    await _appneuronProductRepository.GetAsync(u => u.ObjectId == request.Id);
                 if (isThereAppneuronProductRecord == null) return new ErrorResult(Messages.AppneuronProductNotFound);
                 isThereAppneuronProductRecord.ProductName = request.ProductName;
 
-                _appneuronProductRepository.Update(isThereAppneuronProductRecord);
-                await _appneuronProductRepository.SaveChangesAsync();
+                await _appneuronProductRepository.UpdateAsync(isThereAppneuronProductRecord,
+                    x => x.ObjectId == isThereAppneuronProductRecord.ObjectId);
                 return new SuccessResult(Messages.Updated);
             }
         }

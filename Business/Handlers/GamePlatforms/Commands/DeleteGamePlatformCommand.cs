@@ -15,17 +15,15 @@ namespace Business.Handlers.GamePlatforms.Commands
     /// </summary>
     public class DeleteGamePlatformCommand : IRequest<IResult>
     {
-        public short Id { get; set; }
+        public string Id { get; set; }
 
         public class DeleteGamePlatformCommandHandler : IRequestHandler<DeleteGamePlatformCommand, IResult>
         {
             private readonly IGamePlatformRepository _gamePlatformRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteGamePlatformCommandHandler(IGamePlatformRepository gamePlatformRepository, IMediator mediator)
+            public DeleteGamePlatformCommandHandler(IGamePlatformRepository gamePlatformRepository)
             {
                 _gamePlatformRepository = gamePlatformRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -33,13 +31,13 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var gamePlatformToDelete = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
+                var gamePlatformToDelete = await _gamePlatformRepository.GetAsync(p => p.ObjectId == request.Id);
 
                 if (gamePlatformToDelete == null)
                     return new ErrorResult(Messages.GamePlatformNotFound);
-
-                _gamePlatformRepository.Delete(gamePlatformToDelete);
-                await _gamePlatformRepository.SaveChangesAsync();
+                gamePlatformToDelete.Status = false;
+                await _gamePlatformRepository.UpdateAsync(gamePlatformToDelete,
+                    x => x.ObjectId == gamePlatformToDelete.ObjectId);
                 return new SuccessResult(Messages.Deleted);
             }
         }

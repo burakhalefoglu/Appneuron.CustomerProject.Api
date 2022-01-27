@@ -23,13 +23,10 @@ namespace Business.Handlers.AppneuronProducts.Commands
         public class CreateAppneuronProductCommandHandler : IRequestHandler<CreateAppneuronProductCommand, IResult>
         {
             private readonly IAppneuronProductRepository _appneuronProductRepository;
-            private readonly IMediator _mediator;
 
-            public CreateAppneuronProductCommandHandler(IAppneuronProductRepository appneuronProductRepository,
-                IMediator mediator)
+            public CreateAppneuronProductCommandHandler(IAppneuronProductRepository appneuronProductRepository)
             {
                 _appneuronProductRepository = appneuronProductRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(CreateAppneuronProductValidator), Priority = 1)]
@@ -50,8 +47,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
                     ProductName = request.ProductName
                 };
 
-                _appneuronProductRepository.Add(addedAppneuronProduct);
-                await _appneuronProductRepository.SaveChangesAsync();
+                await _appneuronProductRepository.AddAsync(addedAppneuronProduct);
                 return new SuccessResult(Messages.Added);
             }
         }
