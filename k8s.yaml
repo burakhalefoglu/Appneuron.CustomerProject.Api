@@ -45,8 +45,6 @@ spec:
         - name: customer-project-server 
           image: CONTAINER_IMAGE
           imagePullPolicy: Always
-          imagePullSecrets:
-          - name: regcred
           resources:
             requests:
               memory: "150M"
