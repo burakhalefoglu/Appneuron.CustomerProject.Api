@@ -27,7 +27,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 _httpContextAccessor = httpContextAccessor;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<int>> Handle(GetProjectCountQuery request,
                 CancellationToken cancellationToken)

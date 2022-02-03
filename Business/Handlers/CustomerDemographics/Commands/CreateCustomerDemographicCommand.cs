@@ -37,7 +37,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
 
             [ValidationAspect(typeof(CreateCustomerDemographicValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerDemographicCommand request,
                 CancellationToken cancellationToken)

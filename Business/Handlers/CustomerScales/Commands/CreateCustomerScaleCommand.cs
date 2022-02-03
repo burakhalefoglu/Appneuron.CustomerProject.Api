@@ -32,7 +32,7 @@ namespace Business.Handlers.CustomerScales.Commands
 
             [ValidationAspect(typeof(CreateCustomerScaleValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerScaleCommand request, CancellationToken cancellationToken)
             {

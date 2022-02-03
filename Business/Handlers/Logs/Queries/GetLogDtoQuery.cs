@@ -28,7 +28,7 @@ namespace Business.Handlers.Logs.Queries
             [SecuredOperation(Priority = 1)]
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             public async Task<IDataResult<IEnumerable<LogDto>>> Handle(GetLogDtoQuery request,
                 CancellationToken cancellationToken)
             {

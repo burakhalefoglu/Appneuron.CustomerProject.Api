@@ -23,7 +23,7 @@ namespace Business.Handlers.GamePlatforms.Queries
                 _gamePlatformRepository = gamePlatformRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<GamePlatform>> Handle(GetGamePlatformQuery request,
                 CancellationToken cancellationToken)

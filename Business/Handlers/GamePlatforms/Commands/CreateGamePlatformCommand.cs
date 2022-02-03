@@ -32,7 +32,7 @@ namespace Business.Handlers.GamePlatforms.Commands
 
             [ValidationAspect(typeof(CreateGamePlatformValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateGamePlatformCommand request, CancellationToken cancellationToken)
             {

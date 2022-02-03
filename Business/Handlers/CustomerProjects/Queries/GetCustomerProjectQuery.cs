@@ -31,7 +31,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request,
                 CancellationToken cancellationToken)

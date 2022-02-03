@@ -23,7 +23,7 @@ namespace Business.Handlers.Votes.Queries
                 _voteRepository = voteRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Vote>> Handle(GetVoteQuery request, CancellationToken cancellationToken)
             {

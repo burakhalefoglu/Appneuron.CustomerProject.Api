@@ -30,7 +30,7 @@ namespace Business.Handlers.CustomerDiscounts.Commands
 
             [ValidationAspect(typeof(UpdateCustomerDiscountValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerDiscountCommand request,
                 CancellationToken cancellationToken)

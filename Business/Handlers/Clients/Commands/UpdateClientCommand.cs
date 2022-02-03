@@ -35,7 +35,7 @@ namespace Business.Handlers.Clients.Commands
 
             [ValidationAspect(typeof(UpdateClientValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
             {

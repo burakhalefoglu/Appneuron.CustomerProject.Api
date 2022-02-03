@@ -23,7 +23,7 @@ namespace Business.Handlers.Industries.Queries
                 _industryRepository = industryRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Industry>> Handle(GetIndustryQuery request,
                 CancellationToken cancellationToken)

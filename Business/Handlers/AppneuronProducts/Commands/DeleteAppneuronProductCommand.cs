@@ -30,7 +30,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
             }
 
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteAppneuronProductCommand request,
                 CancellationToken cancellationToken)

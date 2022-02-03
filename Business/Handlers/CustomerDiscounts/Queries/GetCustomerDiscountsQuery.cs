@@ -33,7 +33,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<CustomerDiscount>>> Handle(GetCustomerDiscountsQuery request,
                 CancellationToken cancellationToken)

@@ -26,7 +26,7 @@ namespace Business.Handlers.Customers.Queries
                 _httpContextAccessor = httpContextAccessor;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Customer>> Handle(GetCustomerQuery request,
                 CancellationToken cancellationToken)

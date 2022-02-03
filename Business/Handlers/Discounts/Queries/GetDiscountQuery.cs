@@ -23,7 +23,7 @@ namespace Business.Handlers.Discounts.Queries
                 _discountRepository = discountRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Discount>> Handle(GetDiscountQuery request,
                 CancellationToken cancellationToken)

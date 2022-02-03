@@ -25,7 +25,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
                 _customerDemographicRepository = customerDemographicRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerDemographic>> Handle(GetCustomerDemographicQuery request,
                 CancellationToken cancellationToken)

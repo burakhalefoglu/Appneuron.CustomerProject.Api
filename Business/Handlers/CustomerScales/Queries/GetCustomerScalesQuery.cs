@@ -31,7 +31,7 @@ namespace Business.Handlers.CustomerScales.Queries
 
             [PerformanceAspect(5)]
             [CacheAspect(10)]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request,
                 CancellationToken cancellationToken)

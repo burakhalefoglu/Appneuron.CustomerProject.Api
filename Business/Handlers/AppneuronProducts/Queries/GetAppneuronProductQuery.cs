@@ -27,7 +27,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
                 _mediator = mediator;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<AppneuronProduct>> Handle(GetAppneuronProductQuery request,
                 CancellationToken cancellationToken)

@@ -39,7 +39,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
             [ValidationAspect(typeof(UpdateCustomerProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerProjectCommand request, CancellationToken cancellationToken)
             {

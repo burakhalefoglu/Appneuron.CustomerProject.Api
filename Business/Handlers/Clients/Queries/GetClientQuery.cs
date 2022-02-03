@@ -23,7 +23,7 @@ namespace Business.Handlers.Clients.Queries
                 _clientRepository = clientRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Client>> Handle(GetClientQuery request, CancellationToken cancellationToken)
             {

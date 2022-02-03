@@ -23,7 +23,7 @@ namespace Business.Handlers.Invoices.Queries
                 _invoiceRepository = invoiceRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Invoice>> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
             {

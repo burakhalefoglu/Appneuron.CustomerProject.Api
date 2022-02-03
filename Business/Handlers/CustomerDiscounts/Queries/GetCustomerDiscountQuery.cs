@@ -29,7 +29,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
                 _httpContextAccessor = httpContextAccessor;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerDiscount>> Handle(GetCustomerDiscountQuery request,
                 CancellationToken cancellationToken)

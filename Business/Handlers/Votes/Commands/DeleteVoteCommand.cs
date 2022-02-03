@@ -27,7 +27,7 @@ namespace Business.Handlers.Votes.Commands
             }
 
             [CacheRemoveAspect("Get")]
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteVoteCommand request, CancellationToken cancellationToken)
             {

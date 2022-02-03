@@ -23,7 +23,7 @@ namespace Business.Handlers.CustomerScales.Queries
                 _customerScaleRepository = customerScaleRepository;
             }
 
-            [LogAspect(typeof(FileLogger))]
+            [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerScale>> Handle(GetCustomerScaleQuery request,
                 CancellationToken cancellationToken)
