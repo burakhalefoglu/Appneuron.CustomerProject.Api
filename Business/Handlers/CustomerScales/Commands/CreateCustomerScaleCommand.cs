@@ -30,7 +30,7 @@ namespace Business.Handlers.CustomerScales.Commands
                 _customerScaleRepository = customerScaleRepository;
             }
 
-            [ValidationAspect(typeof(CreateCustomerScaleValidator), Priority = 1)]
+            [ValidationAspect(typeof(CreateCustomerScaleValidator), Priority = 2)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]

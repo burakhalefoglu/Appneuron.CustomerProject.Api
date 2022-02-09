@@ -25,3 +25,4 @@ ENV COMPlus_EnableDiagnostics=0
 ENV ASPNETCORE_URLS="http://*:8000"
 ENV ASPNETCORE_ENVIRONMENT Production
 ENTRYPOINT ["dotnet", "WebAPI.dll"] 
+
