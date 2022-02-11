@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Utilities.IoC;
@@ -8,22 +9,20 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Business.Fakes.Handlers.ProjectCounts
+namespace Business.Internals.Handlers.ProjectCounts
 {
     public class GetProjectCountInternalQuery : IRequest<IDataResult<int>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountInternalQuery, IDataResult<int>>
         {
             private readonly ICustomerProjectRepository _customerProjectRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly IMediator _mediator;
 
-            public GetProjectCountQueryHandler(ICustomerProjectRepository customerProjectRepository, IMediator mediator)
+            public GetProjectCountQueryHandler(ICustomerProjectRepository customerProjectRepository)
             {
                 _customerProjectRepository = customerProjectRepository;
-                _mediator = mediator;
                 _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             }
 
@@ -35,7 +34,7 @@ namespace Business.Fakes.Handlers.ProjectCounts
 
                 var result =
                     await _customerProjectRepository.GetListAsync(p =>
-                        p.CustomerId == userId && p.ObjectId == request.Id);
+                        p.CustomerId == Convert.ToInt64(userId) && p.Id == request.Id);
                 return new SuccessDataResult<int>(result.ToList().Count);
             }
         }

@@ -12,7 +12,7 @@ namespace Business.Handlers.CustomerScales.Queries
 {
     public class GetCustomerScaleQuery : IRequest<IDataResult<CustomerScale>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetCustomerScaleQueryHandler : IRequestHandler<GetCustomerScaleQuery, IDataResult<CustomerScale>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.CustomerScales.Queries
             public async Task<IDataResult<CustomerScale>> Handle(GetCustomerScaleQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerScale = await _customerScaleRepository.GetAsync(p => p.ObjectId == request.Id);
+                var customerScale = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<CustomerScale>(customerScale);
             }
         }

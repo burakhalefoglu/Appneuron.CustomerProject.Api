@@ -19,7 +19,7 @@ namespace WebAPI
         /// <summary>
         /// </summary>
         /// <param name="args"></param>
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("Server start");
             var result = CreateHostBuilder(args).Build().RunAsync();
@@ -55,9 +55,11 @@ namespace WebAPI
             var clientCreationMessageService =
                 ServiceTool.ServiceProvider.GetService<IGetClientCreationMessageService>();
 
-            await messageBroker.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
-                "CreateClientConsumerGroup",
-                clientCreationMessageService.GetClientCreationMessageQuery);
+            if (messageBroker != null)
+                if (clientCreationMessageService != null)
+                    await messageBroker.GetMessageAsync<CreateClientMessageComamnd>("CreateClientMessageComamnd",
+                        "CreateClientConsumerGroup",
+                        clientCreationMessageService.GetClientCreationMessageQuery);
         }
     }
 }

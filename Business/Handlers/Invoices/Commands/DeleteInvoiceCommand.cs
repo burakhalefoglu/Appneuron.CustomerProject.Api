@@ -15,7 +15,7 @@ namespace Business.Handlers.Invoices.Commands
     /// </summary>
     public class DeleteInvoiceCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteInvoiceCommandHandler : IRequestHandler<DeleteInvoiceCommand, IResult>
         {
@@ -31,11 +31,10 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.ObjectId == request.Id);
+                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.Id == request.Id);
                 if (invoiceToDelete == null) return new ErrorResult(Messages.InvoiceNotFound);
                 invoiceToDelete.Status = false;
-                await _invoiceRepository.UpdateAsync(invoiceToDelete,
-                    x => x.ObjectId == invoiceToDelete.ObjectId);
+                await _invoiceRepository.UpdateAsync(invoiceToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

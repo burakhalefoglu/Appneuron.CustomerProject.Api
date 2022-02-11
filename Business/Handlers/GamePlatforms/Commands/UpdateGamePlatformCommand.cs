@@ -15,7 +15,7 @@ namespace Business.Handlers.GamePlatforms.Commands
 {
     public class UpdateGamePlatformCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string PlatformName { get; set; }
         public string PlatformDescription { get; set; }
 
@@ -34,15 +34,14 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereGamePlatformRecord == null)
                     return new ErrorResult(Messages.GamePlatformNotFound);
 
                 isThereGamePlatformRecord.PlatformName = request.PlatformName;
                 isThereGamePlatformRecord.PlatformDescription = request.PlatformDescription;
-                await _gamePlatformRepository.UpdateAsync(isThereGamePlatformRecord,
-                    x => x.ObjectId == isThereGamePlatformRecord.ObjectId);
+                await _gamePlatformRepository.UpdateAsync(isThereGamePlatformRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

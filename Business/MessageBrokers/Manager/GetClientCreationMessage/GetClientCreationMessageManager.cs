@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Business.Fakes.Handlers.Clients;
-using Business.Fakes.Handlers.CustomerProjects;
+using Business.Internals.Handlers.Clients;
+using Business.Internals.Handlers.CustomerProjects;
 using Business.MessageBrokers.Models;
 using Core.Utilities.Results;
 using MediatR;
@@ -20,13 +20,13 @@ namespace Business.MessageBrokers.Manager.GetClientCreationMessage
         {
             var resultProject = await _mediator.Send(new GetCustomerProjectInternalQuery
             {
-                ProjectId = message.ProjectKey
+                ProjectId = message.ProjectId
             });
 
             var result = await _mediator.Send(new CreateClientInternalCommand
             {
                 ClientId = message.ClientId,
-                ProjectId = resultProject.Data.ProjectId,
+                ProjectId = resultProject.Data.Id,
                 CreatedAt = message.CreatedAt,
                 IsPaidClient = message.IsPaidClient
             });

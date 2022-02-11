@@ -11,7 +11,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.AppneuronProducts.Queries.GetAppneuronProductQuery;
@@ -33,15 +32,15 @@ namespace Tests.Business.Handlers
             _mediator = new Mock<IMediator>();
 
             _getAppneuronProductQueryHandler =
-                new GetAppneuronProductQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
+                new GetAppneuronProductQueryHandler(_appneuronProductRepository.Object);
             _getAppneuronProductsQueryHandler =
                 new GetAppneuronProductsQueryHandler(_appneuronProductRepository.Object, _mediator.Object);
             _createAppneuronProductCommandHandler =
                 new CreateAppneuronProductCommandHandler(_appneuronProductRepository.Object);
             _updateAppneuronProductCommandHandler =
-                new UpdateAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
+                new UpdateAppneuronProductCommandHandler(_appneuronProductRepository.Object);
             _deleteAppneuronProductCommandHandler =
-                new DeleteAppneuronProductCommandHandler(_appneuronProductRepository.Object, _mediator.Object);
+                new DeleteAppneuronProductCommandHandler(_appneuronProductRepository.Object);
         }
 
         private Mock<IAppneuronProductRepository> _appneuronProductRepository;
@@ -59,7 +58,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetAppneuronProductQuery
             {
-                Id = "507f191e810c19729de860ea"
+                Id = 1
             };
 
             _appneuronProductRepository.Setup(x =>
@@ -67,7 +66,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new AppneuronProduct
                     {
                         ProductName = "Test",
-                        Id = new ObjectId("507f191e810c19729de860ea")
+                        Id = 1
                     }
                 );
 
@@ -92,13 +91,13 @@ namespace Tests.Business.Handlers
                     new()
                     {
                         ProductName = "Test",
-                        Id = new ObjectId("507f191e810c19729de860ea")
+                        Id = 1
                     },
 
                     new()
                     {
                         ProductName = "Test2",
-                        Id = new ObjectId("107f191e810c19729de860ea")
+                        Id = 2
                     }
                 }.AsQueryable());
             //Act
@@ -162,11 +161,10 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new AppneuronProduct
                 {
                     ProductName = "Test",
-                    Id = new ObjectId("507f191e810c19729de860ea")
+                    Id = 1
                 });
 
-            _appneuronProductRepository.Setup(x => x.UpdateAsync(It.IsAny<AppneuronProduct>(),
-                It.IsAny<Expression<Func<AppneuronProduct, bool>>>()));
+            _appneuronProductRepository.Setup(x => x.UpdateAsync(It.IsAny<AppneuronProduct>()));
 
             var x = await _updateAppneuronProductCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -186,7 +184,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<AppneuronProduct>(null));
 
             _appneuronProductRepository.Setup(x =>
-                x.Update(It.IsAny<AppneuronProduct>(), It.IsAny<Expression<Func<AppneuronProduct, bool>>>()));
+                x.Update(It.IsAny<AppneuronProduct>()));
             var x = await _updateAppneuronProductCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
@@ -203,11 +201,11 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new AppneuronProduct
                 {
                     ProductName = "Test",
-                    Id = new ObjectId("507f191e810c19729de860ea")
+                    Id = 1
                 });
 
             _appneuronProductRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<AppneuronProduct>(), It.IsAny<Expression<Func<AppneuronProduct, bool>>>()));
+                x.UpdateAsync(It.IsAny<AppneuronProduct>()));
 
             var x = await _deleteAppneuronProductCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -225,7 +223,7 @@ namespace Tests.Business.Handlers
                 .Returns(Task.FromResult<AppneuronProduct>(null));
 
             _appneuronProductRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<AppneuronProduct>(), It.IsAny<Expression<Func<AppneuronProduct, bool>>>()));
+                x.UpdateAsync(It.IsAny<AppneuronProduct>()));
 
             var x = await _deleteAppneuronProductCommandHandler.Handle(command, new CancellationToken());
 

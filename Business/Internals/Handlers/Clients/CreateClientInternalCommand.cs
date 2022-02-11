@@ -7,24 +7,22 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Fakes.Handlers.Clients
+namespace Business.Internals.Handlers.Clients
 {
     public class CreateClientInternalCommand : IRequest<IResult>
     {
-        public string ClientId { get; set; }
-        public string ProjectId { get; set; }
+        public long ClientId { get; set; }
+        public long ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
         public class CreateClientCommandHandler : IRequestHandler<CreateClientInternalCommand, IResult>
         {
             private readonly IClientRepository _clientRepository;
-            private readonly IMediator _mediator;
 
-            public CreateClientCommandHandler(IClientRepository clientRepository, IMediator mediator)
+            public CreateClientCommandHandler(IClientRepository clientRepository)
             {
                 _clientRepository = clientRepository;
-                _mediator = mediator;
             }
 
             public async Task<IResult> Handle(CreateClientInternalCommand request, CancellationToken cancellationToken)

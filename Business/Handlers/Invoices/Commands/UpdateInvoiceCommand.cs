@@ -16,12 +16,12 @@ namespace Business.Handlers.Invoices.Commands
 {
     public class UpdateInvoiceCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string BillNo { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastPaymentTime { get; set; }
-        public string UserId { get; set; }
-        public string DiscountId { get; set; }
+        public long UserId { get; set; }
+        public long DiscountId { get; set; }
         public int UnitPrice { get; set; }
         public bool IsItPaid { get; set; }
 
@@ -40,7 +40,7 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereInvoiceRecord == null) return new ErrorResult(Messages.InvoiceNotFound);
 
@@ -52,8 +52,7 @@ namespace Business.Handlers.Invoices.Commands
                 isThereInvoiceRecord.UnitPrice = request.UnitPrice;
                 isThereInvoiceRecord.IsItPaid = request.IsItPaid;
 
-                await _invoiceRepository.UpdateAsync(isThereInvoiceRecord,
-                    x => x.ObjectId == isThereInvoiceRecord.ObjectId);
+                await _invoiceRepository.UpdateAsync(isThereInvoiceRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

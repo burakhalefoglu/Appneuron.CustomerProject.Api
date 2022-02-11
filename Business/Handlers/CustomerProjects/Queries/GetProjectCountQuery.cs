@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -13,7 +14,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 {
     public class GetProjectCountQuery : IRequest<IDataResult<int>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetProjectCountQueryHandler : IRequestHandler<GetProjectCountQuery, IDataResult<int>>
         {
@@ -37,7 +38,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 
                 var result =
                     await _customerProjectRepository.GetListAsync(p =>
-                        p.CustomerId == userId && p.ObjectId == request.Id);
+                        p.CustomerId == Convert.ToInt64(userId) && p.Id == request.Id);
                 return new SuccessDataResult<int>(result.ToList().Count);
             }
         }

@@ -4,9 +4,10 @@
 
 namespace Entities.Concrete
 {
-    public class Industry : DocumentDbEntity
+    public class Industry : IEntity
     {
         public bool Status = true;
         public string Name { get; set; }
+        public long Id { get; set; }
     }
 }

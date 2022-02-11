@@ -5,11 +5,11 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 
-namespace Business.Fakes.Handlers.CustomerProjects
+namespace Business.Internals.Handlers.CustomerProjects
 {
     public class GetCustomerProjectInternalQuery : IRequest<IDataResult<CustomerProject>>
     {
-        public string ProjectId { get; set; }
+        public long ProjectId { get; set; }
 
         public class
             GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectInternalQuery,
@@ -27,7 +27,7 @@ namespace Business.Fakes.Handlers.CustomerProjects
                 CancellationToken cancellationToken)
             {
                 var customerProject =
-                    await _customerProjectRepository.GetAsync(p => p.ProjectId == request.ProjectId);
+                    await _customerProjectRepository.GetAsync(p => p.Id == request.ProjectId);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

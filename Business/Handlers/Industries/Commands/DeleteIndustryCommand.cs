@@ -15,7 +15,7 @@ namespace Business.Handlers.Industries.Commands
     /// </summary>
     public class DeleteIndustryCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteIndustryCommandHandler : IRequestHandler<DeleteIndustryCommand, IResult>
         {
@@ -31,12 +31,11 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteIndustryCommand request, CancellationToken cancellationToken)
             {
-                var industryToDelete = await _industryRepository.GetAsync(p => p.ObjectId == request.Id);
+                var industryToDelete = await _industryRepository.GetAsync(p => p.Id == request.Id);
 
                 if (industryToDelete == null) return new ErrorResult(Messages.IndustryNotFound);
                 industryToDelete.Status = false;
-                await _industryRepository.UpdateAsync(industryToDelete,
-                    x => x.ObjectId == industryToDelete.ObjectId);
+                await _industryRepository.UpdateAsync(industryToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

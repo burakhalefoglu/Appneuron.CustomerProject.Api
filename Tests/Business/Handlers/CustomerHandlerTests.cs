@@ -12,7 +12,6 @@ using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Customers.Queries.GetCustomerQuery;
@@ -60,7 +59,7 @@ namespace Tests.Business.Handlers
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(
                 new Customer
                 {
-                    Id = new ObjectId("507f191e810c19729de860ea")
+                    Id = 1
                 });
 
             //Act
@@ -68,7 +67,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.ObjectId.Should().Be("507f191e810c19729de860ea");
+            x.Data.Id.Should().Be(1);
         }
 
 
@@ -84,12 +83,12 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = ObjectId.GenerateNewId()
+                        Id = 1
                     },
 
                     new()
                     {
-                        Id = ObjectId.GenerateNewId()
+                        Id = 2
                     }
                 }.AsQueryable);
 
@@ -107,8 +106,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateCustomerCommand
             {
-                CustomerScaleId = "107f191e810c19729de860ea",
-                IndustryId = "507f191e810c19729de860ea"
+                CustomerScaleId = 1,
+                IndustryId = 2
             };
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
@@ -127,8 +126,8 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new CreateCustomerCommand
             {
-                CustomerScaleId = "107f191e810c19729de860ea",
-                IndustryId = "507f191e810c19729de860ea"
+                CustomerScaleId = 1,
+                IndustryId = 2
             };
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
@@ -152,7 +151,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new Customer());
 
             _customerRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<Expression<Func<Customer, bool>>>()));
+                => x.UpdateAsync(It.IsAny<Customer>()));
 
             var x = await _deleteCustomerCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -170,7 +169,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync((Customer) null);
 
             _customerRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Customer>(), It.IsAny<Expression<Func<Customer, bool>>>()));
+                x.UpdateAsync(It.IsAny<Customer>()));
 
             var x = await _deleteCustomerCommandHandler.Handle(command, new CancellationToken());
 

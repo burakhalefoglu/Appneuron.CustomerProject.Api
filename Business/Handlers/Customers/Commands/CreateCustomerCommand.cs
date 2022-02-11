@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -20,8 +21,8 @@ namespace Business.Handlers.Customers.Commands
     /// </summary>
     public class CreateCustomerCommand : IRequest<IResult>
     {
-        public string CustomerScaleId { get; set; }
-        public string IndustryId { get; set; }
+        public long CustomerScaleId { get; set; }
+        public long IndustryId { get; set; }
 
         public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, IResult>
         {
@@ -44,7 +45,7 @@ namespace Business.Handlers.Customers.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isCustomerExist = await _customerRepository.GetAsync(c => c.ObjectId == userId);
+                var isCustomerExist = await _customerRepository.GetAsync(c => c.Id == Convert.ToInt64(userId));
                 if (isCustomerExist != null) return new ErrorResult(Messages.CustomerNotFound);
                 var addedCustomer = new Customer
                 {

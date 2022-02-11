@@ -17,7 +17,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
 {
     public class UpdateCustomerDemographicCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string CustomerDesc { get; set; }
         public ICollection<Customer> Customers { get; set; }
 
@@ -39,15 +39,14 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereCustomerDemographicRecord =
-                    await _customerDemographicRepository.GetAsync(u => u.ObjectId == request.Id);
+                    await _customerDemographicRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereCustomerDemographicRecord == null)
                     return new ErrorResult(Messages.CustomerDemographicNotFound);
 
                 isThereCustomerDemographicRecord.CustomerDesc = request.CustomerDesc;
 
-                await _customerDemographicRepository.UpdateAsync(isThereCustomerDemographicRecord,
-                    x => x.ObjectId == isThereCustomerDemographicRecord.ObjectId);
+                await _customerDemographicRepository.UpdateAsync(isThereCustomerDemographicRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

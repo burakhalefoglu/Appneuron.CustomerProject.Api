@@ -44,7 +44,7 @@ namespace Business.Handlers.Logs.Queries
 
                     var list = new LogDto
                     {
-                        Id = item.ObjectId,
+                        Id = item.Id,
                         Level = item.Level,
                         TimeStamp = item.TimeStamp,
                         Type = msg.Parameters[0].Type,

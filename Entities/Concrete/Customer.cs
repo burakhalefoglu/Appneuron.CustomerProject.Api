@@ -4,11 +4,13 @@
 
 namespace Entities.Concrete
 {
-    public class Customer : DocumentDbEntity
+    public class Customer : IEntity
     {
         public bool Status = true;
-        public string CustomerScaleId { get; set; }
-        public string DemographicId { get; set; }
-        public string IndustryId { get; set; }
+        public long CustomerScaleId { get; set; }
+        
+        public long DemographicId { get; set; }
+        public long IndustryId { get; set; }
+        public long Id { get; set; }
     }
 }

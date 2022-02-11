@@ -4,9 +4,12 @@
 
 namespace Entities.Concrete
 {
-    public class CustomerProjectHasProduct : DocumentDbEntity
+    public class CustomerProjectHasProduct : IEntity
     {
-        public string ProductId { get; set; }
-        public string ProjectId { get; set; }
+        public long ProductId { get; set; }
+        public long ProjectId { get; set; }
+        public long Id { get; set; }
+        public bool Status = true;
+
     }
 }

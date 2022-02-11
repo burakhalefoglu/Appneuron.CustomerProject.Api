@@ -21,7 +21,7 @@ namespace Core.DataAccess.Cassandra
             var cluster = Cluster.Builder()
                 .AddContactPoints(cassandraConnectionSettings.Host)
                 .WithCredentials(cassandraConnectionSettings.UserName, cassandraConnectionSettings.Password)
-                .WithApplicationName("AuthServer")
+                .WithApplicationName("CustomerProjectServer")
                 .WithCompression(CompressionType.Snappy)
                 .Build();
             var session = cluster.Connect();

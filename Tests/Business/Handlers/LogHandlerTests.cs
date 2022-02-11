@@ -8,7 +8,6 @@ using Business.Handlers.Logs.Queries;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 using FluentAssertions;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Logs.Queries.GetLogDtoQuery;
@@ -42,7 +41,7 @@ namespace Tests.Business.Handlers
                     new()
                     {
                         Exception = "NoContentException",
-                        Id = ObjectId.GenerateNewId(),
+                        Id = 1,
                         Level = "Test",
                         MessageTemplate = "{'Id':1," +
                                           "'Level':'Test'," +
@@ -56,7 +55,7 @@ namespace Tests.Business.Handlers
                     new()
                     {
                         Exception = "ValidContentException",
-                        Id = ObjectId.GenerateNewId(),
+                        Id = 2,
                         Level = "Test",
                         MessageTemplate = "{'Id':1," +
                                           "'Level':'Test'," +

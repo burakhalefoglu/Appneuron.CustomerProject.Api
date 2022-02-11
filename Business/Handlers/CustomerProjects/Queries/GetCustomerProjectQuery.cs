@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -14,7 +15,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 {
     public class GetCustomerProjectQuery : IRequest<IDataResult<CustomerProject>>
     {
-        public string ProjectId { get; set; }
+        public long ProjectId { get; set; }
 
         public class
             GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectQuery, IDataResult<CustomerProject>>
@@ -41,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerProject = await _customerProjectRepository.GetAsync(p =>
-                    p.CustomerId == userId && p.ProjectId == request.ProjectId);
+                    p.CustomerId == Convert.ToInt64(userId) && p.Id == request.ProjectId);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

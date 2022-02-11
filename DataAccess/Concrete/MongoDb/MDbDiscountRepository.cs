@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class DiscountRepository : MongoDbRepositoryBase<Discount>, IDiscountRepository
+    public class MDbDiscountRepository : MongoDbRepositoryBase<Discount>, IDiscountRepository
     {
-        public DiscountRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbDiscountRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

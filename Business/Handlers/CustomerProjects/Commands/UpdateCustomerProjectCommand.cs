@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -17,10 +18,10 @@ namespace Business.Handlers.CustomerProjects.Commands
 {
     public class UpdateCustomerProjectCommand : IRequest<IResult>
     {
-        public string ProjectId { get; set; }
+        public long ProjectId { get; set; }
         public string ProjectName { get; set; }
         public bool Statuse { get; set; }
-        public string VotesId { get; set; }
+        public long VotesId { get; set; }
         public string ProjectBody { get; set; }
 
         public class UpdateCustomerProjectCommandHandler : IRequestHandler<UpdateCustomerProjectCommand, IResult>
@@ -48,7 +49,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var isThereCustomerProjectRecord =
                     await _customerProjectRepository.GetAsync(u =>
-                        u.ProjectId == request.ProjectId && u.CustomerId == userId);
+                        u.Id == request.ProjectId && u.CustomerId == Convert.ToInt64(userId));
                 if (isThereCustomerProjectRecord == null)
                     return new ErrorResult(Messages.ProjectNotFound);
 
@@ -57,8 +58,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                 isThereCustomerProjectRecord.VoteId = request.VotesId;
                 isThereCustomerProjectRecord.ProjectBody = request.ProjectBody;
 
-                await _customerProjectRepository.UpdateAsync(isThereCustomerProjectRecord,
-                    x => x.ObjectId == isThereCustomerProjectRecord.ObjectId);
+                await _customerProjectRepository.UpdateAsync(isThereCustomerProjectRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

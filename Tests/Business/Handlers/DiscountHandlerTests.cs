@@ -11,7 +11,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Discounts.Queries.GetDiscountQuery;
@@ -37,7 +36,7 @@ namespace Tests.Business.Handlers
             _createDiscountCommandHandler =
                 new CreateDiscountCommandHandler(_discountRepository.Object);
             _updateDiscountCommandHandler =
-                new UpdateDiscountCommandHandler(_discountRepository.Object, _mediator.Object);
+                new UpdateDiscountCommandHandler(_discountRepository.Object);
             _deleteDiscountCommandHandler =
                 new DeleteDiscountCommandHandler(_discountRepository.Object);
         }
@@ -57,13 +56,13 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetDiscountQuery
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>())).ReturnsAsync(
                 new Discount
                 {
-                    Id = new ObjectId("107f191e810c19729de860ea"),
+                    Id =1,
                     DiscountName = "Test"
                 });
 
@@ -72,7 +71,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(new ObjectId("107f191e810c19729de860ea"));
+            x.Data.Id.Should().Be(1);
         }
 
         [Test]
@@ -87,13 +86,13 @@ namespace Tests.Business.Handlers
                     new()
                     {
                         DiscountName = "Test1",
-                        Id = ObjectId.GenerateNewId()
+                        Id = 1
                     },
 
                     new()
                     {
                         DiscountName = "Test2",
-                        Id = ObjectId.GenerateNewId()
+                        Id = 2
                     }
                 }.AsQueryable());
 
@@ -153,7 +152,7 @@ namespace Tests.Business.Handlers
             var command = new UpdateDiscountCommand
             {
                 DiscountName = "Test10",
-                Id = "107f191e810c19729de860ea",
+                Id = 1,
                 Percent = 40
             };
 
@@ -161,11 +160,11 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new Discount
                 {
                     DiscountName = "Test",
-                    Id = new ObjectId("107f191e810c19729de860ea")
+                    Id = 1
                 });
 
             _discountRepository.Setup(x =>
-                x.Update(It.IsAny<Discount>(), It.IsAny<Expression<Func<Discount, bool>>>()));
+                x.Update(It.IsAny<Discount>()));
 
             var x = await _updateDiscountCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -179,7 +178,7 @@ namespace Tests.Business.Handlers
             var command = new UpdateDiscountCommand
             {
                 DiscountName = "Test10",
-                Id = "107f191e810c19729de860ea",
+                Id = 1,
                 Percent = 40
             };
 
@@ -187,7 +186,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync((Discount) null);
 
             _discountRepository.Setup(x
-                => x.Update(It.IsAny<Discount>(), It.IsAny<Expression<Func<Discount, bool>>>()));
+                => x.Update(It.IsAny<Discount>()));
 
             var x = await _updateDiscountCommandHandler.Handle(command, new CancellationToken());
 
@@ -202,18 +201,18 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteDiscountCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
                 .ReturnsAsync(new Discount
                 {
-                    Id = new ObjectId("107f191e810c19729de860ea"),
+                    Id = 1,
                     Percent = 20
                 });
 
             _discountRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Discount>(), It.IsAny<Expression<Func<Discount, bool>>>()));
+                x.UpdateAsync(It.IsAny<Discount>()));
 
             var x = await _deleteDiscountCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -226,14 +225,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteDiscountCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _discountRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Discount, bool>>>()))
                 .ReturnsAsync((Discount) null);
 
             _discountRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Discount>(), It.IsAny<Expression<Func<Discount, bool>>>()));
+                x.UpdateAsync(It.IsAny<Discount>()));
 
             var x = await _deleteDiscountCommandHandler.Handle(command, new CancellationToken());
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -17,7 +18,7 @@ namespace Business.Handlers.CustomerProjects.Commands
     /// </summary>
     public class DeleteCustomerProjectCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteCustomerProjectCommandHandler : IRequestHandler<DeleteCustomerProjectCommand, IResult>
         {
@@ -41,11 +42,10 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var customerProjectToDelete =
                     await _customerProjectRepository.GetAsync(p =>
-                        p.ProjectId == request.Id && p.CustomerId == userId);
+                        p.Id == request.Id && p.CustomerId == Convert.ToInt64(userId));
                 if (customerProjectToDelete == null) return new ErrorResult(Messages.ProjectNotFound);
                 customerProjectToDelete.Status = false;
-                await _customerProjectRepository.UpdateAsync(customerProjectToDelete,
-                    x => x.ObjectId == customerProjectToDelete.ObjectId);
+                await _customerProjectRepository.UpdateAsync(customerProjectToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

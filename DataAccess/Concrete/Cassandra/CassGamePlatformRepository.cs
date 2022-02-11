@@ -5,10 +5,10 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.Cassandra
 {
-    public class GamePlatformRepository : CassandraRepositoryBase<GamePlatform>,
+    public class CassGamePlatformRepository : CassandraRepositoryBase<GamePlatform>,
         IGamePlatformRepository
     {
-        public GamePlatformRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassGamePlatformRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -37,11 +38,10 @@ namespace Business.Handlers.Customers.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var customerToDelete = await _customerRepository.GetAsync(p => p.ObjectId == userId);
+                var customerToDelete = await _customerRepository.GetAsync(p => p.Id == Convert.ToInt64(userId));
                 if (customerToDelete == null) return new ErrorResult(Messages.CustomerNotFound);
                 customerToDelete.Status = false;
-                await _customerRepository.UpdateAsync(customerToDelete,
-                    x => x.ObjectId == customerToDelete.ObjectId);
+                await _customerRepository.UpdateAsync(customerToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

@@ -12,7 +12,7 @@ namespace Business.Handlers.Clients.Queries
 {
     public class GetClientQuery : IRequest<IDataResult<Client>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetClientQueryHandler : IRequestHandler<GetClientQuery, IDataResult<Client>>
         {
@@ -27,7 +27,7 @@ namespace Business.Handlers.Clients.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Client>> Handle(GetClientQuery request, CancellationToken cancellationToken)
             {
-                var client = await _clientRepository.GetAsync(p => p.ObjectId == request.Id);
+                var client = await _clientRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<Client>(client);
             }
         }

@@ -4,9 +4,11 @@
 
 namespace Entities.Concrete
 {
-    public class AppneuronProduct : DocumentDbEntity
+    public class AppneuronProduct : IEntity
     {
         public bool Status = true;
         public string ProductName { get; set; }
+        public long Id { get; set; }
     }
 }
+

@@ -5,9 +5,9 @@ using DataAccess.Concrete.Cassandra.Contexts;
 
 namespace DataAccess.Concrete.Cassandra
 {
-    public class LogRepository : CassandraRepositoryBase<Log>, ILogRepository
+    public class CassLogRepository : CassandraRepositoryBase<Log>, ILogRepository
     {
-        public LogRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassLogRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

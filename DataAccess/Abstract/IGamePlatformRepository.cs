@@ -3,7 +3,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IGamePlatformRepository : IDocumentDbRepository<GamePlatform>
+    public interface IGamePlatformRepository : IRepository<GamePlatform>
     {
     }
 }

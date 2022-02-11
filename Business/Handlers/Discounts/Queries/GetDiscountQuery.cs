@@ -12,7 +12,7 @@ namespace Business.Handlers.Discounts.Queries
 {
     public class GetDiscountQuery : IRequest<IDataResult<Discount>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetDiscountQueryHandler : IRequestHandler<GetDiscountQuery, IDataResult<Discount>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.Discounts.Queries
             public async Task<IDataResult<Discount>> Handle(GetDiscountQuery request,
                 CancellationToken cancellationToken)
             {
-                var discount = await _discountRepository.GetAsync(p => p.ObjectId == request.Id);
+                var discount = await _discountRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<Discount>(discount);
             }
         }

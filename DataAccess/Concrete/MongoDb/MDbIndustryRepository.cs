@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class IndustryRepository : MongoDbRepositoryBase<Industry>, IIndustryRepository
+    public class MDbIndustryRepository : MongoDbRepositoryBase<Industry>, IIndustryRepository
     {
-        public IndustryRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbIndustryRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

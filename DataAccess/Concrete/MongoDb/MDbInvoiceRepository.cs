@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class InvoiceRepository : MongoDbRepositoryBase<Invoice>, IInvoiceRepository
+    public class MDbInvoiceRepository : MongoDbRepositoryBase<Invoice>, IInvoiceRepository
     {
-        public InvoiceRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbInvoiceRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

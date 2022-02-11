@@ -11,7 +11,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Industries.Queries.GetIndustryQuery;
@@ -57,13 +56,13 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetIndustryQuery
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _industryRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Industry, bool>>>())).ReturnsAsync(
                 new Industry
                 {
-                    Id = new ObjectId("107f191e810c19729de860ea"),
+                    Id = 1,
                     Name = "Test"
                 });
 
@@ -72,7 +71,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(new ObjectId("107f191e810c19729de860ea"));
+            x.Data.Id.Should().Be(1);
         }
 
         [Test]
@@ -86,12 +85,12 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = new ObjectId("507f191e810c19729de860ea"),
+                        Id = 1,
                         Name = "Test"
                     },
                     new()
                     {
-                        Id = new ObjectId("107f191e810c19729de860ea"),
+                        Id = 2,
                         Name = "Test"
                     }
                 }.AsQueryable());
@@ -150,14 +149,14 @@ namespace Tests.Business.Handlers
             var command = new UpdateIndustryCommand
             {
                 Name = "test",
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _industryRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Industry, bool>>>()))
                 .ReturnsAsync(new Industry());
 
             _industryRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<Industry>(), It.IsAny<Expression<Func<Industry, bool>>>()));
+                => x.UpdateAsync(It.IsAny<Industry>()));
 
             var x = await _updateIndustryCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -171,14 +170,14 @@ namespace Tests.Business.Handlers
             var command = new UpdateIndustryCommand
             {
                 Name = "test",
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _industryRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Industry, bool>>>()))
                 .ReturnsAsync((Industry) null);
 
             _industryRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<Industry>(), It.IsAny<Expression<Func<Industry, bool>>>()));
+                => x.UpdateAsync(It.IsAny<Industry>()));
 
             var x = await _updateIndustryCommandHandler.Handle(command, new CancellationToken());
 
@@ -192,14 +191,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteIndustryCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _industryRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Industry, bool>>>()))
                 .ReturnsAsync(new Industry());
 
             _industryRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Industry>(), It.IsAny<Expression<Func<Industry, bool>>>()));
+                x.UpdateAsync(It.IsAny<Industry>()));
 
             var x = await _deleteIndustryCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -212,14 +211,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteIndustryCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _industryRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Industry, bool>>>()))
                 .ReturnsAsync((Industry) null);
 
             _industryRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<Industry>(), It.IsAny<Expression<Func<Industry, bool>>>()));
+                x.UpdateAsync(It.IsAny<Industry>()));
 
             var x = await _deleteIndustryCommandHandler.Handle(command, new CancellationToken());
 

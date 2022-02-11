@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class AppneuronProductRepository : MongoDbRepositoryBase<AppneuronProduct>, IAppneuronProductRepository
+    public class MDbAppneuronProductRepository : MongoDbRepositoryBase<AppneuronProduct>, IAppneuronProductRepository
     {
-        public AppneuronProductRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbAppneuronProductRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

@@ -12,7 +12,7 @@ namespace Business.Handlers.Invoices.Queries
 {
     public class GetInvoiceQuery : IRequest<IDataResult<Invoice>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetInvoiceQueryHandler : IRequestHandler<GetInvoiceQuery, IDataResult<Invoice>>
         {
@@ -27,7 +27,7 @@ namespace Business.Handlers.Invoices.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Invoice>> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
             {
-                var invoice = await _invoiceRepository.GetAsync(p => p.ObjectId == request.Id);
+                var invoice = await _invoiceRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<Invoice>(invoice);
             }
         }

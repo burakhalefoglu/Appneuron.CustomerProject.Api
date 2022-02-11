@@ -15,7 +15,7 @@ namespace Business.Handlers.Discounts.Commands
     /// </summary>
     public class DeleteDiscountCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteDiscountCommandHandler : IRequestHandler<DeleteDiscountCommand, IResult>
         {
@@ -31,10 +31,10 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteDiscountCommand request, CancellationToken cancellationToken)
             {
-                var discountToDelete = await _discountRepository.GetAsync(p => p.ObjectId == request.Id);
+                var discountToDelete = await _discountRepository.GetAsync(p => p.Id == request.Id);
                 if (discountToDelete == null) return new ErrorResult(Messages.DiscountNotFound);
                 discountToDelete.Status = false;
-                await _discountRepository.UpdateAsync(discountToDelete, x => x.ObjectId == discountToDelete.ObjectId);
+                await _discountRepository.UpdateAsync(discountToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

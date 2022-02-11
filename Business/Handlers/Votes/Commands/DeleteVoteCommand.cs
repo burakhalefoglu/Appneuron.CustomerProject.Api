@@ -15,7 +15,7 @@ namespace Business.Handlers.Votes.Commands
     /// </summary>
     public class DeleteVoteCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteVoteCommandHandler : IRequestHandler<DeleteVoteCommand, IResult>
         {
@@ -31,11 +31,10 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteVoteCommand request, CancellationToken cancellationToken)
             {
-                var voteToDelete = await _voteRepository.GetAsync(p => p.ObjectId == request.Id);
+                var voteToDelete = await _voteRepository.GetAsync(p => p.Id == request.Id);
                 if (voteToDelete == null) return new ErrorResult(Messages.VoteNotFound);
                 voteToDelete.Status = false;
-                await _voteRepository.UpdateAsync(voteToDelete,
-                    x => x.ObjectId == voteToDelete.ObjectId);
+                await _voteRepository.UpdateAsync(voteToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

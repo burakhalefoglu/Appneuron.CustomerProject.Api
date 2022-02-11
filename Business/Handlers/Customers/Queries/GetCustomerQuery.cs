@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -34,7 +35,7 @@ namespace Business.Handlers.Customers.Queries
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var customer = await _customerRepository.GetAsync(p => p.ObjectId == userId);
+                var customer = await _customerRepository.GetAsync(p => p.Id == Convert.ToInt64(userId));
                 return new SuccessDataResult<Customer>(customer);
             }
         }

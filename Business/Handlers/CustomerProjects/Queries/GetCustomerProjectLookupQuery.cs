@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
-                    await _customerProjectRepository.GetListAsync(p => p.CustomerId == userId));
+                    await _customerProjectRepository.GetListAsync(p => p.CustomerId == Convert.ToInt64(userId)));
             }
         }
     }

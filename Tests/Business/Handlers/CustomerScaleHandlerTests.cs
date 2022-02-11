@@ -11,7 +11,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.CustomerScales.Queries.GetCustomerScaleQuery;
@@ -63,7 +62,7 @@ namespace Tests.Business.Handlers
                     x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale
                 {
-                    Id = ObjectId.GenerateNewId(),
+                    Id = 1,
                     Name = "Test"
                 });
 
@@ -86,13 +85,13 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = ObjectId.GenerateNewId(),
+                        Id = 1,
                         Name = "Test1"
                     },
 
                     new()
                     {
-                        Id = ObjectId.GenerateNewId(),
+                        Id = 2,
                         Name = "Test2"
                     }
                 }.AsQueryable);
@@ -152,7 +151,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerScaleCommand
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                Id =1,
                 Description = "TestDescription",
                 Name = "Test"
             };
@@ -161,7 +160,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync(new CustomerScale());
 
             _customerScaleRepository.Setup(x
-                => x.Update(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
+                => x.Update(It.IsAny<CustomerScale>()));
 
             var x = await _updateCustomerScaleCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -174,7 +173,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerScaleCommand
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                Id = 1,
                 Description = "TestDescription",
                 Name = "Test"
             };
@@ -183,7 +182,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync((CustomerScale) null);
 
             _customerScaleRepository.Setup(x
-                => x.Update(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
+                => x.Update(It.IsAny<CustomerScale>()));
 
             var x = await _updateCustomerScaleCommandHandler.Handle(command, new CancellationToken());
 
@@ -197,14 +196,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerScaleCommand
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1,
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync(new CustomerScale());
 
             _customerScaleRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
+                => x.UpdateAsync(It.IsAny<CustomerScale>()));
 
             var x = await _deleteCustomerScaleCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -217,14 +216,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerScaleCommand
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1
             };
 
             _customerScaleRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerScale, bool>>>()))
                 .ReturnsAsync((CustomerScale) null);
 
             _customerScaleRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<CustomerScale>(), It.IsAny<Expression<Func<CustomerScale, bool>>>()));
+                x.UpdateAsync(It.IsAny<CustomerScale>()));
 
             var x = await _deleteCustomerScaleCommandHandler.Handle(command, new CancellationToken());
 

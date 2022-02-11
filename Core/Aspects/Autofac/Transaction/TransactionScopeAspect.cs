@@ -20,7 +20,7 @@ namespace Core.Aspects.Autofac.Transaction
                 }
                 catch (System.Exception ex)
                 {
-                    ex.ToString();
+                    _ = ex.ToString();
                     throw;
                 }
             }

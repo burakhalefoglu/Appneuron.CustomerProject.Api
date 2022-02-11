@@ -5,9 +5,9 @@ using DataAccess.Concrete.MongoDb.Context;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class LogRepository : MongoDbRepositoryBase<Log>, ILogRepository
+    public class MDbLogRepository : MongoDbRepositoryBase<Log>, ILogRepository
     {
-        public LogRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbLogRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

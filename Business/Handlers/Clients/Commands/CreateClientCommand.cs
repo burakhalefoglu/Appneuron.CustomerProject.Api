@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
-using Business.Fakes.Handlers.CustomerProjects;
 using Business.Handlers.Clients.ValidationRules;
+using Business.Internals.Handlers.CustomerProjects;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
@@ -20,8 +20,8 @@ namespace Business.Handlers.Clients.Commands
     /// </summary>
     public class CreateClientCommand : IRequest<IResult>
     {
-        public string ClientId { get; set; }
-        public string ProjectId { get; set; }
+        public long ClientId { get; set; }
+        public long ProjectId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsPaidClient { get; set; }
 
@@ -56,7 +56,7 @@ namespace Business.Handlers.Clients.Commands
                 var addedClient = new Client
                 {
                     ClientId = request.ClientId,
-                    ProjectId = resultProject.Data.ProjectId,
+                    ProjectId = resultProject.Data.Id,
                     CreatedAt = request.CreatedAt,
                     IsPaidClient = request.IsPaidClient
                 };

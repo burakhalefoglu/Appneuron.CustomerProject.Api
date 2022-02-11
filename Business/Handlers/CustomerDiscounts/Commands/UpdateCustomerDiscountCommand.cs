@@ -15,9 +15,9 @@ namespace Business.Handlers.CustomerDiscounts.Commands
 {
     public class UpdateCustomerDiscountCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
-        public string CustomerId { get; set; }
-        public string DiscountId { get; set; }
+        public long Id { get; set; }
+        public long CustomerId { get; set; }
+        public long DiscountId { get; set; }
 
         public class UpdateCustomerDiscountCommandHandler : IRequestHandler<UpdateCustomerDiscountCommand, IResult>
         {
@@ -36,15 +36,14 @@ namespace Business.Handlers.CustomerDiscounts.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereCustomerDiscountRecord =
-                    await _customerDiscountRepository.GetAsync(u => u.ObjectId == request.Id);
+                    await _customerDiscountRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereCustomerDiscountRecord == null) return new ErrorResult(Messages.CustomerDiscountNotFound);
 
                 isThereCustomerDiscountRecord.UserId = request.CustomerId;
                 isThereCustomerDiscountRecord.DiscountId = request.DiscountId;
 
-                await _customerDiscountRepository.UpdateAsync(isThereCustomerDiscountRecord,
-                    x => x.ObjectId == isThereCustomerDiscountRecord.ObjectId);
+                await _customerDiscountRepository.UpdateAsync(isThereCustomerDiscountRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

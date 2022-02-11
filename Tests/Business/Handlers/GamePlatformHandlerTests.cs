@@ -11,7 +11,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.GamePlatforms.Queries.GetGamePlatformQuery;
@@ -59,13 +58,13 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetGamePlatformQuery
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
                 .ReturnsAsync(new GamePlatform
                 {
-                    Id = new ObjectId("107f191e810c19729de860ea"),
+                    Id = 1,
                     PlatformName = "Test"
                 });
 
@@ -74,7 +73,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.Id.Should().Be(new ObjectId("107f191e810c19729de860ea"));
+            x.Data.Id.Should().Be(1);
         }
 
         [Test]
@@ -88,13 +87,13 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        Id = new ObjectId("107f191e810c19729de860ea"),
+                        Id = 1,
                         PlatformDescription = "TestDesc"
                     },
 
                     new()
                     {
-                        Id = new ObjectId("107f191e810c19729de860ea"),
+                        Id = 2,
                         PlatformDescription = "TestDesc2"
                     }
                 }.AsQueryable);
@@ -158,18 +157,18 @@ namespace Tests.Business.Handlers
             var command = new UpdateGamePlatformCommand
             {
                 PlatformName = "test",
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
                 .ReturnsAsync(new GamePlatform
                 {
-                    Id = new ObjectId("107f191e810c19729de860ea")
+                    Id = 1
                 });
 
             _gamePlatformRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<GamePlatform>(), It.IsAny<Expression<Func<GamePlatform, bool>>>()));
+                x.UpdateAsync(It.IsAny<GamePlatform>()));
 
             var x = await _updateGamePlatformCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -183,7 +182,7 @@ namespace Tests.Business.Handlers
             var command = new UpdateGamePlatformCommand
             {
                 PlatformName = "test",
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
 
@@ -191,7 +190,7 @@ namespace Tests.Business.Handlers
                 .ReturnsAsync((GamePlatform) null);
 
             _gamePlatformRepository.Setup(x =>
-                x.Update(It.IsAny<GamePlatform>(), It.IsAny<Expression<Func<GamePlatform, bool>>>()));
+                x.Update(It.IsAny<GamePlatform>()));
 
             var x = await _updateGamePlatformCommandHandler.Handle(command, new CancellationToken());
 
@@ -205,14 +204,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteGamePlatformCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
                 .ReturnsAsync(new GamePlatform());
 
             _gamePlatformRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<GamePlatform>(), It.IsAny<Expression<Func<GamePlatform, bool>>>()));
+                x.UpdateAsync(It.IsAny<GamePlatform>()));
 
             var x = await _deleteGamePlatformCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -226,14 +225,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteGamePlatformCommand
             {
-                Id = "107f191e810c19729de860ea"
+                Id = 1
             };
 
             _gamePlatformRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<GamePlatform, bool>>>()))
                 .ReturnsAsync((GamePlatform) null);
 
             _gamePlatformRepository.Setup(x =>
-                x.UpdateAsync(It.IsAny<GamePlatform>(), It.IsAny<Expression<Func<GamePlatform, bool>>>()));
+                x.UpdateAsync(It.IsAny<GamePlatform>()));
 
             var x = await _deleteGamePlatformCommandHandler.Handle(command, new CancellationToken());
 

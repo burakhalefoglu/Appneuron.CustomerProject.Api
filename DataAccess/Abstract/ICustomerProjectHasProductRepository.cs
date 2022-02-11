@@ -1,6 +1,9 @@
-﻿namespace DataAccess.Abstract
+﻿using Core.DataAccess;
+using Entities.Concrete;
+
+namespace DataAccess.Abstract
 {
-    public interface ICustomerProjectHasProductRepository
+    public interface ICustomerProjectHasProductRepository : IRepository<CustomerProjectHasProduct>
     {
         
     }

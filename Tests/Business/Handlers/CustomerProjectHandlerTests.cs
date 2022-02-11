@@ -13,7 +13,6 @@ using Entities.Concrete;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.CustomerProjects.Queries.GetCustomerProjectQuery;
@@ -80,7 +79,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomerProjectQuery
             {
-                ProjectId = "507f191e810c19729de860ea"
+                ProjectId = 1
             };
 
             _httpContextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
@@ -90,10 +89,9 @@ namespace Tests.Business.Handlers
                     x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                     {
-                        Id = ObjectId.GenerateNewId(),
+                        Id = 2,
                         CreatedAt = DateTime.Now,
                         ProjectName = "Test",
-                        ProjectId = "507f191e810c19729de860ea"
                     }
                 );
 
@@ -120,18 +118,17 @@ namespace Tests.Business.Handlers
                     {
                         new()
                         {
-                            Id = ObjectId.GenerateNewId(),
+                            Id =  1,
                             CreatedAt = DateTime.Now,
-                            ProjectName = "Test",
-                            ProjectId = "507f191e810c19729de860ea"
+                            ProjectName = "Test"
                         },
 
                         new()
                         {
-                            Id = ObjectId.GenerateNewId(),
+                            Id = 2,
                             CreatedAt = DateTime.Now,
-                            ProjectName = "Test",
-                            ProjectId = "107f191e810c19729de860ea"
+                            ProjectName = "Test"
+                            
                         }
                     }.AsQueryable
                 );
@@ -160,11 +157,11 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        ProjectId = "107f191e810c19729de860ea"
+                        Id = 1
                     },
                     new()
                     {
-                        ProjectId = "507f191e810c19729de860ea"
+                        Id = 2
                     }
                 }.AsQueryable);
             //Act
@@ -187,11 +184,11 @@ namespace Tests.Business.Handlers
                 {
                     new()
                     {
-                        ProjectId = "107f191e810c19729de860ea"
+                        Id = 1
                     },
                     new()
                     {
-                        ProjectId = "507f191e810c19729de860ea"
+                        Id = 2
                     }
                 }.AsQueryable);
 
@@ -251,17 +248,16 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerProjectCommand
             {
-                ProjectId = "107f191e810c19729de860ea"
+                ProjectId = 1
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                 {
-                    ProjectId = "507f191e810c19729de860ea"
+                    Id = 1
                 });
 
-            _customerProjectRepository.Setup(x => x.Update(It.IsAny<CustomerProject>(),
-                It.IsAny<Expression<Func<CustomerProject, bool>>>()));
+            _customerProjectRepository.Setup(x => x.Update(It.IsAny<CustomerProject>()));
 
             var x = await _updateCustomerProjectCommandHandler.Handle(command, new CancellationToken());
             x.Success.Should().BeTrue();
@@ -274,14 +270,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new UpdateCustomerProjectCommand
             {
-                ProjectId = "107f191e810c19729de860ea"
+                ProjectId = 1
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync((CustomerProject) null);
 
             _customerProjectRepository.Setup(x =>
-                x.Update(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
+                x.Update(It.IsAny<CustomerProject>()));
 
             var x = await _updateCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -295,17 +291,17 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerProjectCommand
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync(new CustomerProject
                 {
-                    ProjectId = "107f191e810c19729de860ea"
+                    Id = 1
                 });
 
             _customerProjectRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
+                => x.UpdateAsync(It.IsAny<CustomerProject>()));
 
             var x = await _deleteCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 
@@ -319,14 +315,14 @@ namespace Tests.Business.Handlers
             //Arrange
             var command = new DeleteCustomerProjectCommand
             {
-                Id = ObjectId.GenerateNewId().ToString()
+                Id = 1
             };
 
             _customerProjectRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<CustomerProject, bool>>>()))
                 .ReturnsAsync((CustomerProject) null);
 
             _customerProjectRepository.Setup(x
-                => x.UpdateAsync(It.IsAny<CustomerProject>(), It.IsAny<Expression<Func<CustomerProject, bool>>>()));
+                => x.UpdateAsync(It.IsAny<CustomerProject>()));
 
             var x = await _deleteCustomerProjectCommandHandler.Handle(command, new CancellationToken());
 

@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class VoteRepository : MongoDbRepositoryBase<Vote>, IVoteRepository
+    public class MDbVoteRepository : MongoDbRepositoryBase<Vote>, IVoteRepository
     {
-        public VoteRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbVoteRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

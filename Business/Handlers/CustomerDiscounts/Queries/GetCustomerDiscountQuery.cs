@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
@@ -14,7 +15,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 {
     public class GetCustomerDiscountQuery : IRequest<IDataResult<CustomerDiscount>>
     {
-        public string DiscountId { get; set; }
+        public long DiscountId { get; set; }
 
         public class
             GetCustomerDiscountQueryHandler : IRequestHandler<GetCustomerDiscountQuery, IDataResult<CustomerDiscount>>
@@ -39,7 +40,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 
                 var customerDiscount =
                     await _customerDiscountRepository.GetAsync(p =>
-                        p.DiscountId == request.DiscountId && p.UserId == userId);
+                        p.DiscountId == request.DiscountId && p.UserId == Convert.ToInt64(userId));
                 return new SuccessDataResult<CustomerDiscount>(customerDiscount);
             }
         }

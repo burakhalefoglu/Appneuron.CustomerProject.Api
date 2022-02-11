@@ -15,19 +15,16 @@ namespace Business.Handlers.CustomerDemographics.Commands
     /// </summary>
     public class DeleteCustomerDemographicCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class
             DeleteCustomerDemographicCommandHandler : IRequestHandler<DeleteCustomerDemographicCommand, IResult>
         {
             private readonly ICustomerDemographicRepository _customerDemographicRepository;
-            private readonly IMediator _mediator;
 
-            public DeleteCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository,
-                IMediator mediator)
+            public DeleteCustomerDemographicCommandHandler(ICustomerDemographicRepository customerDemographicRepository)
             {
                 _customerDemographicRepository = customerDemographicRepository;
-                _mediator = mediator;
             }
 
             [CacheRemoveAspect("Get")]
@@ -37,11 +34,10 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var customerDemographicToDelete =
-                    await _customerDemographicRepository.GetAsync(p => p.ObjectId == request.Id);
+                    await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
                 if (customerDemographicToDelete == null) return new ErrorResult(Messages.CustomerDemographicNotFound);
                 customerDemographicToDelete.Status = false;
-                await _customerDemographicRepository.UpdateAsync(customerDemographicToDelete,
-                    x => x.ObjectId == customerDemographicToDelete.ObjectId);
+                await _customerDemographicRepository.UpdateAsync(customerDemographicToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

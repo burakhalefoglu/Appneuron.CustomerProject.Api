@@ -15,7 +15,7 @@ namespace Business.Handlers.CustomerScales.Commands
 {
     public class UpdateCustomerScaleCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -34,13 +34,12 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Id == request.Id);
                 if (isThereCustomerScaleRecord == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 isThereCustomerScaleRecord.Name = request.Name;
                 isThereCustomerScaleRecord.Description = request.Description;
 
-                await _customerScaleRepository.UpdateAsync(isThereCustomerScaleRecord,
-                    x => x.ObjectId == isThereCustomerScaleRecord.ObjectId);
+                await _customerScaleRepository.UpdateAsync(isThereCustomerScaleRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

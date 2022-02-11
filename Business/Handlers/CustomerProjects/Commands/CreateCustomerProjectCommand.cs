@@ -45,7 +45,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
             [ValidationAspect(typeof(CreateCustomerProjectValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
-            [TransactionScopeAspectAsync]
+            [TransactionScopeAspect]
             [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerProjectCommand request, CancellationToken cancellationToken)
@@ -55,19 +55,18 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.ProjectName == request.ProjectName &&
-                    u.CustomerId == userId);
+                    u.CustomerId == Convert.ToInt64(userId));
 
                 if (isThereCustomerProjectRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
 
-                var projectKey = SecurityKeyHelper.GetRandomHexNumber(64).ToLower();
+                var projectId = SecurityKeyHelper.GetRandomHexNumber(64).ToLower();
                 var addedCustomerProject = new CustomerProject
                 {
-                    ProjectId = projectKey,
                     ProjectName = request.ProjectName,
                     Status = true,
                     CreatedAt = DateTime.Now,
-                    CustomerId = userId,
+                    CustomerId = Convert.ToInt64(userId),
                     ProjectBody = request.ProjectBody
                 };
 
@@ -76,7 +75,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                 var projectModel = new ProjectMessageCommand
                 {
                     UserId = userId,
-                    ProjectKey = projectKey
+                    ProjectKey = projectId
                 };
 
                 await _messageBroker.SendMessageAsync(projectModel);

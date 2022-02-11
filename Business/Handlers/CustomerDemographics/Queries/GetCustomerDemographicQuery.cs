@@ -12,7 +12,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
 {
     public class GetCustomerDemographicQuery : IRequest<IDataResult<CustomerDemographic>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class
             GetCustomerDemographicQueryHandler : IRequestHandler<GetCustomerDemographicQuery,
@@ -30,7 +30,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
             public async Task<IDataResult<CustomerDemographic>> Handle(GetCustomerDemographicQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.ObjectId == request.Id);
+                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<CustomerDemographic>(customerDemographic);
             }
         }

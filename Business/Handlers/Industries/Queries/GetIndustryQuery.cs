@@ -12,7 +12,7 @@ namespace Business.Handlers.Industries.Queries
 {
     public class GetIndustryQuery : IRequest<IDataResult<Industry>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetIndustryQueryHandler : IRequestHandler<GetIndustryQuery, IDataResult<Industry>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.Industries.Queries
             public async Task<IDataResult<Industry>> Handle(GetIndustryQuery request,
                 CancellationToken cancellationToken)
             {
-                var industry = await _industryRepository.GetAsync(p => p.ObjectId == request.Id);
+                var industry = await _industryRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<Industry>(industry);
             }
         }

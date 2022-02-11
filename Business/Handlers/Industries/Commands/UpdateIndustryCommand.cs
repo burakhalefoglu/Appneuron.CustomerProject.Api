@@ -15,7 +15,7 @@ namespace Business.Handlers.Industries.Commands
 {
     public class UpdateIndustryCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
 
         public class UpdateIndustryCommandHandler : IRequestHandler<UpdateIndustryCommand, IResult>
@@ -33,14 +33,13 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateIndustryCommand request, CancellationToken cancellationToken)
             {
-                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereIndustryRecord == null) return new ErrorResult(Messages.IndustryNotFound);
 
                 isThereIndustryRecord.Name = request.Name;
 
-                await _industryRepository.UpdateAsync(isThereIndustryRecord,
-                    x => x.ObjectId == isThereIndustryRecord.ObjectId);
+                await _industryRepository.UpdateAsync(isThereIndustryRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

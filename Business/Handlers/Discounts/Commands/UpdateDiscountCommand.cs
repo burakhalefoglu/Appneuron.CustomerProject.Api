@@ -15,19 +15,17 @@ namespace Business.Handlers.Discounts.Commands
 {
     public class UpdateDiscountCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string DiscountName { get; set; }
         public short Percent { get; set; }
 
         public class UpdateDiscountCommandHandler : IRequestHandler<UpdateDiscountCommand, IResult>
         {
             private readonly IDiscountRepository _discountRepository;
-            private readonly IMediator _mediator;
 
-            public UpdateDiscountCommandHandler(IDiscountRepository discountRepository, IMediator mediator)
+            public UpdateDiscountCommandHandler(IDiscountRepository discountRepository)
             {
                 _discountRepository = discountRepository;
-                _mediator = mediator;
             }
 
             [ValidationAspect(typeof(UpdateDiscountValidator), Priority = 1)]
@@ -36,14 +34,13 @@ namespace Business.Handlers.Discounts.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
             {
-                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereDiscountRecord = await _discountRepository.GetAsync(u => u.Id == request.Id);
                 if (isThereDiscountRecord == null) return new ErrorResult(Messages.DiscountNotFound);
 
                 isThereDiscountRecord.DiscountName = request.DiscountName;
                 isThereDiscountRecord.Percent = request.Percent;
 
-                await _discountRepository.UpdateAsync(isThereDiscountRecord,
-                    x => x.ObjectId == isThereDiscountRecord.ObjectId);
+                await _discountRepository.UpdateAsync(isThereDiscountRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

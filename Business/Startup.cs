@@ -16,8 +16,10 @@ using Core.Extensions;
 using Core.Utilities.ElasticSearch;
 using Core.Utilities.IoC;
 using DataAccess.Abstract;
+using DataAccess.Concrete.Cassandra;
+using DataAccess.Concrete.Cassandra.Contexts;
+using DataAccess.Concrete.Cassandra.Tables;
 using DataAccess.Concrete.EntityFramework.Contexts;
-using DataAccess.Concrete.MongoDb;
 using DataAccess.Concrete.MongoDb.Context;
 using FluentValidation;
 using MediatR;
@@ -51,7 +53,7 @@ namespace Business
         public virtual void ConfigureServices(IServiceCollection services)
         {
             Func<IServiceProvider, ClaimsPrincipal> getPrincipal = sp =>
-                sp.GetService<IHttpContextAccessor>().HttpContext?.User ??
+                sp.GetService<IHttpContextAccessor>()?.HttpContext?.User ??
                 new ClaimsPrincipal(new ClaimsIdentity(Messages.Unknown));
 
             services.AddScoped<IPrincipal>(getPrincipal);
@@ -85,23 +87,52 @@ namespace Business
         public void ConfigureDevelopmentServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
-            services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
-            services.AddTransient<IVoteRepository, VoteRepository>();
-            services.AddTransient<IIndustryRepository, IndustryRepository>();
-            services.AddTransient<IDiscountRepository, DiscountRepository>();
-            services.AddTransient<ICustomerDemographicRepository, CustomerDemographicRepository>();
-            services.AddTransient<IAppneuronProductRepository, AppneuronProductRepository>();
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<IInvoiceRepository, InvoiceRepository>();
-            services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
-            services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
-            services.AddTransient<ILogRepository, LogRepository>();
-            services.AddTransient<IMessageBroker, KafkaMessageBroker>();
+            
+            services.AddTransient<IClientRepository>(x => new CassClientRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
+            
+            services.AddTransient<IGamePlatformRepository>(x => new CassGamePlatformRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GamePlatform));
+            
+            services.AddTransient<ICustomerScaleRepository>(x => new CassCustomerScaleRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerScale));
+            
+            services.AddTransient<IVoteRepository>(x => new CassVoteRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Vote));
+            
+            services.AddTransient<IIndustryRepository>(x => new CassIndustryRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Industry));
+            
+            services.AddTransient<IDiscountRepository>(x => new CassDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Discount));
+            
+            services.AddTransient<ICustomerDemographicRepository>(x => new CassCustomerDemographicRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDemographic));
+            
+            services.AddTransient<IAppneuronProductRepository>(x => new CassAppneuronProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.AppneuronProduct));
+            
+            services.AddTransient<ICustomerRepository>(x => new CassCustomerRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Customer));
+            
+            services.AddTransient<IInvoiceRepository>(x => new CassInvoiceRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Invoice));
+            
+            services.AddTransient<ICustomerDiscountRepository>(x => new CassCustomerDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDiscount));
+            
+            services.AddTransient<ICustomerProjectRepository>(x => new CassCustomerProjectRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProject));
+         
+            services.AddTransient<ILogRepository>(x => new CassLogRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
 
+            services.AddTransient<ICustomerProjectHasProductRepository>(x => new CassCustomerProjectHasProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProjectHasProduct));
+            
+            services.AddTransient<IMessageBroker, KafkaMessageBroker>();
             services.AddDbContext<ProjectDbContext, DArchInMemory>(ServiceLifetime.Transient);
-            services.AddSingleton<MongoDbContextBase, MongoDbContext>();
+            services.AddSingleton<CassandraContextBase, Cassandracontext>();
         }
 
         /// <summary>
@@ -111,25 +142,54 @@ namespace Business
         public void ConfigureStagingServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
-            services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
-            services.AddTransient<IVoteRepository, VoteRepository>();
-            services.AddTransient<IIndustryRepository, IndustryRepository>();
-            services.AddTransient<IDiscountRepository, DiscountRepository>();
-            services.AddTransient<ICustomerDemographicRepository, CustomerDemographicRepository>();
-            services.AddTransient<IAppneuronProductRepository, AppneuronProductRepository>();
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<IInvoiceRepository, InvoiceRepository>();
-            services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
-            services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
-            services.AddTransient<ILogRepository, LogRepository>();
+            services.AddTransient<IClientRepository>(x => new CassClientRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
+            
+            services.AddTransient<IGamePlatformRepository>(x => new CassGamePlatformRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GamePlatform));
+            
+            services.AddTransient<ICustomerScaleRepository>(x => new CassCustomerScaleRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerScale));
+            
+            services.AddTransient<IVoteRepository>(x => new CassVoteRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Vote));
+            
+            services.AddTransient<IIndustryRepository>(x => new CassIndustryRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Industry));
+            
+            services.AddTransient<IDiscountRepository>(x => new CassDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Discount));
+            
+            services.AddTransient<ICustomerDemographicRepository>(x => new CassCustomerDemographicRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDemographic));
+            
+            services.AddTransient<IAppneuronProductRepository>(x => new CassAppneuronProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.AppneuronProduct));
+            
+            services.AddTransient<ICustomerRepository>(x => new CassCustomerRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Customer));
+            
+            services.AddTransient<IInvoiceRepository>(x => new CassInvoiceRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Invoice));
+            
+            services.AddTransient<ICustomerDiscountRepository>(x => new CassCustomerDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDiscount));
+            
+            services.AddTransient<ICustomerProjectRepository>(x => new CassCustomerProjectRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProject));
+            
+            services.AddTransient<ICustomerProjectHasProductRepository>(x => new CassCustomerProjectHasProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProjectHasProduct));
+         
+            services.AddTransient<ILogRepository>(x => new CassLogRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
+            
+
             services.AddTransient<IMessageBroker, KafkaMessageBroker>();
 
-            services.AddDbContext<ProjectDbContext>();
-
-            services.AddSingleton<MongoDbContextBase, MongoDbContext>();
-        }
+         //   services.AddDbContext<ProjectDbContext>();
+            
+            services.AddSingleton<CassandraContextBase, Cassandracontext>();        }
 
         /// <summary>
         ///     This method gets called by the Production
@@ -138,24 +198,54 @@ namespace Business
         public void ConfigureProductionServices(IServiceCollection services)
         {
             ConfigureServices(services);
-            services.AddTransient<IClientRepository, ClientRepository>();
-            services.AddTransient<IGamePlatformRepository, GamePlatformRepository>();
-            services.AddTransient<ICustomerScaleRepository, CustomerScaleRepository>();
-            services.AddTransient<IVoteRepository, VoteRepository>();
-            services.AddTransient<IIndustryRepository, IndustryRepository>();
-            services.AddTransient<IDiscountRepository, DiscountRepository>();
-            services.AddTransient<ICustomerDemographicRepository, CustomerDemographicRepository>();
-            services.AddTransient<IAppneuronProductRepository, AppneuronProductRepository>();
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<IInvoiceRepository, InvoiceRepository>();
-            services.AddTransient<ICustomerDiscountRepository, CustomerDiscountRepository>();
-            services.AddTransient<ICustomerProjectRepository, CustomerProjectRepository>();
-            services.AddTransient<ILogRepository, LogRepository>();
+            services.AddTransient<IClientRepository>(x => new CassClientRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Client));
+            
+            services.AddTransient<IGamePlatformRepository>(x => new CassGamePlatformRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.GamePlatform));
+            
+            services.AddTransient<ICustomerScaleRepository>(x => new CassCustomerScaleRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerScale));
+            
+            services.AddTransient<IVoteRepository>(x => new CassVoteRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Vote));
+            
+            services.AddTransient<IIndustryRepository>(x => new CassIndustryRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Industry));
+            
+            services.AddTransient<IDiscountRepository>(x => new CassDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Discount));
+            
+            services.AddTransient<ICustomerDemographicRepository>(x => new CassCustomerDemographicRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDemographic));
+            
+            services.AddTransient<IAppneuronProductRepository>(x => new CassAppneuronProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.AppneuronProduct));
+            
+            services.AddTransient<ICustomerRepository>(x => new CassCustomerRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Customer));
+            
+            services.AddTransient<IInvoiceRepository>(x => new CassInvoiceRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Invoice));
+            
+            services.AddTransient<ICustomerDiscountRepository>(x => new CassCustomerDiscountRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerDiscount));
+            
+            services.AddTransient<ICustomerProjectRepository>(x => new CassCustomerProjectRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProject));
+            
+            services.AddTransient<ICustomerProjectHasProductRepository>(x => new CassCustomerProjectHasProductRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.CustomerProjectHasProduct));
+         
+            services.AddTransient<ILogRepository>(x => new CassLogRepository(
+                x.GetRequiredService<CassandraContextBase>(), CassandraTableQueries.Log));
+            
             services.AddTransient<IMessageBroker, KafkaMessageBroker>();
 
-            services.AddDbContext<ProjectDbContext>();
+           // services.AddDbContext<ProjectDbContext>();
 
-            services.AddSingleton<MongoDbContextBase, MongoDbContext>();
+            services.AddSingleton<CassandraContextBase, Cassandracontext>();
+            
         }
 
         /// <summary>

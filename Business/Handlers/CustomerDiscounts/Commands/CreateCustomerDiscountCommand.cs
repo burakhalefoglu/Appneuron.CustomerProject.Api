@@ -18,8 +18,8 @@ namespace Business.Handlers.CustomerDiscounts.Commands
     /// </summary>
     public class CreateCustomerDiscountCommand : IRequest<IResult>
     {
-        public string CustomerId { get; set; }
-        public string DiscountId { get; set; }
+        public long CustomerId { get; set; }
+        public long DiscountId { get; set; }
 
         public class CreateCustomerDiscountCommandHandler : IRequestHandler<CreateCustomerDiscountCommand, IResult>
         {

@@ -5,9 +5,9 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.Cassandra
 {
-    public class InvoiceRepository : CassandraRepositoryBase<Invoice>, IInvoiceRepository
+    public class CassInvoiceRepository : CassandraRepositoryBase<Invoice>, IInvoiceRepository
     {
-        public InvoiceRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassInvoiceRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

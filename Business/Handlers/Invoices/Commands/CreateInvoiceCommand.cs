@@ -22,8 +22,8 @@ namespace Business.Handlers.Invoices.Commands
         public string BillNo { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastPaymentTime { get; set; }
-        public string UserId { get; set; }
-        public string DiscountId { get; set; }
+        public long UserId { get; set; }
+        public long DiscountId { get; set; }
         public int UnitPrice { get; set; }
         public bool IsItPaid { get; set; }
 

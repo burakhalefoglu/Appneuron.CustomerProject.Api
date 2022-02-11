@@ -12,7 +12,7 @@ namespace Business.Handlers.Votes.Queries
 {
     public class GetVoteQuery : IRequest<IDataResult<Vote>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetVoteQueryHandler : IRequestHandler<GetVoteQuery, IDataResult<Vote>>
         {
@@ -27,7 +27,7 @@ namespace Business.Handlers.Votes.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Vote>> Handle(GetVoteQuery request, CancellationToken cancellationToken)
             {
-                var vote = await _voteRepository.GetAsync(p => p.ObjectId == request.Id);
+                var vote = await _voteRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<Vote>(vote);
             }
         }

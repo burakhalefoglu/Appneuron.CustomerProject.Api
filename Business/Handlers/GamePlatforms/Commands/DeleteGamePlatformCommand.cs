@@ -15,7 +15,7 @@ namespace Business.Handlers.GamePlatforms.Commands
     /// </summary>
     public class DeleteGamePlatformCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteGamePlatformCommandHandler : IRequestHandler<DeleteGamePlatformCommand, IResult>
         {
@@ -31,13 +31,12 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var gamePlatformToDelete = await _gamePlatformRepository.GetAsync(p => p.ObjectId == request.Id);
+                var gamePlatformToDelete = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
 
                 if (gamePlatformToDelete == null)
                     return new ErrorResult(Messages.GamePlatformNotFound);
                 gamePlatformToDelete.Status = false;
-                await _gamePlatformRepository.UpdateAsync(gamePlatformToDelete,
-                    x => x.ObjectId == gamePlatformToDelete.ObjectId);
+                await _gamePlatformRepository.UpdateAsync(gamePlatformToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

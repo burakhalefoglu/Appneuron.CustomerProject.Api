@@ -5,10 +5,10 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.Cassandra
 {
-    public class CustomerDiscountRepository : CassandraRepositoryBase<CustomerDiscount>,
+    public class CassCustomerDiscountRepository : CassandraRepositoryBase<CustomerDiscount>,
         ICustomerDiscountRepository
     {
-        public CustomerDiscountRepository(CassandraContexts cassandraContexts, string tableQuery) : base(
+        public CassCustomerDiscountRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
             cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }

@@ -12,7 +12,7 @@ namespace Business.Handlers.GamePlatforms.Queries
 {
     public class GetGamePlatformQuery : IRequest<IDataResult<GamePlatform>>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class GetGamePlatformQueryHandler : IRequestHandler<GetGamePlatformQuery, IDataResult<GamePlatform>>
         {
@@ -28,7 +28,7 @@ namespace Business.Handlers.GamePlatforms.Queries
             public async Task<IDataResult<GamePlatform>> Handle(GetGamePlatformQuery request,
                 CancellationToken cancellationToken)
             {
-                var gamePlatform = await _gamePlatformRepository.GetAsync(p => p.ObjectId == request.Id);
+                var gamePlatform = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
                 return new SuccessDataResult<GamePlatform>(gamePlatform);
             }
         }

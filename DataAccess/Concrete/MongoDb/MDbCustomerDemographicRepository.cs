@@ -5,10 +5,10 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.MongoDb
 {
-    public class CustomerDemographicRepository : MongoDbRepositoryBase<CustomerDemographic>,
+    public class MDbCustomerDemographicRepository : MongoDbRepositoryBase<CustomerDemographic>,
         ICustomerDemographicRepository
     {
-        public CustomerDemographicRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
+        public MDbCustomerDemographicRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
             mongoDbContext.MongoConnectionSettings, collectionName)
         {
         }

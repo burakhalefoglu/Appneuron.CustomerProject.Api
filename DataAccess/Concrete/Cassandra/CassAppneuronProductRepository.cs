@@ -1,14 +1,14 @@
-﻿using Core.DataAccess.MongoDb.Concrete;
+﻿using Core.DataAccess.Cassandra;
 using DataAccess.Abstract;
-using DataAccess.Concrete.MongoDb.Context;
+using DataAccess.Concrete.Cassandra.Contexts;
 using Entities.Concrete;
 
 namespace DataAccess.Concrete.Cassandra
 {
-    public class AppneuronProductRepository : MongoDbRepositoryBase<AppneuronProduct>, IAppneuronProductRepository
+    public class CassAppneuronProductRepository : CassandraRepositoryBase<AppneuronProduct>, IAppneuronProductRepository
     {
-        public AppneuronProductRepository(MongoDbContextBase mongoDbContext, string collectionName) : base(
-            mongoDbContext.MongoConnectionSettings, collectionName)
+        public CassAppneuronProductRepository(CassandraContextBase cassandraContexts, string tableQuery) : base(
+            cassandraContexts.CassandraConnectionSettings, tableQuery)
         {
         }
     }

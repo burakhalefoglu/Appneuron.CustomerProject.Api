@@ -15,7 +15,7 @@ namespace Business.Handlers.Votes.Commands
 {
     public class UpdateVoteCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string VoteName { get; set; }
         public short VoteValue { get; set; }
 
@@ -34,15 +34,14 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateVoteCommand request, CancellationToken cancellationToken)
             {
-                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.ObjectId == request.Id);
+                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.Id == request.Id);
 
                 if (isThereVoteRecord == null) return new ErrorResult(Messages.VoteNotFound);
 
                 isThereVoteRecord.VoteName = request.VoteName;
                 isThereVoteRecord.VoteValue = request.VoteValue;
 
-                await _voteRepository.UpdateAsync(isThereVoteRecord,
-                    x => x.ObjectId == isThereVoteRecord.ObjectId);
+                await _voteRepository.UpdateAsync(isThereVoteRecord);
                 return new SuccessResult(Messages.Updated);
             }
         }

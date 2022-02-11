@@ -15,7 +15,7 @@ namespace Business.Handlers.Clients.Commands
     /// </summary>
     public class DeleteClientCommand : IRequest<IResult>
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public class DeleteClientCommandHandler : IRequestHandler<DeleteClientCommand, IResult>
         {
@@ -31,11 +31,11 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteClientCommand request, CancellationToken cancellationToken)
             {
-                var clientToDelete = await _clientRepository.GetAsync(p => p.ObjectId == request.Id);
+                var clientToDelete = await _clientRepository.GetAsync(p => p.Id == request.Id);
 
                 if (clientToDelete == null) return new ErrorResult(Messages.ClientNotFound);
                 clientToDelete.Status = false;
-                await _clientRepository.UpdateAsync(clientToDelete, x => x.ObjectId == clientToDelete.ObjectId);
+                await _clientRepository.UpdateAsync(clientToDelete);
                 return new SuccessResult(Messages.Deleted);
             }
         }

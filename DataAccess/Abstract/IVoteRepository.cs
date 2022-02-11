@@ -3,7 +3,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IVoteRepository : IDocumentDbRepository<Vote>
+    public interface IVoteRepository : IRepository<Vote>
     {
     }
 }

@@ -7,38 +7,38 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Helpers\EnumerableExtensions.cs"/>
+        <Compile Remove="Helpers\EnumerableExtensions.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Handlers\ProjectPlatforms\Queries\GetProjectPlatformQuery.cs~RF73dbf9.TMP"/>
+        <None Remove="Handlers\ProjectPlatforms\Queries\GetProjectPlatformQuery.cs~RF73dbf9.TMP" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="10.1.1"/>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1"/>
-        <PackageReference Include="Confluent.Kafka" Version="1.7.0"/>
-        <PackageReference Include="FluentValidation" Version="9.5.1"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.1"/>
-        <PackageReference Include="MassTransit.AspNetCore" Version="7.2.0"/>
-        <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.0"/>
-        <PackageReference Include="MediatR" Version="9.0.0"/>
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.3"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.3"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0"/>
-        <PackageReference Include="Refit" Version="6.0.15"/>
-        <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1"/>
-        <PackageReference Include="System.ServiceModel.Http" Version="4.8.1"/>
-        <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1"/>
-        <PackageReference Include="System.ServiceModel.Security" Version="4.8.1"/>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
+        <PackageReference Include="FluentValidation" Version="9.5.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.1" />
+        <PackageReference Include="MassTransit.AspNetCore" Version="7.2.0" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.0" />
+        <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+        <PackageReference Include="Refit" Version="6.0.15" />
+        <PackageReference Include="System.ServiceModel.Duplex" Version="4.8.1" />
+        <PackageReference Include="System.ServiceModel.Http" Version="4.8.1" />
+        <PackageReference Include="System.ServiceModel.NetTcp" Version="4.8.1" />
+        <PackageReference Include="System.ServiceModel.Security" Version="4.8.1" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\DataAccess\DataAccess.csproj"/>
-        <ProjectReference Include="..\Entities\Entities.csproj"/>
+        <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+        <ProjectReference Include="..\Entities\Entities.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <WCFMetadata Include="Connected Services"/>
+        <WCFMetadata Include="Connected Services" />
     </ItemGroup>
 </Project>
