@@ -2,13 +2,16 @@
 using System.Threading.Tasks;
 using Business.MessageBrokers.Models;
 using Confluent.Kafka;
+using Core.Aspects.Autofac.Exception;
+using Core.Aspects.Autofac.Logging;
+using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.IoC;
 using Core.Utilities.Results;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Business.MessageBrokers.Kafka
+namespace Core.Utilities.MessageBrokers.Kafka
 {
     public class KafkaMessageBroker : IMessageBroker
     {
@@ -22,6 +25,8 @@ namespace Business.MessageBrokers.Kafka
                     .Get<MessageBrokerOption>();
         }
 
+        [LogAspect(typeof(ConsoleLogger))]
+        [ExceptionLogAspect(typeof(ConsoleLogger))]
         public async Task GetMessageAsync<T>(string topic, string consumerGroup,
             Func<T, Task<IResult>> callback)
         {
@@ -96,7 +101,9 @@ namespace Business.MessageBrokers.Kafka
                 }
             });
         }
-
+        
+        [LogAspect(typeof(ConsoleLogger))]
+        [ExceptionLogAspect(typeof(ConsoleLogger))]
         public async Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new()
         {

@@ -12,6 +12,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Utilities.MessageBrokers;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Encyption;
 using DataAccess.Abstract;
@@ -55,7 +56,8 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.ProjectName == request.ProjectName &&
-                    u.CustomerId == Convert.ToInt64(userId));
+                    u.CustomerId == Convert.ToInt64(userId) &&
+                    u.Status == true);
 
                 if (isThereCustomerProjectRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);
