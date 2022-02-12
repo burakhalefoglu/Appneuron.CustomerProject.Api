@@ -43,7 +43,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereCustomerDemographicRecord =
-                    await _customerDemographicRepository.GetAsync(u => u.CustomerDesc == request.CustomerDesc);
+                    await _customerDemographicRepository.GetAsync(u => u.CustomerDesc == request.CustomerDesc && u.Status == true);
 
                 if (isThereCustomerDemographicRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

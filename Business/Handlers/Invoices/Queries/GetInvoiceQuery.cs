@@ -27,7 +27,7 @@ namespace Business.Handlers.Invoices.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Invoice>> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
             {
-                var invoice = await _invoiceRepository.GetAsync(p => p.Id == request.Id);
+                var invoice = await _invoiceRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<Invoice>(invoice);
             }
         }

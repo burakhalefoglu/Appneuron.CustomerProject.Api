@@ -33,7 +33,7 @@ namespace Business.Handlers.Industries.Queries
             public async Task<IDataResult<IEnumerable<Industry>>> Handle(GetIndustriesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Industry>>(await _industryRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<Industry>>(await _industryRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

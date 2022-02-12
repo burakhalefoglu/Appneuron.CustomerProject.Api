@@ -33,7 +33,7 @@ namespace Business.Handlers.Votes.Queries
             public async Task<IDataResult<IEnumerable<Vote>>> Handle(GetVotesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Vote>>(await _voteRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<Vote>>(await _voteRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

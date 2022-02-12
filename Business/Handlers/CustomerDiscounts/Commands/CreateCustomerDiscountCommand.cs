@@ -38,7 +38,7 @@ namespace Business.Handlers.CustomerDiscounts.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereCustomerDiscountRecord =
-                    await _customerDiscountRepository.GetAsync(u => u.UserId == request.CustomerId);
+                    await _customerDiscountRepository.GetAsync(u => u.UserId == request.CustomerId && u.Status == true);
 
                 if (isThereCustomerDiscountRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

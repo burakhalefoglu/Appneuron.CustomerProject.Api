@@ -44,7 +44,7 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.BillNo == request.BillNo);
+                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.BillNo == request.BillNo && u.Status == true);
 
                 if (isThereInvoiceRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

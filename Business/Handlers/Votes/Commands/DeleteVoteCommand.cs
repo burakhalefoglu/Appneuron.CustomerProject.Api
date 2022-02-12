@@ -31,7 +31,7 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteVoteCommand request, CancellationToken cancellationToken)
             {
-                var voteToDelete = await _voteRepository.GetAsync(p => p.Id == request.Id);
+                var voteToDelete = await _voteRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (voteToDelete == null) return new ErrorResult(Messages.VoteNotFound);
                 voteToDelete.Status = false;
                 await _voteRepository.UpdateAsync(voteToDelete);

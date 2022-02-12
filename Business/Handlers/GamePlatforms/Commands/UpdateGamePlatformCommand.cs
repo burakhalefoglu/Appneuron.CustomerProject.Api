@@ -34,7 +34,7 @@ namespace Business.Handlers.GamePlatforms.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateGamePlatformCommand request, CancellationToken cancellationToken)
             {
-                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.Id == request.Id);
+                var isThereGamePlatformRecord = await _gamePlatformRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 if (isThereGamePlatformRecord == null)
                     return new ErrorResult(Messages.GamePlatformNotFound);

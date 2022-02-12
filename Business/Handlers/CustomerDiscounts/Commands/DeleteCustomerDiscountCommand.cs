@@ -33,7 +33,7 @@ namespace Business.Handlers.CustomerDiscounts.Commands
                 CancellationToken cancellationToken)
             {
                 var customerDiscountToDelete =
-                    await _customerDiscountRepository.GetAsync(p => p.Id == request.Id);
+                    await _customerDiscountRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (customerDiscountToDelete == null) return new ErrorResult(Messages.CustomerDiscountNotFound);
                 customerDiscountToDelete.Status = false;
                 await _customerDiscountRepository.UpdateAsync(customerDiscountToDelete);

@@ -42,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
-                    await _customerProjectRepository.GetListAsync(p => p.CustomerId == Convert.ToInt64(userId)));
+                    await _customerProjectRepository.GetListAsync(p => p.CustomerId == Convert.ToInt64(userId) && p.Status == true));
             }
         }
     }

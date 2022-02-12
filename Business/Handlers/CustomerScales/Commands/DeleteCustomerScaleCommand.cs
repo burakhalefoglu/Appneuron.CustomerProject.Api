@@ -31,7 +31,7 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
+                var customerScaleToDelete = await _customerScaleRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (customerScaleToDelete == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 customerScaleToDelete.Status = false;
                 await _customerScaleRepository.UpdateAsync(customerScaleToDelete);

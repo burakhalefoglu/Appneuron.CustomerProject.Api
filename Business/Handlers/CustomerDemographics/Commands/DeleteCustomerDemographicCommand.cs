@@ -34,7 +34,7 @@ namespace Business.Handlers.CustomerDemographics.Commands
                 CancellationToken cancellationToken)
             {
                 var customerDemographicToDelete =
-                    await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
+                    await _customerDemographicRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (customerDemographicToDelete == null) return new ErrorResult(Messages.CustomerDemographicNotFound);
                 customerDemographicToDelete.Status = false;
                 await _customerDemographicRepository.UpdateAsync(customerDemographicToDelete);

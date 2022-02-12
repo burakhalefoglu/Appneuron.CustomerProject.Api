@@ -28,7 +28,7 @@ namespace Business.Handlers.Discounts.Queries
             public async Task<IDataResult<Discount>> Handle(GetDiscountQuery request,
                 CancellationToken cancellationToken)
             {
-                var discount = await _discountRepository.GetAsync(p => p.Id == request.Id);
+                var discount = await _discountRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<Discount>(discount);
             }
         }

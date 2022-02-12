@@ -31,7 +31,7 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteIndustryCommand request, CancellationToken cancellationToken)
             {
-                var industryToDelete = await _industryRepository.GetAsync(p => p.Id == request.Id);
+                var industryToDelete = await _industryRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
 
                 if (industryToDelete == null) return new ErrorResult(Messages.IndustryNotFound);
                 industryToDelete.Status = false;

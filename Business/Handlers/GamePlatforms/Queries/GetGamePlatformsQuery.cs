@@ -35,7 +35,7 @@ namespace Business.Handlers.GamePlatforms.Queries
             public async Task<IDataResult<IEnumerable<GamePlatform>>> Handle(GetGamePlatformsQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<GamePlatform>>(await _gamePlatformRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<GamePlatform>>(await _gamePlatformRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

@@ -33,7 +33,7 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateIndustryCommand request, CancellationToken cancellationToken)
             {
-                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Id == request.Id);
+                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 if (isThereIndustryRecord == null) return new ErrorResult(Messages.IndustryNotFound);
 

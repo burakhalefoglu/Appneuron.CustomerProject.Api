@@ -34,7 +34,7 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Id == request.Id);
+                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
                 if (isThereCustomerScaleRecord == null) return new ErrorResult(Messages.CustomerScaleNotFound);
                 isThereCustomerScaleRecord.Name = request.Name;
                 isThereCustomerScaleRecord.Description = request.Description;

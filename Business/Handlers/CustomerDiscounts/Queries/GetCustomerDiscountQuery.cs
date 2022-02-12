@@ -40,7 +40,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
 
                 var customerDiscount =
                     await _customerDiscountRepository.GetAsync(p =>
-                        p.DiscountId == request.DiscountId && p.UserId == Convert.ToInt64(userId));
+                        p.DiscountId == request.DiscountId && p.UserId == Convert.ToInt64(userId) && p.Status == true);
                 return new SuccessDataResult<CustomerDiscount>(customerDiscount);
             }
         }

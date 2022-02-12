@@ -50,7 +50,7 @@ namespace Business.Handlers.Clients.Commands
                 if (resultProject.Data == null) return new ErrorResult(Messages.ProjectNotFound);
 
                 var resultClient = await _clientRepository.GetAsync(c => c.ClientId == request.ClientId &&
-                                                                         c.ProjectId == request.ProjectId);
+                                                                         c.ProjectId == request.ProjectId && c.Status == true);
                 if (resultClient != null) return new ErrorResult(Messages.ClientAlreadyExist);
 
                 var addedClient = new Client

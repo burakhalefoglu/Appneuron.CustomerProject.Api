@@ -37,7 +37,7 @@ namespace Business.Handlers.GamePlatforms.Commands
             public async Task<IResult> Handle(CreateGamePlatformCommand request, CancellationToken cancellationToken)
             {
                 var isThereGamePlatformRecord =
-                    await _gamePlatformRepository.GetAsync(u => u.PlatformName == request.PlatformName);
+                    await _gamePlatformRepository.GetAsync(u => u.PlatformName == request.PlatformName && u.Status == true);
 
                 if (isThereGamePlatformRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

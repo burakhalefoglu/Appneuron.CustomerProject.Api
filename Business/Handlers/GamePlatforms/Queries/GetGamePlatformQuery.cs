@@ -28,7 +28,7 @@ namespace Business.Handlers.GamePlatforms.Queries
             public async Task<IDataResult<GamePlatform>> Handle(GetGamePlatformQuery request,
                 CancellationToken cancellationToken)
             {
-                var gamePlatform = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id);
+                var gamePlatform = await _gamePlatformRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<GamePlatform>(gamePlatform);
             }
         }

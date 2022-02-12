@@ -39,7 +39,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
-                    await _customerProjectRepository.GetListAsync());
+                    await _customerProjectRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

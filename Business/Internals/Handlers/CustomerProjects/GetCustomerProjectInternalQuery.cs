@@ -27,7 +27,7 @@ namespace Business.Internals.Handlers.CustomerProjects
                 CancellationToken cancellationToken)
             {
                 var customerProject =
-                    await _customerProjectRepository.GetAsync(p => p.Id == request.ProjectId);
+                    await _customerProjectRepository.GetAsync(p => p.Id == request.ProjectId && p.Status == true);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

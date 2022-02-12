@@ -42,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var customerProjectToDelete =
                     await _customerProjectRepository.GetAsync(p =>
-                        p.Id == request.Id && p.CustomerId == Convert.ToInt64(userId));
+                        p.Id == request.Id && p.CustomerId == Convert.ToInt64(userId) && p.Status == true);
                 if (customerProjectToDelete == null) return new ErrorResult(Messages.ProjectNotFound);
                 customerProjectToDelete.Status = false;
                 await _customerProjectRepository.UpdateAsync(customerProjectToDelete);

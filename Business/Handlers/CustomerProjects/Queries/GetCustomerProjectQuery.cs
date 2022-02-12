@@ -42,7 +42,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerProject = await _customerProjectRepository.GetAsync(p =>
-                    p.CustomerId == Convert.ToInt64(userId) && p.Id == request.ProjectId);
+                    p.CustomerId == Convert.ToInt64(userId) && p.Id == request.ProjectId && p.Status == true);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

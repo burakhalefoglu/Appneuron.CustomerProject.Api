@@ -30,7 +30,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
             public async Task<IDataResult<CustomerDemographic>> Handle(GetCustomerDemographicQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.Id == request.Id);
+                var customerDemographic = await _customerDemographicRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<CustomerDemographic>(customerDemographic);
             }
         }

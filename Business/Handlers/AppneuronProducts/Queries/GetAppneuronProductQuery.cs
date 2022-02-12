@@ -29,7 +29,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
             public async Task<IDataResult<AppneuronProduct>> Handle(GetAppneuronProductQuery request,
                 CancellationToken cancellationToken)
             {
-                var appneuronProduct = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);
+                var appneuronProduct = await _appneuronProductRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<AppneuronProduct>(appneuronProduct);
             }
         }

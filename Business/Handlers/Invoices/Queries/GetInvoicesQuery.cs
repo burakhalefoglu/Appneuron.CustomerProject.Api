@@ -33,7 +33,7 @@ namespace Business.Handlers.Invoices.Queries
             public async Task<IDataResult<IEnumerable<Invoice>>> Handle(GetInvoicesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Invoice>>(await _invoiceRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<Invoice>>(await _invoiceRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

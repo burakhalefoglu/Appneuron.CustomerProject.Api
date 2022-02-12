@@ -37,7 +37,7 @@ namespace Business.Handlers.Discounts.Commands
             public async Task<IResult> Handle(CreateDiscountCommand request, CancellationToken cancellationToken)
             {
                 var isThereDiscountRecord =
-                    await _discountRepository.GetAsync(u => u.DiscountName == request.DiscountName);
+                    await _discountRepository.GetAsync(u => u.DiscountName == request.DiscountName && u.Status == true);
 
                 if (isThereDiscountRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

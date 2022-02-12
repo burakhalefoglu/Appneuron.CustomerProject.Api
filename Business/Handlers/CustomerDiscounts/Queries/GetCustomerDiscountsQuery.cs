@@ -39,7 +39,7 @@ namespace Business.Handlers.CustomerDiscounts.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<CustomerDiscount>>(await _customerDiscountRepository
-                    .GetListAsync());
+                    .GetListAsync( p=> p.Status == true));
             }
         }
     }

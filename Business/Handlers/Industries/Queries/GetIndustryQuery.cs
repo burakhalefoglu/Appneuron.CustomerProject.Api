@@ -28,7 +28,7 @@ namespace Business.Handlers.Industries.Queries
             public async Task<IDataResult<Industry>> Handle(GetIndustryQuery request,
                 CancellationToken cancellationToken)
             {
-                var industry = await _industryRepository.GetAsync(p => p.Id == request.Id);
+                var industry = await _industryRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<Industry>(industry);
             }
         }

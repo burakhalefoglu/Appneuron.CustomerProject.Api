@@ -38,7 +38,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 
                 var result =
                     await _customerProjectRepository.GetListAsync(p =>
-                        p.CustomerId == Convert.ToInt64(userId) && p.Id == request.Id);
+                        p.CustomerId == Convert.ToInt64(userId) && p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<int>(result.ToList().Count);
             }
         }

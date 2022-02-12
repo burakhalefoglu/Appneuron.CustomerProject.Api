@@ -34,7 +34,7 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateVoteCommand request, CancellationToken cancellationToken)
             {
-                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.Id == request.Id);
+                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 if (isThereVoteRecord == null) return new ErrorResult(Messages.VoteNotFound);
 

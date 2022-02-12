@@ -33,7 +33,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
                 CancellationToken cancellationToken)
             {
                 var appneuronProductToDelete =
-                    await _appneuronProductRepository.GetAsync(p => p.Id == request.Id);
+                    await _appneuronProductRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (appneuronProductToDelete == null) return new ErrorResult(Messages.AppneuronProductNotFound);
                 appneuronProductToDelete.Status = false;
                 await _appneuronProductRepository.UpdateAsync(appneuronProductToDelete);

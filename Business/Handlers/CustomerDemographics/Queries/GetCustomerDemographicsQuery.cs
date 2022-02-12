@@ -36,7 +36,7 @@ namespace Business.Handlers.CustomerDemographics.Queries
                 GetCustomerDemographicsQuery request, CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<CustomerDemographic>>(await _customerDemographicRepository
-                    .GetListAsync());
+                    .GetListAsync(p=>  p.Status == true));
             }
         }
     }

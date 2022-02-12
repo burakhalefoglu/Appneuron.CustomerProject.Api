@@ -33,7 +33,7 @@ namespace Business.Handlers.Discounts.Queries
             public async Task<IDataResult<IEnumerable<Discount>>> Handle(GetDiscountsQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<Discount>>(await _discountRepository.GetListAsync());
+                return new SuccessDataResult<IEnumerable<Discount>>(await _discountRepository.GetListAsync(p=> p.Status == true));
             }
         }
     }

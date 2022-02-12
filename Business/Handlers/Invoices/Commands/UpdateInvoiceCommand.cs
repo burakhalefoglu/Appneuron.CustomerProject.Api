@@ -40,7 +40,7 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.Id == request.Id);
+                var isThereInvoiceRecord = await _invoiceRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 if (isThereInvoiceRecord == null) return new ErrorResult(Messages.InvoiceNotFound);
 

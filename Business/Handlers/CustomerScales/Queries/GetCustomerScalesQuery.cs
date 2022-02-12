@@ -36,7 +36,7 @@ namespace Business.Handlers.CustomerScales.Queries
             public async Task<IDataResult<IEnumerable<CustomerScale>>> Handle(GetCustomerScalesQuery request,
                 CancellationToken cancellationToken)
             {
-                return new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(),
+                return new SuccessDataResult<IEnumerable<CustomerScale>>(await _customerScaleRepository.GetListAsync(p=> p.Status == true),
                     Messages.DefaultSuccess);
             }
         }

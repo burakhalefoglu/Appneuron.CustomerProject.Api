@@ -28,7 +28,7 @@ namespace Business.Handlers.CustomerScales.Queries
             public async Task<IDataResult<CustomerScale>> Handle(GetCustomerScaleQuery request,
                 CancellationToken cancellationToken)
             {
-                var customerScale = await _customerScaleRepository.GetAsync(p => p.Id == request.Id);
+                var customerScale = await _customerScaleRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<CustomerScale>(customerScale);
             }
         }

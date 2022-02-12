@@ -31,7 +31,7 @@ namespace Business.Handlers.Invoices.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
             {
-                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.Id == request.Id);
+                var invoiceToDelete = await _invoiceRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 if (invoiceToDelete == null) return new ErrorResult(Messages.InvoiceNotFound);
                 invoiceToDelete.Status = false;
                 await _invoiceRepository.UpdateAsync(invoiceToDelete);

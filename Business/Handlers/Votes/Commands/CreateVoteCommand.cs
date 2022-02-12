@@ -36,7 +36,7 @@ namespace Business.Handlers.Votes.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateVoteCommand request, CancellationToken cancellationToken)
             {
-                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.VoteName == request.VoteName);
+                var isThereVoteRecord = await _voteRepository.GetAsync(u => u.VoteName == request.VoteName && u.Status == true);
 
                 if (isThereVoteRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

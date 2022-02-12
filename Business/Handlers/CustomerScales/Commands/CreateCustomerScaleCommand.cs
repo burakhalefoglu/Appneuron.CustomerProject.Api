@@ -36,7 +36,7 @@ namespace Business.Handlers.CustomerScales.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateCustomerScaleCommand request, CancellationToken cancellationToken)
             {
-                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Name == request.Name);
+                var isThereCustomerScaleRecord = await _customerScaleRepository.GetAsync(u => u.Name == request.Name && u.Status == true);
 
                 if (isThereCustomerScaleRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

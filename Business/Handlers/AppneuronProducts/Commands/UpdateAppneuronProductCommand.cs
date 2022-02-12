@@ -35,7 +35,7 @@ namespace Business.Handlers.AppneuronProducts.Commands
                 CancellationToken cancellationToken)
             {
                 var isThereAppneuronProductRecord =
-                    await _appneuronProductRepository.GetAsync(u => u.Id == request.Id);
+                    await _appneuronProductRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
                 if (isThereAppneuronProductRecord == null) return new ErrorResult(Messages.AppneuronProductNotFound);
                 isThereAppneuronProductRecord.ProductName = request.ProductName;
 

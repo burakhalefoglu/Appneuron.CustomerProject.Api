@@ -35,7 +35,7 @@ namespace Business.Handlers.Industries.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(CreateIndustryCommand request, CancellationToken cancellationToken)
             {
-                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Name == request.Name);
+                var isThereIndustryRecord = await _industryRepository.GetAsync(u => u.Name == request.Name && u.Status == true);
 
                 if (isThereIndustryRecord != null)
                     return new ErrorResult(Messages.NameAlreadyExist);

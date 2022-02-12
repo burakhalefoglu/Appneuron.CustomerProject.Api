@@ -45,7 +45,7 @@ namespace Business.Handlers.Customers.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var isCustomerExist = await _customerRepository.GetAsync(c => c.Id == Convert.ToInt64(userId));
+                var isCustomerExist = await _customerRepository.GetAsync(c => c.Id == Convert.ToInt64(userId) && c.Status == true);
                 if (isCustomerExist != null) return new ErrorResult(Messages.CustomerNotFound);
                 var addedCustomer = new Customer
                 {

@@ -36,7 +36,7 @@ namespace Business.Handlers.AppneuronProducts.Queries
                 CancellationToken cancellationToken)
             {
                 return new SuccessDataResult<IEnumerable<AppneuronProduct>>(await _appneuronProductRepository
-                    .GetListAsync());
+                    .GetListAsync( p=>  p.Status == true));
             }
         }
     }

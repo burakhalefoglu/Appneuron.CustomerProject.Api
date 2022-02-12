@@ -49,7 +49,7 @@ namespace Business.Handlers.CustomerProjects.Commands
 
                 var isThereCustomerProjectRecord =
                     await _customerProjectRepository.GetAsync(u =>
-                        u.Id == request.ProjectId && u.CustomerId == Convert.ToInt64(userId));
+                        u.Id == request.ProjectId && u.CustomerId == Convert.ToInt64(userId) && u.Status == true);
                 if (isThereCustomerProjectRecord == null)
                     return new ErrorResult(Messages.ProjectNotFound);
 

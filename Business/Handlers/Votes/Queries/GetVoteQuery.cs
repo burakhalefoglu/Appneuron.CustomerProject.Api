@@ -27,7 +27,7 @@ namespace Business.Handlers.Votes.Queries
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<Vote>> Handle(GetVoteQuery request, CancellationToken cancellationToken)
             {
-                var vote = await _voteRepository.GetAsync(p => p.Id == request.Id);
+                var vote = await _voteRepository.GetAsync(p => p.Id == request.Id && p.Status == true);
                 return new SuccessDataResult<Vote>(vote);
             }
         }

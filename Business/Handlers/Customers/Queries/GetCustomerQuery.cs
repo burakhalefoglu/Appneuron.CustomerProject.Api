@@ -35,7 +35,7 @@ namespace Business.Handlers.Customers.Queries
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                var customer = await _customerRepository.GetAsync(p => p.Id == Convert.ToInt64(userId));
+                var customer = await _customerRepository.GetAsync(p => p.Id == Convert.ToInt64(userId) && p.Status == true);
                 return new SuccessDataResult<Customer>(customer);
             }
         }

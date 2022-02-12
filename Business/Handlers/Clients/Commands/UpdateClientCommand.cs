@@ -39,7 +39,7 @@ namespace Business.Handlers.Clients.Commands
             [SecuredOperation(Priority = 1)]
             public async Task<IResult> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
             {
-                var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id);
+                var isThereClientRecord = await _clientRepository.GetAsync(u => u.Id == request.Id && u.Status == true);
 
                 if (isThereClientRecord == null) return new ErrorResult(Messages.ClientNotFound);
 
