@@ -69,7 +69,7 @@ namespace Tests.Business.Handlers
 
             //Asset
             x.Success.Should().BeTrue();
-            x.Data.UserId.Should().Be(1);
+            x.Data.UserId.Should().Be(12);
         }
 
         [Test]

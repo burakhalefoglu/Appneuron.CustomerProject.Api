@@ -33,7 +33,6 @@ namespace Business.Handlers.CustomerProjects.Queries
             }
 
             [LogAspect(typeof(ConsoleLogger))]
-
             [SecuredOperation(Priority = 1)]
             public async Task<IDataResult<CustomerProject>> Handle(GetCustomerProjectQuery request,
                 CancellationToken cancellationToken)

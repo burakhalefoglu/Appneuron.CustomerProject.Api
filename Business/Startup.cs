@@ -7,7 +7,6 @@ using Autofac;
 using Business.Constants;
 using Business.DependencyResolvers;
 using Business.Fakes.DArch;
-using Business.MessageBrokers;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.DependencyResolvers;
@@ -67,7 +66,7 @@ namespace Business
             services.AddSingleton<ConfigurationManager>();
 
             services.AddTransient<IElasticSearch, ElasticSearchManager>();
-
+            services.AddTransient<IMessageBroker, KafkaMessageBroker>();
             services.AddSingleton<ICacheManager, MemoryCacheManager>();
 
             services.AddAutoMapper(typeof(ConfigurationManager));
