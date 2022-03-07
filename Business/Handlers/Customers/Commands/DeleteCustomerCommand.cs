@@ -11,6 +11,7 @@ using Core.Utilities.Results;
 using DataAccess.Abstract;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace Business.Handlers.Customers.Commands
 {
@@ -39,7 +40,7 @@ namespace Business.Handlers.Customers.Commands
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerToDelete = await _customerRepository.GetAsync(p => p.Id == Convert.ToInt64(userId) && p.Status == true);
-                if (customerToDelete == null) return new ErrorResult(Messages.CustomerNotFound);
+                if (customerToDelete == null) return new ErrorResult(Messages.UserNotFound);
                 customerToDelete.Status = false;
                 await _customerRepository.UpdateAsync(customerToDelete);
                 return new SuccessResult(Messages.Deleted);

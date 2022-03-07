@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Business.BusinessAspects;
 using Business.Constants;
-using Business.Handlers.Customers.ValidationRules;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Validation;
@@ -14,6 +13,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace Business.Handlers.Customers.Commands
 {
@@ -21,9 +21,6 @@ namespace Business.Handlers.Customers.Commands
     /// </summary>
     public class CreateCustomerCommand : IRequest<IResult>
     {
-        public long CustomerScaleId { get; set; }
-        public long IndustryId { get; set; }
-
         public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, IResult>
         {
             private readonly ICustomerRepository _customerRepository;
@@ -36,7 +33,6 @@ namespace Business.Handlers.Customers.Commands
                 _httpContextAccessor = httpContextAccessor;
             }
 
-            [ValidationAspect(typeof(CreateCustomerValidator), Priority = 1)]
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
@@ -46,11 +42,10 @@ namespace Business.Handlers.Customers.Commands
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var isCustomerExist = await _customerRepository.GetAsync(c => c.Id == Convert.ToInt64(userId) && c.Status == true);
-                if (isCustomerExist != null) return new ErrorResult(Messages.CustomerNotFound);
+                if (isCustomerExist != null) return new ErrorResult(Messages.AlreadyExist);
                 var addedCustomer = new Customer
                 {
-                    CustomerScaleId = request.CustomerScaleId,
-                    IndustryId = request.IndustryId
+                    Id = Convert.ToInt64(userId),
                 };
 
                 await _customerRepository.AddAsync(addedCustomer);

@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using static Business.Handlers.Customers.Queries.GetCustomerQuery;
-using static Business.Handlers.Customers.Queries.GetCustomersQuery;
 using static Business.Handlers.Customers.Commands.CreateCustomerCommand;
 using static Business.Handlers.Customers.Commands.DeleteCustomerCommand;
 
@@ -34,7 +33,6 @@ namespace Tests.Business.Handlers
 
             _getCustomerQueryHandler =
                 new GetCustomerQueryHandler(_customerRepository.Object, _httpContextAccessor.Object);
-            _getCustomersQueryHandler = new GetCustomersQueryHandler(_customerRepository.Object, _mediator.Object);
             _createCustomerCommandHandler =
                 new CreateCustomerCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
             _deleteCustomerCommandHandler =
@@ -46,7 +44,6 @@ namespace Tests.Business.Handlers
         private Mock<IHttpContextAccessor> _httpContextAccessor;
 
         private GetCustomerQueryHandler _getCustomerQueryHandler;
-        private GetCustomersQueryHandler _getCustomersQueryHandler;
         private CreateCustomerCommandHandler _createCustomerCommandHandler;
         private DeleteCustomerCommandHandler _deleteCustomerCommandHandler;
 
@@ -71,44 +68,13 @@ namespace Tests.Business.Handlers
         }
 
 
-        [Test]
-        public async Task Customer_GetQueries_Success()
-        {
-            //Arrange
-            var query = new GetCustomersQuery();
-
-            _customerRepository.Setup(x
-                    => x.GetListAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync(new List<Customer>
-                {
-                    new()
-                    {
-                        Id = 1
-                    },
-
-                    new()
-                    {
-                        Id = 2
-                    }
-                }.AsQueryable);
-
-            //Act
-            var x = await _getCustomersQueryHandler.Handle(query, new CancellationToken());
-
-            //Asset
-            x.Success.Should().BeTrue();
-            x.Data.ToList().Count.Should().BeGreaterThan(1);
-        }
+   
 
         [Test]
         public async Task Customer_CreateCommand_Success()
         {
             //Arrange
-            var command = new CreateCustomerCommand
-            {
-                CustomerScaleId = 1,
-                IndustryId = 2
-            };
+            var command = new CreateCustomerCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync((Customer) null);
@@ -124,11 +90,7 @@ namespace Tests.Business.Handlers
         public async Task Customer_CreateCommand_CustomerNotFound()
         {
             //Arrange
-            var command = new CreateCustomerCommand
-            {
-                CustomerScaleId = 1,
-                IndustryId = 2
-            };
+            var command = new CreateCustomerCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new Customer());
@@ -138,7 +100,7 @@ namespace Tests.Business.Handlers
             var x = await _createCustomerCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
-            x.Message.Should().Be(Messages.CustomerNotFound);
+            x.Message.Should().Be(Messages.UserNotFound);
         }
 
         [Test]
@@ -174,7 +136,7 @@ namespace Tests.Business.Handlers
             var x = await _deleteCustomerCommandHandler.Handle(command, new CancellationToken());
 
             x.Success.Should().BeFalse();
-            x.Message.Should().Be(Messages.CustomerNotFound);
+            x.Message.Should().Be(Messages.UserNotFound);
         }
     }
 }

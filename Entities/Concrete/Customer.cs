@@ -6,11 +6,13 @@ namespace Entities.Concrete
 {
     public class Customer : IEntity
     {
-        public bool Status = true;
-        public long CustomerScaleId { get; set; }
-        
-        public long DemographicId { get; set; }
-        public long IndustryId { get; set; }
+        public Customer()
+        {
+            Status = true;
+            CreatedAt = DateTimeOffset.Now;
+        }
+        public bool Status { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public long Id { get; set; }
     }
 }

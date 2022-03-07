@@ -12,12 +12,11 @@ namespace Core.DataAccess
 
         IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null);
 
-        T GetById(long id);
-        
-        void Update(T record);
-
         Task UpdateAsync(T record);
+        void Update(T record);
         
+        T GetById(long id);
+
         Task AddAsync(T entity);
 
         Task<IQueryable<T>> GetListAsync(Expression<Func<T, bool>> predicate = null);

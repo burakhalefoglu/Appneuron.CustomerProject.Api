@@ -7,12 +7,16 @@ namespace Entities.Concrete
 {
     public class CustomerProject : IEntity
     {
-        public bool Status = true;
+        public CustomerProject()
+        {
+            Status = true;
+            CreatedAt = DateTimeOffset.Now;
+        }
+        public bool Status { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
         public long CustomerId { get; set; }
-        public long VoteId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string ProjectName { get; set; }
-        public string ProjectBody { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public long Id { get; set; }
     }
 }

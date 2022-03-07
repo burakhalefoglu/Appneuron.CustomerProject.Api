@@ -4,5 +4,9 @@ namespace Business.Helpers
 {
     public class AutoMapperHelper : Profile
     {
+        public AutoMapperHelper()
+        {
+        }
     }
 }
+

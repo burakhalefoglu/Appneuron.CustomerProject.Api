@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Core.Utilities.Results;
+﻿using Core.Utilities.Results;
 
 namespace Core.Utilities.MessageBrokers
 {
@@ -8,7 +6,5 @@ namespace Core.Utilities.MessageBrokers
     {
         Task<IResult> SendMessageAsync<T>(T messageModel) where T :
             class, new();
-
-        Task GetMessageAsync<T>(string topic, string consumerGroup, Func<T, Task<IResult>> callback);
     }
 }

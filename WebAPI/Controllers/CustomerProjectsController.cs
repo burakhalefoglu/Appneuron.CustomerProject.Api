@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Business.Handlers.CustomerProjects.Commands;
+﻿using Business.Handlers.CustomerProjects.Commands;
 using Business.Handlers.CustomerProjects.Queries;
 using Core.Utilities.Results;
 using Entities.Concrete;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace WebAPI.Controllers
 {
@@ -34,23 +32,6 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        ///     List CustomerProjects
-        /// </summary>
-        /// <remarks>CustomerProjects</remarks>
-        /// <return>List CustomerProjects</return>
-        /// <response code="200"></response>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<IEnumerable<CustomerProject>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getbyuser")]
-        public async Task<IActionResult> GetUsersList()
-        {
-            var result = await Mediator.Send(new GetCustomerProjectLookupQuery());
-            if (result.Success) return Ok(result);
-            return BadRequest(result);
-        }
-
-        /// <summary>
         ///     It brings the details according to its id.
         /// </summary>
         /// <remarks>CustomerProjects</remarks>
@@ -59,7 +40,7 @@ namespace WebAPI.Controllers
         [Produces("application/json", "text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<CustomerProject>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpGet("getbyid")]
+        [HttpGet]
         public async Task<IActionResult> GetByProjectKey(long id)
         {
             var result = await Mediator.Send(new GetCustomerProjectQuery {ProjectId = id});
@@ -82,23 +63,7 @@ namespace WebAPI.Controllers
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }
-
-        /// <summary>
-        ///     Update CustomerProject.
-        /// </summary>
-        /// <param name="updateCustomerProject"></param>
-        /// <returns></returns>
-        [Produces("application/json", "text/plain")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateCustomerProjectCommand updateCustomerProject)
-        {
-            var result = await Mediator.Send(updateCustomerProject);
-            if (result.Success) return Ok(result);
-            return BadRequest(result);
-        }
-
+        
         /// <summary>
         ///     Delete CustomerProject.
         /// </summary>

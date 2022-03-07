@@ -1,4 +1,4 @@
-﻿namespace Business.MessageBrokers.Models
+﻿namespace Core.Utilities.MessageBrokers
 {
     public class MessageBrokerOption
     {

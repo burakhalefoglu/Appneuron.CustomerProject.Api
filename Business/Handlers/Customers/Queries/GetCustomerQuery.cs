@@ -11,8 +11,8 @@ using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Business.Handlers.Customers.Queries
-{
+namespace Business.Handlers.Customers.Queries;
+
     public class GetCustomerQuery : IRequest<IDataResult<Customer>>
     {
         public class GetCustomerQueryHandler : IRequestHandler<GetCustomerQuery, IDataResult<Customer>>
@@ -40,4 +40,3 @@ namespace Business.Handlers.Customers.Queries
             }
         }
     }
-}

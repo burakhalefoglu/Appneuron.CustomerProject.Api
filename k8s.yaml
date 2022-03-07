@@ -37,7 +37,7 @@ spec:
       volumes:
         - name: appconfig
           secret:
-            secretName: customer-project-service-config
+            secretName: pm-service-secret
             items:
             - key: appsettings.json
               path: appsettings.json
@@ -73,26 +73,3 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
-
----
-
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: webapi-customer-project-ingress
-  namespace: service-app-dev
-spec:
-  tls:
-    - hosts:
-        - webapi.appneuron.net
-      secretName: webapi-tls
-  rules:
-    - host: webapi.appneuron.net
-      http:
-        paths:
-          - path: /customer-project
-            pathType: Prefix
-            backend: 
-              serviceName: customer-project-server-service
-              servicePort: 8000
-
