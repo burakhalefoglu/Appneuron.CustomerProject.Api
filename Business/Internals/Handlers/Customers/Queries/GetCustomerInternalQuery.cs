@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Core.Aspects.Autofac.Logging;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
@@ -11,16 +7,16 @@ using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Business.Handlers.Customers.Queries;
+namespace Business.Internals.Handlers.Customers.Queries;
 
-    public class GetCustomerQuery : IRequest<IDataResult<Customer>>
+    public class GetCustomerInternalQuery : IRequest<IDataResult<Customer>>
     {
-        public class GetCustomerQueryHandler : IRequestHandler<GetCustomerQuery, IDataResult<Customer>>
+        public class GetCustomerInternalQueryHandler : IRequestHandler<GetCustomerInternalQuery, IDataResult<Customer>>
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public GetCustomerQueryHandler(ICustomerRepository customerRepository,
+            public GetCustomerInternalQueryHandler(ICustomerRepository customerRepository,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
@@ -29,7 +25,7 @@ namespace Business.Handlers.Customers.Queries;
 
             [LogAspect(typeof(ConsoleLogger))]
             [SecuredOperation(Priority = 1)]
-            public async Task<IDataResult<Customer>> Handle(GetCustomerQuery request,
+            public async Task<IDataResult<Customer>> Handle(GetCustomerInternalQuery request,
                 CancellationToken cancellationToken)
             {
                 var userId = _httpContextAccessor.HttpContext?.User.Claims

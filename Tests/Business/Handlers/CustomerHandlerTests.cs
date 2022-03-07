@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Business.Constants;
-using Business.Handlers.Customers.Commands;
-using Business.Handlers.Customers.Queries;
+using Business.Internals.Handlers.Customers.Commands;
+using Business.Internals.Handlers.Customers.Queries;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using FluentAssertions;
@@ -14,9 +14,9 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using static Business.Handlers.Customers.Queries.GetCustomerQuery;
-using static Business.Handlers.Customers.Commands.CreateCustomerCommand;
-using static Business.Handlers.Customers.Commands.DeleteCustomerCommand;
+using static Business.Internals.Handlers.Customers.Queries.GetCustomerInternalQuery;
+using static Business.Internals.Handlers.Customers.Commands.CreateCustomerInternalCommand;
+using static Business.Internals.Handlers.Customers.Commands.DeleteCustomerInternalCommand;
 
 
 namespace Tests.Business.Handlers
@@ -32,26 +32,26 @@ namespace Tests.Business.Handlers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             _getCustomerQueryHandler =
-                new GetCustomerQueryHandler(_customerRepository.Object, _httpContextAccessor.Object);
+                new GetCustomerInternalQueryHandler(_customerRepository.Object, _httpContextAccessor.Object);
             _createCustomerCommandHandler =
-                new CreateCustomerCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
+                new CreateCustomerCommandInternalHandler(_customerRepository.Object, _httpContextAccessor.Object);
             _deleteCustomerCommandHandler =
-                new DeleteCustomerCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
+                new DeleteCustomerInternalCommandHandler(_customerRepository.Object, _httpContextAccessor.Object);
         }
 
         private Mock<ICustomerRepository> _customerRepository;
         private Mock<IMediator> _mediator;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
 
-        private GetCustomerQueryHandler _getCustomerQueryHandler;
-        private CreateCustomerCommandHandler _createCustomerCommandHandler;
-        private DeleteCustomerCommandHandler _deleteCustomerCommandHandler;
+        private GetCustomerInternalQueryHandler _getCustomerQueryHandler;
+        private CreateCustomerCommandInternalHandler _createCustomerCommandHandler;
+        private DeleteCustomerInternalCommandHandler _deleteCustomerCommandHandler;
 
         [Test]
         public async Task Customer_GetQuery_Success()
         {
             //Arrange
-            var query = new GetCustomerQuery();
+            var query = new GetCustomerInternalQuery();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>())).ReturnsAsync(
                 new Customer
@@ -74,7 +74,7 @@ namespace Tests.Business.Handlers
         public async Task Customer_CreateCommand_Success()
         {
             //Arrange
-            var command = new CreateCustomerCommand();
+            var command = new CreateCustomerInternalCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync((Customer) null);
@@ -90,7 +90,7 @@ namespace Tests.Business.Handlers
         public async Task Customer_CreateCommand_CustomerNotFound()
         {
             //Arrange
-            var command = new CreateCustomerCommand();
+            var command = new CreateCustomerInternalCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new Customer());
@@ -107,7 +107,7 @@ namespace Tests.Business.Handlers
         public async Task Customer_DeleteCommand_Success()
         {
             //Arrange
-            var command = new DeleteCustomerCommand();
+            var command = new DeleteCustomerInternalCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync(new Customer());
@@ -125,7 +125,7 @@ namespace Tests.Business.Handlers
         public async Task Customer_DeleteCommand_CustomerNotFound()
         {
             //Arrange
-            var command = new DeleteCustomerCommand();
+            var command = new DeleteCustomerInternalCommand();
 
             _customerRepository.Setup(x => x.GetAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
                 .ReturnsAsync((Customer) null);

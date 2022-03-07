@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Business.BusinessAspects;
+﻿using Business.BusinessAspects;
 using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
@@ -13,18 +9,18 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using IResult = Core.Utilities.Results.IResult;
 
-namespace Business.Handlers.Customers.Commands
+namespace Business.Internals.Handlers.Customers.Commands
 {
     /// <summary>
     /// </summary>
-    public class DeleteCustomerCommand : IRequest<IResult>
+    public class DeleteCustomerInternalCommand : IRequest<IResult>
     {
-        public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerCommand, IResult>
+        public class DeleteCustomerInternalCommandHandler : IRequestHandler<DeleteCustomerInternalCommand, IResult>
         {
             private readonly ICustomerRepository _customerRepository;
             private readonly IHttpContextAccessor _httpContextAccessor;
 
-            public DeleteCustomerCommandHandler(ICustomerRepository customerRepository,
+            public DeleteCustomerInternalCommandHandler(ICustomerRepository customerRepository,
                 IHttpContextAccessor httpContextAccessor)
             {
                 _customerRepository = customerRepository;
@@ -33,8 +29,7 @@ namespace Business.Handlers.Customers.Commands
 
             [CacheRemoveAspect("Get")]
             [LogAspect(typeof(ConsoleLogger))]
-            [SecuredOperation(Priority = 1)]
-            public async Task<IResult> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
+            public async Task<IResult> Handle(DeleteCustomerInternalCommand request, CancellationToken cancellationToken)
             {
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;

@@ -1,7 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
-using Business.Handlers.Customers.Commands;
 using Business.Handlers.Feedbacks.ValidationRules;
+using Business.Internals.Handlers.Customers.Commands;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
@@ -45,7 +45,7 @@ public class CreateFeedbackCommand : IRequest<IResult>
             var userId = _httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-            await _mediator.Send(new CreateCustomerCommand(), cancellationToken);
+            await _mediator.Send(new CreateCustomerInternalCommand(), cancellationToken);
 
             await _feedbackRepository.AddAsync(new Feedback
             {

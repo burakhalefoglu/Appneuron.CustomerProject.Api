@@ -1,7 +1,7 @@
 ﻿using Business.BusinessAspects;
 using Business.Constants;
 using Business.Handlers.CustomerProjects.ValidationRules;
-using Business.Handlers.Customers.Commands;
+using Business.Internals.Handlers.Customers.Commands;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
@@ -50,7 +50,7 @@ namespace Business.Handlers.CustomerProjects.Commands
                 var userId = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
-                await _mediator.Send(new CreateCustomerCommand(), cancellationToken);
+                await _mediator.Send(new CreateCustomerInternalCommand(), cancellationToken);
                 
                 var isThereCustomerProjectRecord = await _customerProjectRepository.GetAsync(u =>
                     u.Name == request.Name &&
