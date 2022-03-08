@@ -44,7 +44,6 @@ namespace Business.Handlers.CustomerProjects.Commands
                         p.Name == request.Name && p.CustomerId == Convert.ToInt64(userId) && p.Status == true);
                 if (customerProjectToDelete == null) return new ErrorDataResult<AccessToken>(Messages.ProjectNotFound);
                 await _customerProjectRepository.DeleteAsync(customerProjectToDelete);
-                
                 return new SuccessResult(Messages.Deleted);
             }
         }
