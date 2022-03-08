@@ -28,7 +28,7 @@ namespace Core.DataAccess.Cassandra
             var cluster = Cluster.Builder()
                 .AddContactPoints(cassandraConnectionSettings.Host)
                 .WithCredentials(cassandraConnectionSettings.UserName, cassandraConnectionSettings.Password)
-                .WithApplicationName("AuthServer")
+                .WithApplicationName("CustomerProjectServer")
                 .WithCompression(CompressionType.Snappy)
                 .Build();
             var session = cluster.Connect();
@@ -133,14 +133,26 @@ namespace Core.DataAccess.Cassandra
 
         public async Task UpdateAsync(T entity)
         {
-            await _mapper.DeleteAsync(entity);
-            await _mapper.InsertAsync(entity);
+            await _mapper.UpdateAsync(entity);
         }
 
         public void Update(T entity)
         {
+            _mapper.Update(entity);
+        }
+        
+        public void Delete(T entity)
+        {
             _mapper.Delete(entity);
+            entity.Status = false;
             _mapper.Insert(entity);
+        }
+        
+        public async Task DeleteAsync(T entity)
+        {
+            await _mapper.DeleteAsync(entity);
+            entity.Status = false;
+            await _mapper.InsertAsync(entity);
         }
     }
 }

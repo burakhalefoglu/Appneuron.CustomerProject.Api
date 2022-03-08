@@ -15,7 +15,7 @@ public class CustomerMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Customer>()
-            .TableName("customer")
+            .TableName("customers")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id", "status")
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))

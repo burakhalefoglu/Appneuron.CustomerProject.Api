@@ -41,7 +41,26 @@ namespace Core.DataAccess.EntityFramework
             Context.Update(entity);
             Context.SaveChanges();
         }
-        
+
+        public async Task DeleteAsync(TEntity entity)
+        {
+            await Task.Run(() =>
+            {
+                entity.Status = false;
+                Context.Update(entity);
+                Context.SaveChanges();
+                
+            });
+        }
+
+        public void Delete(TEntity entity)
+        {
+            
+            entity.Status = false;
+            Context.Update(entity);
+            Context.SaveChanges();
+        }
+
         public async Task UpdateAsync(TEntity entity)
         {
             await Task.Run(() => Context.Update(entity));

@@ -15,6 +15,9 @@ namespace Core.DataAccess
         Task UpdateAsync(T record);
 
         void Update(T record);
+        Task DeleteAsync(T record);
+
+        void Delete(T record);
         
         T GetById(long id);
 

@@ -13,5 +13,6 @@ namespace Core.Entities.Concrete
         public DateTimeOffset TimeStamp { get; set; }
         public string Exception { get; set; }
         public long Id { get; set; }
+        public bool Status { get; set; }
     }
 }
