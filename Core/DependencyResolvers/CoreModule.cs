@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Core.ApiDoc;
 using Core.CrossCuttingConcerns.Caching;
+using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.CrossCuttingConcerns.Caching.Redis;
 using Core.Utilities.IoC;
 using Core.Utilities.Mail;
@@ -19,7 +20,7 @@ namespace Core.DependencyResolvers
         {
             services.AddMemoryCache();
             // set redis
-            services.AddSingleton<ICacheManager, RedisCacheManager>();
+            services.AddSingleton<ICacheManager, MemoryCacheManager>();
             services.AddSingleton<IMailService, MailManager>();
             services.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
