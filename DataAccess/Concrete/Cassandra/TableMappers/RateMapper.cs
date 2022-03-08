@@ -15,7 +15,7 @@ public class RateMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Rate>()
-            .TableName("customer_projects")
+            .TableName("rates")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id", "status")
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))

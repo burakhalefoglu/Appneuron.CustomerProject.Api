@@ -15,7 +15,7 @@ public class FeedbackMapper: Mappings
         var cassandraConnectionSettings = 
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Feedback>()
-            .TableName("customer_projects")
+            .TableName("feedbacks")
             .KeyspaceName(cassandraConnectionSettings.Keyspace)
             .PartitionKey("id", "status")
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))
