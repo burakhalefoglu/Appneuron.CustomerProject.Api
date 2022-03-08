@@ -13,6 +13,7 @@ namespace Core.DataAccess
         IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null);
 
         Task UpdateAsync(T record);
+
         void Update(T record);
         
         T GetById(long id);

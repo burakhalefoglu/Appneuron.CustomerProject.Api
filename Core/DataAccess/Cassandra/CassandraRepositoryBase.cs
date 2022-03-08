@@ -13,7 +13,7 @@ namespace Core.DataAccess.Cassandra
     // https://github.com/datastax/csharp-driver
     public class CassandraRepositoryBase<T>
         : IRepository<T>
-        where T : class, IEntity, new()
+            where T : class, IEntity, new()
     {
         private readonly Table<T> _table;
 
@@ -133,7 +133,26 @@ namespace Core.DataAccess.Cassandra
                 _table.Insert(entity).Execute();
             });
         }
-        
+
+        public async Task UpdateFilterAsync(T record, Expression<Func<T, bool>> filter)
+        {
+            await Task.Run(() =>
+            {
+            _table.Where(filter)
+                .Select(u => record )
+                .Update()
+                .Execute();
+            });
+        }
+
+        public void UpdateFilter(T record, Expression<Func<T, bool>> filter)
+        {
+            _table.Where(filter)
+                .Select(u => record )
+                .Update()
+                .Execute();
+        }
+
         public async void Update(T entity)
         {
                 _table.Insert(entity).Execute();

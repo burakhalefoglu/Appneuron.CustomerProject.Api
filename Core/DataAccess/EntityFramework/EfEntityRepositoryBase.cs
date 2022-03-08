@@ -35,7 +35,7 @@ namespace Core.DataAccess.EntityFramework
             await Context.AddAsync(entity);
             await Context.SaveChangesAsync();
         }
-        
+
         public void Update(TEntity entity)
         {
             Context.Update(entity);
