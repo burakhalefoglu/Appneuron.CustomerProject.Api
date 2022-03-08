@@ -43,12 +43,9 @@ namespace Business.Handlers.CustomerProjects.Commands
                     await _customerProjectRepository.GetAsync(p =>
                         p.Name == request.Name && p.CustomerId == Convert.ToInt64(userId) && p.Status == true);
                 if (customerProjectToDelete == null) return new ErrorDataResult<AccessToken>(Messages.ProjectNotFound);
-                await _customerProjectRepository.UpdateFilterAsync(new CustomerProject
-                {
-                    Status = false
-                }, c=> c.Name == customerProjectToDelete.Name &&
-                       c.CustomerId == customerProjectToDelete.CustomerId &&
-                       c.Status);
+                customerProjectToDelete.Status = false;
+                
+                await _customerProjectRepository.UpdateAsync(customerProjectToDelete);
                 
                 return new SuccessResult(Messages.Deleted);
             }

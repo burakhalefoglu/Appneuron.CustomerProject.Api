@@ -4,7 +4,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IRateRepository : IRepository<Rate>, ICassandraRepository<Rate>
+    public interface IRateRepository : IRepository<Rate>
     {
     }
 }

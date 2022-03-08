@@ -5,7 +5,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface ILogRepository : IRepository<Log>, ICassandraRepository<Log>
+    public interface ILogRepository : IRepository<Log>
     {
     }
 }

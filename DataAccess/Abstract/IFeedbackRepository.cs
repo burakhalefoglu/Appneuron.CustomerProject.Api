@@ -4,7 +4,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface IFeedbackRepository : IRepository<Feedback>, ICassandraRepository<Feedback>
+    public interface IFeedbackRepository : IRepository<Feedback>
     {
     }
 }

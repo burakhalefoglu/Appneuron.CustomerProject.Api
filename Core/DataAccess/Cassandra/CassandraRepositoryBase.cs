@@ -15,10 +15,13 @@ namespace Core.DataAccess.Cassandra
         : IRepository<T>
             where T : class, IEntity, new()
     {
+        private readonly MappingConfiguration _mappingConfiguration;
         private readonly Table<T> _table;
-
+        private readonly IMapper _mapper;
+        
         protected CassandraRepositoryBase(MappingConfiguration mappingConfiguration)
         {
+            _mappingConfiguration = mappingConfiguration;
             var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
             var cassandraConnectionSettings = 
                     configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
@@ -32,6 +35,8 @@ namespace Core.DataAccess.Cassandra
             session.CreateKeyspaceIfNotExists(cassandraConnectionSettings.Keyspace);
             _table = new Table<T>(session, mappingConfiguration);
             _table.CreateIfNotExists();
+            _mapper = new Mapper(session, mappingConfiguration);
+
         }
 
         public IQueryable<T> GetList(Expression<Func<T, bool>> predicate = null)
@@ -130,32 +135,13 @@ namespace Core.DataAccess.Cassandra
         {
             await Task.Run(() =>
             {
-                _table.Insert(entity).Execute();
+                _mapper.Update(entity);
             });
         }
 
-        public async Task UpdateFilterAsync(T record, Expression<Func<T, bool>> filter)
+        public void Update(T entity)
         {
-            await Task.Run(() =>
-            {
-            _table.Where(filter)
-                .Select(u => record )
-                .Update()
-                .Execute();
-            });
-        }
-
-        public void UpdateFilter(T record, Expression<Func<T, bool>> filter)
-        {
-            _table.Where(filter)
-                .Select(u => record )
-                .Update()
-                .Execute();
-        }
-
-        public async void Update(T entity)
-        {
-                _table.Insert(entity).Execute();
+            _mapper.Update(entity);
         }
     }
 }

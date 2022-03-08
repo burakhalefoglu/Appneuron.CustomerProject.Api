@@ -4,7 +4,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Abstract
 {
-    public interface ICustomerRepository : IRepository<Customer>, ICassandraRepository<Customer>
+    public interface ICustomerRepository : IRepository<Customer>
     {
     }
 }
