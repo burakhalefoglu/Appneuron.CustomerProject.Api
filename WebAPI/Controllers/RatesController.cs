@@ -1,11 +1,11 @@
-﻿using Business.Handlers.Feedbacks.Commands;
+﻿using Business.Handlers.Rates.Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class FeedbackController : BaseApiController
+public class RatesController : BaseApiController
 {
     /// <summary>
     ///     Add Rate.
@@ -15,9 +15,9 @@ public class FeedbackController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody] CreateFeedbackCommand createFeedbackCommand)
+    public async Task<IActionResult> Add([FromBody] CreateRateCommand createRateCommand)
     {
-        var result = await Mediator.Send(createFeedbackCommand);
+        var result = await Mediator.Send(createRateCommand);
         if (result.Success) return Ok(result);
         return BadRequest(result);
     }
