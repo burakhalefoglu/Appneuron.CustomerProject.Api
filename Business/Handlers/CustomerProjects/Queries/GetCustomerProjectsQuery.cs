@@ -38,8 +38,12 @@ namespace Business.Handlers.CustomerProjects.Queries
             public async Task<IDataResult<IEnumerable<CustomerProject>>> Handle(GetCustomerProjectsQuery request,
                 CancellationToken cancellationToken)
             {
+                var userId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+                
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
-                    await _customerProjectRepository.GetListAsync(p=> p.Status == true));
+                    _customerProjectRepository.GetListAsync().Result.ToList().Where(p =>
+                        p.CustomerId == Convert.ToInt64(userId) && p.Status));
             }
         }
     }

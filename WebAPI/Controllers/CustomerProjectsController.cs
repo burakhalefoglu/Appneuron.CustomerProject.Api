@@ -41,9 +41,9 @@ namespace WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDataResult<CustomerProject>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IResult))]
         [HttpGet]
-        public async Task<IActionResult> GetByProjectKey(long id)
+        public async Task<IActionResult> GetByProjectKey(string name)
         {
-            var result = await Mediator.Send(new GetCustomerProjectQuery {ProjectId = id});
+            var result = await Mediator.Send(new GetCustomerProjectQuery {Name = name});
             if (result.Success) return Ok(result);
             return BadRequest(result);
         }

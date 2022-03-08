@@ -15,7 +15,7 @@ namespace Business.Handlers.CustomerProjects.Queries
 {
     public class GetCustomerProjectQuery : IRequest<IDataResult<CustomerProject>>
     {
-        public long ProjectId { get; set; }
+        public string Name { get; set; }
 
         public class
             GetCustomerProjectQueryHandler : IRequestHandler<GetCustomerProjectQuery, IDataResult<CustomerProject>>
@@ -41,7 +41,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                     .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
 
                 var customerProject = await _customerProjectRepository.GetAsync(p =>
-                    p.CustomerId == Convert.ToInt64(userId) && p.Id == request.ProjectId && p.Status == true);
+                    p.CustomerId == Convert.ToInt64(userId) && p.Name == request.Name && p.Status == true);
                 return new SuccessDataResult<CustomerProject>(customerProject);
             }
         }

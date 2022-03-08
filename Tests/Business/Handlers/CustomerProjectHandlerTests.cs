@@ -62,7 +62,7 @@ namespace Tests.Business.Handlers
             //Arrange
             var query = new GetCustomerProjectQuery
             {
-                ProjectId = 1
+                Name = "test"
             };
 
             _httpContextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
@@ -74,7 +74,7 @@ namespace Tests.Business.Handlers
                     {
                         Id = 2,
                         CreatedAt = DateTime.Now,
-                        Name = "Test",
+                        Name = "test",
                     }
                 );
 
