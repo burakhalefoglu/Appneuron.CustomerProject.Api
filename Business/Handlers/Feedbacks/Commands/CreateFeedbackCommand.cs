@@ -71,7 +71,7 @@ public class CreateFeedbackCommand : IRequest<IResult>
                         Name = "Appneuron"
                     }
                 },
-                Subject = "Reset password Mail...",
+                Subject = "Feedback...",
                 ToAddresses =
                 {
                     new EmailAddress
