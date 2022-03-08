@@ -19,6 +19,7 @@ namespace Business.BusinessAspects
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _operationClaimCrypto;
+        public IConfiguration Configuration { get; }
 
         public SecuredOperation()
         {
@@ -27,7 +28,6 @@ namespace Business.BusinessAspects
             _operationClaimCrypto = Configuration.GetSection("OperationClaimCrypto").Get<string>();
         }
 
-        public IConfiguration Configuration { get; }
 
         protected override void OnBefore(IInvocation invocation)
         {
