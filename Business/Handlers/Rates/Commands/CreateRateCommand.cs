@@ -7,11 +7,14 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
+using Core.Utilities.Mail;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using MimeKit;
+using MimeKit.Text;
 using IResult = Core.Utilities.Results.IResult;
 
 namespace Business.Handlers.Rates.Commands;
@@ -25,13 +28,15 @@ public class CreateRateCommand : IRequest<IResult>
         private readonly IRateRepository _rateRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMediator _mediator;
+        private readonly IMailService _mailService;
 
         public CreateRateCommandHandler(IRateRepository rateRepository,
             IMediator mediator,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IMailService mailService)
         {
             _rateRepository = rateRepository;
             _httpContextAccessor = httpContextAccessor;
+            _mailService = mailService;
             _mediator = mediator;
         }
 
@@ -52,6 +57,29 @@ public class CreateRateCommand : IRequest<IResult>
                 Value = request.Value,
                 CustomerId = Convert.ToInt64(userId)
                 
+            });
+            //send email for us..
+            await _mailService.Send(new EmailMessage
+            {
+                Content = new TextPart(TextFormat.Html)
+                    {Text = $"<p>feedback rate from userıd: {userId}, feedback: {request.Value} </p>"},
+                FromAddresses =
+                {
+                    new EmailAddress
+                    {
+                        Address = "info@appneuron.com",
+                        Name = "Appneuron"
+                    }
+                },
+                Subject = "Reset password Mail...",
+                ToAddresses =
+                {
+                    new EmailAddress
+                    {
+                        Address = "info@appneuron.com",
+                        Name = "no name"
+                    }
+                }
             });
             return new SuccessResult(Messages.Added);
         }
