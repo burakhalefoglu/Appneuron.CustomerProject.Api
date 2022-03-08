@@ -133,12 +133,14 @@ namespace Core.DataAccess.Cassandra
 
         public async Task UpdateAsync(T entity)
         {
-            await _mapper.UpdateAsync(entity);
+            await _mapper.DeleteAsync(entity);
+            await _mapper.InsertAsync(entity);
         }
 
         public void Update(T entity)
         {
-            _mapper.Update(entity);
+            _mapper.Delete(entity);
+            _mapper.Insert(entity);
         }
         
         public void Delete(T entity)
