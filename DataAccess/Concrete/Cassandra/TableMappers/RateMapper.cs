@@ -21,9 +21,9 @@ public class RateMapper: Mappings
             .ClusteringKey(new Tuple<string, SortOrder>("created_at", SortOrder.Ascending))
             .Column(u => u.Id, cm => cm.WithName("id").WithDbType(typeof(long)))
             .Column(u => u.CustomerId, cm => cm.WithName("customer_id").WithDbType(typeof(long)))
-            .Column(u => u.Value, cm => cm.WithName("name").WithDbType(typeof(short)))
+            .Column(u => u.Value, cm => cm.WithName("value").WithDbType(typeof(short)))
             .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
-            .Column(u => u.Status, cm => cm.WithName("name").WithDbType(typeof(bool)));
+            .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
 
     }
 }

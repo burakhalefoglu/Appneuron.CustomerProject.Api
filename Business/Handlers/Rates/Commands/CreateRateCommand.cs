@@ -51,6 +51,7 @@ public class CreateRateCommand : IRequest<IResult>
             {
                 Value = request.Value,
                 CustomerId = Convert.ToInt64(userId)
+                
             });
             return new SuccessResult(Messages.Added);
         }
