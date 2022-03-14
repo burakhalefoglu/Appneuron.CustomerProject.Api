@@ -32,8 +32,6 @@ spec:
       labels:
         app: customer-project-server 
     spec:
-      nodeSelector:
-        dedicated: spot
       volumes:
         - name: appconfig
           secret:
