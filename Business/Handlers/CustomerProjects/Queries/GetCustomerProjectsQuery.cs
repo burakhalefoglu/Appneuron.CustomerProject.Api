@@ -43,7 +43,7 @@ namespace Business.Handlers.CustomerProjects.Queries
                 
                 return new SuccessDataResult<IEnumerable<CustomerProject>>(
                     _customerProjectRepository.GetListAsync().Result.ToList().Where(p =>
-                        p.CustomerId == Convert.ToInt64(userId) && p.Status));
+                        p.CustomerId == Convert.ToInt64(userId)));
             }
         }
     }
