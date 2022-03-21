@@ -41,7 +41,9 @@ public class IsCustomerProjectValidQuery : IRequest<IDataResult<bool>>
                 
             return new SuccessDataResult<bool>(
                 _customerProjectRepository.GetListAsync().Result.ToList()
-                    .Any(p => p.CustomerId == Convert.ToInt64(userId) &&  p.Id == request.ProjectId));
+                    .Any(p => p.CustomerId == Convert.ToInt64(userId) &&
+                              p.Id == request.ProjectId && 
+                              p.Status));
         }
     }
 }
