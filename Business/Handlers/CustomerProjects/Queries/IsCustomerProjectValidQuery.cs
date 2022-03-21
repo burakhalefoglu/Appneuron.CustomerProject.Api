@@ -31,7 +31,6 @@ public class IsCustomerProjectValidQuery : IRequest<IDataResult<bool>>
         }
 
         [PerformanceAspect(5)]
-        [CacheAspect(10)]
         [LogAspect(typeof(ConsoleLogger))]
         [SecuredOperation(Priority = 1)]
         public async Task<IDataResult<bool>> Handle(IsCustomerProjectValidQuery request,
