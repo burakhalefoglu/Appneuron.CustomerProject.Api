@@ -1,5 +1,6 @@
 ﻿using Business.Handlers.Feedbacks.Commands;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Core.Utilities.Results.IResult;
 
 namespace WebAPI.Controllers;
 
