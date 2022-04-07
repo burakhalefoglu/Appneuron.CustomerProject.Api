@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace Business.Handlers.CustomerProjects.ValidationRules;
 
-    public class CreateCustomerProjectValidator : AbstractValidator<CreateCustomerProjectCommand>
+public class CreateCustomerProjectValidator : AbstractValidator<CreateCustomerProjectCommand>
+{
+    public CreateCustomerProjectValidator()
     {
-        public CreateCustomerProjectValidator()
-        {
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.Description).NotEmpty();
-        }
+        RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.Description).NotEmpty();
     }
+}

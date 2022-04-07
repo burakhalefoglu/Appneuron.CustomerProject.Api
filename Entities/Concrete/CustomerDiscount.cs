@@ -2,19 +2,19 @@
 
 #nullable disable
 
-namespace Entities.Concrete
+namespace Entities.Concrete;
+
+public class CustomerDiscount : IEntity
 {
-    public class CustomerDiscount : IEntity
+    public CustomerDiscount()
     {
-        public CustomerDiscount()
-        {
-            Status = true;
-            CreatedAt = DateTimeOffset.Now;
-        }
-        public bool Status { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public long CustomerId { get; set; }
-        public long DiscountId { get; set; }
-        public long Id { get; set; }
+        Status = true;
+        CreatedAt = DateTimeOffset.Now;
     }
+
+    public DateTimeOffset CreatedAt { get; set; }
+    public long CustomerId { get; set; }
+    public long DiscountId { get; set; }
+    public bool Status { get; set; }
+    public long Id { get; set; }
 }

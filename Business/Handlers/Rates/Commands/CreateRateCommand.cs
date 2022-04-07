@@ -25,10 +25,10 @@ public class CreateRateCommand : IRequest<IResult>
 
     public class CreateRateCommandHandler : IRequestHandler<CreateRateCommand, IResult>
     {
-        private readonly IRateRepository _rateRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMediator _mediator;
         private readonly IMailService _mailService;
+        private readonly IMediator _mediator;
+        private readonly IRateRepository _rateRepository;
 
         public CreateRateCommandHandler(IRateRepository rateRepository,
             IMediator mediator,
@@ -56,7 +56,6 @@ public class CreateRateCommand : IRequest<IResult>
             {
                 Value = request.Value,
                 CustomerId = Convert.ToInt64(userId)
-                
             });
             //send email for us..
             await _mailService.Send(new EmailMessage

@@ -6,7 +6,7 @@ using Entities.Concrete;
 
 namespace DataAccess.Concrete.Cassandra;
 
-public class CassCustomerProjectRepository: CassandraRepositoryBase<CustomerProject>, ICustomerProjectRepository
+public class CassCustomerProjectRepository : CassandraRepositoryBase<CustomerProject>, ICustomerProjectRepository
 {
     public CassCustomerProjectRepository() : base(MappingConfiguration.Global.Define<CustomerProjectMapper>())
     {

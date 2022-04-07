@@ -1,15 +1,15 @@
+using System.Globalization;
+using System.Text.Json.Serialization;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Business.DependencyResolvers;
 using Core.DependencyResolvers;
 using Core.Extensions;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Localization;
-using System.Globalization;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Models;
 using MediatR;
+using Microsoft.AspNetCore.Localization;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

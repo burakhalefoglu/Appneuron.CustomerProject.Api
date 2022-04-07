@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class FeedbackMapper: Mappings
+public class FeedbackMapper : Mappings
 {
     public FeedbackMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Feedback>()
             .TableName("feedbacks")
@@ -24,6 +24,5 @@ public class FeedbackMapper: Mappings
             .Column(u => u.Message, cm => cm.WithName("message").WithDbType(typeof(string)))
             .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
-
     }
 }

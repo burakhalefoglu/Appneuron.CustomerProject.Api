@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class RateMapper: Mappings
+public class RateMapper : Mappings
 {
     public RateMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Rate>()
             .TableName("rates")
@@ -24,6 +24,5 @@ public class RateMapper: Mappings
             .Column(u => u.Value, cm => cm.WithName("value").WithDbType(typeof(short)))
             .Column(u => u.CreatedAt, cm => cm.WithName("created_at").WithDbType(typeof(DateTimeOffset)))
             .Column(u => u.Status, cm => cm.WithName("status").WithDbType(typeof(bool)));
-
     }
 }

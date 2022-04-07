@@ -27,8 +27,8 @@ public class CreateFeedbackCommand : IRequest<IResult>
     {
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMediator _mediator;
         private readonly IMailService _mailService;
+        private readonly IMediator _mediator;
 
         public CreateFeedbackCommandHandler(IFeedbackRepository feedbackRepository,
             IMediator mediator,

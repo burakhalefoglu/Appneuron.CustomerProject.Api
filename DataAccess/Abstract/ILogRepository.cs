@@ -1,11 +1,8 @@
 ﻿using Core.DataAccess;
-using Core.DataAccess.Cassandra;
 using Core.Entities.Concrete;
-using Entities.Concrete;
 
-namespace DataAccess.Abstract
+namespace DataAccess.Abstract;
+
+public interface ILogRepository : IRepository<Log>
 {
-    public interface ILogRepository : IRepository<Log>
-    {
-    }
 }

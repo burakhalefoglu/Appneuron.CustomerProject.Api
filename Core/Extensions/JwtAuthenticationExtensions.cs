@@ -10,16 +10,16 @@ public static class JwtAuthenticationExtensions
 {
     public static void ConfigureAuthentication(this IServiceCollection services, TokenOptions tokenOptions)
     {
-        services.AddAuthentication(opt=>
+        services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options=>
+            .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidIssuer = tokenOptions.Issuer,
@@ -35,9 +35,7 @@ public static class JwtAuthenticationExtensions
                     OnMessageReceived = context =>
                     {
                         if (context.Request.Cookies.ContainsKey("X-Access-Token"))
-                        {
                             context.Token = context.Request.Cookies["X-Access-Token"];
-                        }
                         return Task.CompletedTask;
                     }
                 };

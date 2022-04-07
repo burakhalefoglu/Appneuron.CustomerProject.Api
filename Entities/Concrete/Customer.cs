@@ -2,17 +2,17 @@
 
 #nullable disable
 
-namespace Entities.Concrete
+namespace Entities.Concrete;
+
+public class Customer : IEntity
 {
-    public class Customer : IEntity
+    public Customer()
     {
-        public Customer()
-        {
-            Status = true;
-            CreatedAt = DateTimeOffset.Now;
-        }
-        public bool Status { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public long Id { get; set; }
+        Status = true;
+        CreatedAt = DateTimeOffset.Now;
     }
+
+    public DateTimeOffset CreatedAt { get; set; }
+    public bool Status { get; set; }
+    public long Id { get; set; }
 }

@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.Cassandra.TableMappers;
 
-public class CustomerMapper: Mappings
+public class CustomerMapper : Mappings
 {
     public CustomerMapper()
     {
         var configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
-        var cassandraConnectionSettings = 
+        var cassandraConnectionSettings =
             configuration.GetSection("CassandraConnectionSettings").Get<CassandraConnectionSettings>();
         For<Customer>()
             .TableName("customers")

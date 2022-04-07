@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Business.Handlers.Feedbacks.ValidationRules;
 
-    public class FeedbackValidator : AbstractValidator<CreateFeedbackCommand>
+public class FeedbackValidator : AbstractValidator<CreateFeedbackCommand>
+{
+    public FeedbackValidator()
     {
-        public FeedbackValidator()
-        {
-            RuleFor(x => x.Message).NotEmpty();
-        }
+        RuleFor(x => x.Message).NotEmpty();
     }
+}

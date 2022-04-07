@@ -1,11 +1,9 @@
 ﻿using Business.BusinessAspects;
-using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Performance;
 using Core.CrossCuttingConcerns.Logging.Serilog.Loggers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -14,7 +12,7 @@ namespace Business.Handlers.CustomerProjects.Queries;
 public class IsCustomerProjectValidQuery : IRequest<IDataResult<bool>>
 {
     public long ProjectId { get; set; }
-    
+
     public class IsCustomerProjectValidQueryHandler : IRequestHandler<IsCustomerProjectValidQuery,
         IDataResult<bool>>
     {
@@ -38,11 +36,11 @@ public class IsCustomerProjectValidQuery : IRequest<IDataResult<bool>>
         {
             var userId = _httpContextAccessor.HttpContext?.User.Claims
                 .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
-                
+
             return new SuccessDataResult<bool>(
                 _customerProjectRepository.GetListAsync().Result.ToList()
                     .Any(p => p.CustomerId == Convert.ToInt64(userId) &&
-                              p.Id == request.ProjectId && 
+                              p.Id == request.ProjectId &&
                               p.Status));
         }
     }

@@ -2,19 +2,19 @@
 
 #nullable disable
 
-namespace Entities.Concrete
+namespace Entities.Concrete;
+
+public class Discount : IEntity
 {
-    public class Discount : IEntity
+    public Discount()
     {
-        public Discount()
-        {
-            Status = true;
-            CreatedAt = DateTimeOffset.Now;
-        }
-        public bool Status { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public string DiscountName { get; set; }
-        public short Percent { get; set; }
-        public long Id { get; set; }
+        Status = true;
+        CreatedAt = DateTimeOffset.Now;
     }
+
+    public DateTimeOffset CreatedAt { get; set; }
+    public string DiscountName { get; set; }
+    public short Percent { get; set; }
+    public bool Status { get; set; }
+    public long Id { get; set; }
 }

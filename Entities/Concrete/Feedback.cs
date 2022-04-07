@@ -9,6 +9,7 @@ public class Feedback : IEntity
         CreatedAt = DateTimeOffset.Now;
         Status = true;
     }
+
     public DateTimeOffset CreatedAt { get; set; }
     public string Message { get; set; }
     public long CustomerId { get; set; }

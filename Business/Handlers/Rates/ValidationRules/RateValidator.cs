@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Business.Handlers.Rates.ValidationRules;
 
-    public class RateValidator : AbstractValidator<CreateRateCommand>
+public class RateValidator : AbstractValidator<CreateRateCommand>
+{
+    public RateValidator()
     {
-        public RateValidator()
-        {
-            RuleFor(x => x.Value).NotEmpty();
-        }
+        RuleFor(x => x.Value).NotEmpty();
     }
+}

@@ -2,7 +2,6 @@
 using Core.ApiDoc;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
-using Core.CrossCuttingConcerns.Caching.Redis;
 using Core.Utilities.IoC;
 using Core.Utilities.Mail;
 using Core.Utilities.MessageBrokers;
@@ -12,50 +11,49 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Core.DependencyResolvers
+namespace Core.DependencyResolvers;
+
+public class CoreModule : IDIModule
 {
-    public class CoreModule : IDIModule
+    public void Load(IServiceCollection services)
     {
-        public void Load(IServiceCollection services)
+        services.AddMemoryCache();
+        // set redis
+        services.AddSingleton<ICacheManager, MemoryCacheManager>();
+        services.AddSingleton<IMailService, MailManager>();
+        services.AddSingleton<IEmailConfiguration, EmailConfiguration>();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddSingleton<IMessageBroker, KafkaMessageBroker>();
+
+        services.AddSingleton<Stopwatch>();
+
+        services.AddSwaggerGen(c =>
         {
-            services.AddMemoryCache();
-            // set redis
-            services.AddSingleton<ICacheManager, MemoryCacheManager>();
-            services.AddSingleton<IMailService, MailManager>();
-            services.AddSingleton<IEmailConfiguration, EmailConfiguration>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IMessageBroker, KafkaMessageBroker>();
-            
-            services.AddSingleton<Stopwatch>();
-
-            services.AddSwaggerGen(c =>
+            c.SwaggerDoc(SwaggerMessages.Version, new OpenApiInfo
             {
-                c.SwaggerDoc(SwaggerMessages.Version, new OpenApiInfo
+                Version = SwaggerMessages.Version,
+                Title = SwaggerMessages.Title,
+                Description = SwaggerMessages.Description,
+                TermsOfService = new Uri(SwaggerMessages.TermsOfService),
+                Contact = new OpenApiContact
                 {
-                    Version = SwaggerMessages.Version,
-                    Title = SwaggerMessages.Title,
-                    Description = SwaggerMessages.Description,
-                    TermsOfService = new Uri(SwaggerMessages.TermsOfService),
-                    Contact = new OpenApiContact
-                    {
-                        Name = SwaggerMessages.ContactName,
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = SwaggerMessages.LicenceName,
-                    },
-                });
-
-                c.OperationFilter<AddAuthHeaderOperationFilter>();
-                c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                    Name = SwaggerMessages.ContactName
+                },
+                License = new OpenApiLicense
                 {
-                    Description = "`Token only!!!` - without `Bearer_` prefix",
-                    Type = SecuritySchemeType.Http,
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Scheme = "bearer"
-                });
+                    Name = SwaggerMessages.LicenceName
+                }
             });
-        }
+
+            c.OperationFilter<AddAuthHeaderOperationFilter>();
+            c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                Description = "`Token only!!!` - without `Bearer_` prefix",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Scheme = "bearer"
+            });
+        });
     }
 }

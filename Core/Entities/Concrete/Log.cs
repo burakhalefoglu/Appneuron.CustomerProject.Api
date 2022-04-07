@@ -1,18 +1,16 @@
-﻿using System;
+﻿namespace Core.Entities.Concrete;
 
-namespace Core.Entities.Concrete
+public class Log : IEntity
 {
-    public class Log : IEntity
+    public Log()
     {
-        public Log()
-        {
-            TimeStamp = DateTime.Now;
-        }
-        public string MessageTemplate { get; set; }
-        public string Level { get; set; }
-        public DateTimeOffset TimeStamp { get; set; }
-        public string Exception { get; set; }
-        public long Id { get; set; }
-        public bool Status { get; set; }
+        TimeStamp = DateTime.Now;
     }
+
+    public string MessageTemplate { get; set; }
+    public string Level { get; set; }
+    public DateTimeOffset TimeStamp { get; set; }
+    public string Exception { get; set; }
+    public long Id { get; set; }
+    public bool Status { get; set; }
 }
